@@ -356,7 +356,7 @@
                 document.getElementById('loginSection').classList.add('hidden');
                 document.getElementById('mainDashboard').classList.remove('hidden');
                 
-                document.getElementById('userInfoTag').innerText = `المستخدم: ${currentUser.full_name} (${currentUser.role === 'admin' ? 'مدير' : 'مدخل بيانات'})`;
+                document.getElementById('userInfoTag').innerText = `المستخدم: ${currentUser.full_name} (${currentUser.role === 'raad' ? 'مدير' : 'مدخل بيانات'})`;
 
                 // تحجيم القائمة وتثبيت شركة المستخدم إذا كان حسابه لشركة محددة فقط
                 const companyFilter = document.getElementById('globalCompanyFilter');
