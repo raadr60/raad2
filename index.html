@@ -28,7 +28,7 @@
                     <i class="fas fa-truck-fast"></i>
                 </div>
                 <h2 class="text-2xl font-black text-slate-900">المنظومة اللوجستية الموحدة</h2>
-                <p class="text-xs text-slate-500 font-semibold mt-1">جسور المسافات | ركن المشروعات</p>
+                <p class="text-xs text-slate-500 font-semibold mt-1">شركة جسور المسافات | ركن المشروعات</p>
             </div>
 
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
@@ -126,8 +126,6 @@
 
             <!-- ==================== 0. قسم لوحة العدادات والرؤية الشاملة ==================== -->
             <div id="sectionOverview" class="space-y-6">
-                
-                <!-- العدادات الرقمية العريضة -->
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div class="bg-slate-800/50 border border-slate-700/50 p-5 rounded-2xl relative overflow-hidden">
                         <span class="text-xs font-bold text-slate-400 block mb-1">إجمالي الرحلات</span>
@@ -160,9 +158,7 @@
                     </div>
                 </div>
 
-                <!-- الرسوم البيانية التفاعلية -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- رسم الميزانية الإجمالية -->
                     <div class="md:col-span-2 bg-slate-800/40 border border-slate-800 p-5 rounded-2xl">
                         <h4 class="text-xs font-bold text-slate-300 mb-4 flex items-center gap-2">
                             <i class="fas fa-chart-column text-blue-400"></i> مقارنة الإيرادات مقابل المصروفات والديون
@@ -172,7 +168,6 @@
                         </div>
                     </div>
 
-                    <!-- رسم توزيع المصروفات -->
                     <div class="bg-slate-800/40 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between">
                         <h4 class="text-xs font-bold text-slate-300 mb-2 flex items-center gap-2">
                             <i class="fas fa-chart-pie text-purple-400"></i> نسبة توزيع التكاليف
@@ -180,7 +175,7 @@
                         <div class="h-56 relative flex items-center justify-center">
                             <canvas id="expensesPieChart"></canvas>
                         </div>
-                        <p class="text-[10px] text-slate-500 text-center mt-2">يتحين تلقائياً بناءً على بيانات السحبيات والصيانة</p>
+                        <p class="text-[10px] text-slate-500 text-center mt-2">تلقائي بناءً على البيانات المُدخلة</p>
                     </div>
                 </div>
             </div>
@@ -189,7 +184,7 @@
             <section id="sectionTrips" class="bg-slate-800/40 border border-slate-800 rounded-2xl overflow-hidden shadow-xl hidden">
                 <div class="p-4 border-b border-slate-800 flex justify-between items-center">
                     <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fas fa-route text-blue-400"></i> سجل الرحلات والنولون اليومي</h3>
-                    <input type="text" onkeyup="filterTable('tripsTableBody', this.value)" placeholder="بحث بالسائق أو اللوحة..." class="bg-slate-900 border border-slate-700 text-xs px-3 py-1.5 rounded-xl text-white focus:outline-none w-48">
+                    <input type="text" onkeyup="filterTable('tripsTableBody', this.value)" placeholder="بحث بالسائق، اللوحة أو العميل..." class="bg-slate-900 border border-slate-700 text-xs px-3 py-1.5 rounded-xl text-white focus:outline-none w-56">
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-right text-xs">
@@ -197,6 +192,7 @@
                             <tr>
                                 <th class="p-3.5">التاريخ</th>
                                 <th class="p-3.5">الشركة</th>
+                                <th class="p-3.5">العميل / الجهة</th>
                                 <th class="p-3.5">السائق</th>
                                 <th class="p-3.5">الشاحنة</th>
                                 <th class="p-3.5">خط السير (من - إلى)</th>
@@ -204,7 +200,7 @@
                             </tr>
                         </thead>
                         <tbody id="tripsTableBody" class="divide-y divide-slate-800 text-slate-300">
-                            <tr><td colspan="6" class="p-6 text-center text-slate-500">جاري تحميل البيانات...</td></tr>
+                            <tr><td colspan="7" class="p-6 text-center text-slate-500">جاري تحميل البيانات...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -295,10 +291,22 @@
             </div>
             <form onsubmit="saveTrip(event)" class="space-y-3 text-xs">
                 <div>
-                    <label class="font-bold text-slate-400">الشركة</label>
+                    <label class="font-bold text-slate-400">الشركة المشغلة</label>
                     <select id="tripCompany" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-white font-bold">
                         <option value="شركة جسور المسافات">شركة جسور المسافات</option>
                         <option value="ركن المشروعات">ركن المشروعات</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="font-bold text-slate-400">العميل / الجهة المنقول لها</label>
+                    <select id="tripClient" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-blue-400 font-bold">
+                        <option value="أرامكس">أرامكس (Aramex)</option>
+                        <option value="المطلق">المطلق</option>
+                        <option value="سدير">سدير</option>
+                        <option value="الحكير">الحكير</option>
+                        <option value="كيري">كيري</option>
+                        <option value="جي اف اس">جي اف اس (GFS)</option>
+                        <option value="عميل آخر">عميل آخر / عام</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
@@ -438,7 +446,7 @@
                     <label class="font-bold text-slate-400">الورشة / المورد</label>
                     <input type="text" id="maintVendor" placeholder="اسم الورشة" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-white">
                 </div>
-                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 font-bold py-3 rounded-xl transition text-white">حفظ امر الصيانة</button>
+                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 font-bold py-3 rounded-xl transition text-white">حفظ أمر الصيانة</button>
             </form>
         </div>
     </div>
@@ -534,14 +542,22 @@
 
         async function saveTrip(e) {
             e.preventDefault();
-            await dbClient.from('daily_trips').insert([{
+            const tripData = {
                 company: document.getElementById('tripCompany').value,
+                client_name: document.getElementById('tripClient').value,
                 driver_name: document.getElementById('tripDriver').value,
                 plate_number: document.getElementById('tripPlate').value,
                 route: document.getElementById('tripRoute').value,
                 amount: parseFloat(document.getElementById('tripAmount').value) || 0
-            }]);
-            closeModal('tripModal'); loadAllData();
+            };
+
+            const { error } = await dbClient.from('daily_trips').insert([tripData]);
+            if (error) {
+                console.error("خطأ في الحفظ السحابي:", error);
+            }
+            closeModal('tripModal');
+            loadAllData();
+            switchTab('trips');
         }
 
         async function saveDriverExpense(e) {
@@ -553,7 +569,7 @@
                 amount: parseFloat(document.getElementById('driverAmount').value) || 0,
                 notes: document.getElementById('driverNotes').value
             }]);
-            closeModal('driverModal'); loadAllData();
+            closeModal('driverModal'); loadAllData(); switchTab('drivers');
         }
 
         async function saveDebt(e) {
@@ -565,7 +581,7 @@
                 amount: parseFloat(document.getElementById('debtAmount').value) || 0,
                 due_date: document.getElementById('debtDueDate').value
             }]);
-            closeModal('debtModal'); loadAllData();
+            closeModal('debtModal'); loadAllData(); switchTab('debts');
         }
 
         async function saveMaintenance(e) {
@@ -577,7 +593,7 @@
                 cost: parseFloat(document.getElementById('maintCost').value) || 0,
                 vendor_name: document.getElementById('maintVendor').value
             }]);
-            closeModal('maintModal'); loadAllData();
+            closeModal('maintModal'); loadAllData(); switchTab('maintenance');
         }
 
         async function loadAllData() {
@@ -593,19 +609,20 @@
             if (trips && trips.length > 0) {
                 document.getElementById('statTotalTripsCount').innerText = trips.length;
                 tripsTbody.innerHTML = trips.map(t => {
-                    totalTripsIncome += t.amount;
+                    totalTripsIncome += (t.amount || 0);
                     return `<tr class="hover:bg-slate-800/60">
                         <td class="p-3.5 text-slate-400">${t.created_at ? new Date(t.created_at).toLocaleDateString('ar-SA') : '-'}</td>
                         <td class="p-3.5 font-bold text-slate-400">${t.company || '-'}</td>
-                        <td class="p-3.5 font-bold text-white">${t.driver_name}</td>
-                        <td class="p-3.5 text-amber-400 font-bold">${t.plate_number}</td>
-                        <td class="p-3.5 text-slate-300">${t.route}</td>
-                        <td class="p-3.5 font-bold text-emerald-400">${t.amount.toLocaleString()} ر.س</td>
+                        <td class="p-3.5 font-bold text-blue-400">${t.client_name || 'عام'}</td>
+                        <td class="p-3.5 font-bold text-white">${t.driver_name || '-'}</td>
+                        <td class="p-3.5 text-amber-400 font-bold">${t.plate_number || '-'}</td>
+                        <td class="p-3.5 text-slate-300">${t.route || '-'}</td>
+                        <td class="p-3.5 font-bold text-emerald-400">${(t.amount || 0).toLocaleString()} ر.س</td>
                     </tr>`;
                 }).join('');
             } else {
                 document.getElementById('statTotalTripsCount').innerText = '0';
-                tripsTbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">لا توجد رحلات يومية مسجلة</td></tr>`;
+                tripsTbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500">لا توجد رحلات يومية مسجلة</td></tr>`;
             }
 
             // 2. سحبيات السائقين
@@ -617,13 +634,13 @@
             const driversTbody = document.getElementById('driversTableBody');
             if (drivers && drivers.length > 0) {
                 driversTbody.innerHTML = drivers.map(d => {
-                    totalDriverDraws += d.amount;
+                    totalDriverDraws += (d.amount || 0);
                     return `<tr class="hover:bg-slate-800/60">
                         <td class="p-3.5 text-slate-400">${d.created_at ? new Date(d.created_at).toLocaleDateString('ar-SA') : '-'}</td>
                         <td class="p-3.5 font-bold text-slate-400">${d.company || '-'}</td>
-                        <td class="p-3.5 font-bold text-white">${d.driver_name}</td>
-                        <td class="p-3.5 text-purple-400 font-bold">${d.expense_type}</td>
-                        <td class="p-3.5 font-bold text-rose-400">${d.amount.toLocaleString()} ر.س</td>
+                        <td class="p-3.5 font-bold text-white">${d.driver_name || '-'}</td>
+                        <td class="p-3.5 text-purple-400 font-bold">${d.expense_type || '-'}</td>
+                        <td class="p-3.5 font-bold text-rose-400">${(d.amount || 0).toLocaleString()} ر.س</td>
                         <td class="p-3.5 text-slate-400">${d.notes || '-'}</td>
                     </tr>`;
                 }).join('');
@@ -640,13 +657,13 @@
             const debtsTbody = document.getElementById('debtsTableBody');
             if (debts && debts.length > 0) {
                 debtsTbody.innerHTML = debts.map(d => {
-                    if (d.debt_type === 'receivable') totalRec += d.amount;
-                    else totalPay += d.amount;
+                    if (d.debt_type === 'receivable') totalRec += (d.amount || 0);
+                    else totalPay += (d.amount || 0);
                     return `<tr class="hover:bg-slate-800/60">
                         <td class="p-3.5 font-bold text-slate-400">${d.company || '-'}</td>
-                        <td class="p-3.5 font-bold text-white">${d.entity_name}</td>
+                        <td class="p-3.5 font-bold text-white">${d.entity_name || '-'}</td>
                         <td class="p-3.5">${d.debt_type === 'receivable' ? '<span class="text-emerald-400 font-bold">مستحق لنا</span>' : '<span class="text-rose-400 font-bold">التزام علينا</span>'}</td>
-                        <td class="p-3.5 font-bold ${d.debt_type === 'receivable' ? 'text-emerald-400' : 'text-rose-400'}">${d.amount.toLocaleString()} ر.س</td>
+                        <td class="p-3.5 font-bold ${d.debt_type === 'receivable' ? 'text-emerald-400' : 'text-rose-400'}">${(d.amount || 0).toLocaleString()} ر.س</td>
                         <td class="p-3.5 text-slate-400">${d.due_date || '-'}</td>
                     </tr>`;
                 }).join('');
@@ -663,12 +680,12 @@
             const maintTbody = document.getElementById('maintenanceTableBody');
             if (maints && maints.length > 0) {
                 maintTbody.innerHTML = maints.map(m => {
-                    totalMaint += m.cost;
+                    totalMaint += (m.cost || 0);
                     return `<tr class="hover:bg-slate-800/60">
                         <td class="p-3.5 font-bold text-slate-400">${m.company || '-'}</td>
-                        <td class="p-3.5 font-bold text-amber-400">${m.plate_number}</td>
-                        <td class="p-3.5 text-slate-200">${m.maintenance_type}</td>
-                        <td class="p-3.5 font-bold text-rose-400">${m.cost.toLocaleString()} ر.س</td>
+                        <td class="p-3.5 font-bold text-amber-400">${m.plate_number || '-'}</td>
+                        <td class="p-3.5 text-slate-200">${m.maintenance_type || '-'}</td>
+                        <td class="p-3.5 font-bold text-rose-400">${(m.cost || 0).toLocaleString()} ر.س</td>
                         <td class="p-3.5 text-slate-400">${m.vendor_name || '-'}</td>
                     </tr>`;
                 }).join('');
@@ -687,7 +704,6 @@
         }
 
         function renderCharts(income, rec, drivers, maint, pay) {
-            // Chart 1: Bar Chart
             const ctx1 = document.getElementById('financialOverviewChart').getContext('2d');
             if (barChartInstance) barChartInstance.destroy();
 
@@ -713,7 +729,6 @@
                 }
             });
 
-            // Chart 2: Pie Chart
             const ctx2 = document.getElementById('expensesPieChart').getContext('2d');
             if (pieChartInstance) pieChartInstance.destroy();
 
