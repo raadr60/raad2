@@ -24,7 +24,7 @@
             
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <input type="password" id="pinInput" maxlength="6" placeholder="• • • • • •" class="w-full text-center text-3xl tracking-widest py-3 border-2 border-slate-200 rounded-2xl focus:border-blue-600 focus:outline-none transition-all" required autocomplete="off">
+                    <input type="password" id="pinInput" maxlength="6" placeholder="737125" class="w-full text-center text-3xl tracking-widest py-3 border-2 border-slate-200 rounded-2xl focus:border-blue-600 focus:outline-none transition-all" required autocomplete="off">
                 </div>
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-3.5 rounded-2xl transition duration-200 shadow-lg shadow-blue-500/30">
                     دخول النظام <i class="fas fa-arrow-left mr-2"></i>
@@ -192,7 +192,74 @@
         </div>
     </div>
 
-    <!-- ==================== البرمجة والربط ==================== -->
+    <!-- ==================== النوافذ المنبثقة (Modals) ==================== -->
+    
+    <!-- نافذة إضافة أمر صيانة -->
+    <div id="maintModal" class="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold">إضافة أمر صيانة جديد</h3>
+                <button onclick="closeMaintenanceModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <form onsubmit="handleSaveMaintenance(event)" class="space-y-3">
+                <div>
+                    <label class="text-xs font-bold text-slate-600">رقم اللوحة / الشاحنة</label>
+                    <input type="text" id="maintPlate" placeholder="أ ب ج 1234" class="w-full p-3 border rounded-xl mt-1" required>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-600">نوع الصيانة</label>
+                    <input type="text" id="maintType" placeholder="تغيير زيت، فلاتر، إطارات..." class="w-full p-3 border rounded-xl mt-1" required>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-bold text-slate-600">التكلفة (ر.س)</label>
+                        <input type="number" id="maintCost" placeholder="0.00" class="w-full p-3 border rounded-xl mt-1" required>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-600">الورشة / المورد</label>
+                        <input type="text" id="maintVendor" placeholder="اسم الورشة" class="w-full p-3 border rounded-xl mt-1">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl mt-2">حفظ السجل</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة دين / مستحق -->
+    <div id="debtModal" class="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold">تسجيل دين / مستحق جديد</h3>
+                <button onclick="closeDebtModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <form onsubmit="handleSaveDebt(event)" class="space-y-3">
+                <div>
+                    <label class="text-xs font-bold text-slate-600">اسم الجهة / الشخص</label>
+                    <input type="text" id="debtEntity" placeholder="اسم العميل أو الشركة أو المورد" class="w-full p-3 border rounded-xl mt-1" required>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-bold text-slate-600">نوع الدين</label>
+                        <select id="debtType" class="w-full p-3 border rounded-xl mt-1">
+                            <option value="receivable">مستحق لنا (مطلوب منا)</option>
+                            <option value="payable">التزام علينا (مطلوب لنا)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-600">المبلغ (ر.س)</label>
+                        <input type="number" id="debtAmount" placeholder="0.00" class="w-full p-3 border rounded-xl mt-1" required>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-600">تاريخ الاستحقاق</label>
+                    <input type="date" id="debtDueDate" class="w-full p-3 border rounded-xl mt-1">
+                </div>
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl mt-2">حفظ الدين</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== البرمجة والتفاعل ==================== -->
     <script>
         // إعدادات الدخول المبدئية
         const DEFAULT_PIN = "123456";
@@ -219,12 +286,40 @@
 
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const target = document.getElementById(`tab-${tabId}`);
+            if (target) target.classList.remove('hidden');
         }
 
+        // التحكم بنوافذ الصيانة
+        function openMaintenanceModal() {
+            document.getElementById('maintModal').classList.remove('hidden');
+        }
+        function closeMaintenanceModal() {
+            document.getElementById('maintModal').classList.add('hidden');
+        }
+        function handleSaveMaintenance(e) {
+            e.preventDefault();
+            alert('تم حفظ أمر الصيانة بنجاح!');
+            closeMaintenanceModal();
+        }
+
+        // التحكم بنوافذ الديون
+        function openDebtModal() {
+            document.getElementById('debtModal').classList.remove('hidden');
+        }
+        function closeDebtModal() {
+            document.getElementById('debtModal').classList.add('hidden');
+        }
+        function handleSaveDebt(e) {
+            e.preventDefault();
+            alert('تم تسجيل الدين بنجاح!');
+            closeDebtModal();
+        }
+
+        // إضافة مستخدم
         function handleAddUser(e) {
             e.preventDefault();
-            alert('تم إضافة المستخدم بنجاح والحفظ في السحابة!');
+            alert('تم إضافة المستخدم بنجاح!');
             document.getElementById('addUserForm').reset();
         }
     </script>
