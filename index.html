@@ -291,6 +291,10 @@
             </div>
             <form onsubmit="saveTrip(event)" class="space-y-3 text-xs">
                 <div>
+                    <label class="font-bold text-slate-400">تاريخ الرحلة</label>
+                    <input type="date" id="tripDate" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-white" required>
+                </div>
+                <div>
                     <label class="font-bold text-slate-400">الشركة المشغلة</label>
                     <select id="tripCompany" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-white font-bold">
                         <option value="شركة جسور المسافات">شركة جسور المسافات</option>
@@ -339,6 +343,10 @@
                 <button onclick="closeModal('driverModal')" class="text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
             </div>
             <form onsubmit="saveDriverExpense(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold text-slate-400">تاريخ السحبية</label>
+                    <input type="date" id="driverDate" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-white" required>
+                </div>
                 <div>
                     <label class="font-bold text-slate-400">الشركة</label>
                     <select id="driverCompany" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-white font-bold">
@@ -407,7 +415,7 @@
                 </div>
                 <div>
                     <label class="font-bold text-slate-400">تاريخ الاستحقاق</label>
-                    <input type="date" id="debtDueDate" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-white">
+                    <input type="date" id="debtDueDate" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-white" required>
                 </div>
                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 font-bold py-3 rounded-xl transition text-white">حفظ القيد السحابي</button>
             </form>
@@ -457,48 +465,25 @@
         const SUPABASE_KEY = "sb_publishable_Xr6Qm3QS7h8K-5P9dLjDUQ_uHF4CTgD";
         const dbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let systemPin = "123456";
-        let barChartInstance = null;
-        let pieChartInstance = null;
+        let systemPin = localStorage.getItem('systemPin') || "1234";
 
-        async function fetchSystemPin() {
-            try {
-                const { data } = await dbClient.from('system_config').select('pin_code').eq('id', 1).single();
-                if (data && data.pin_code) systemPin = data.pin_code;
-            } catch (e) { }
-        }
-        fetchSystemPin();
+        // ضبط التاريخ الحالي بشكل افتراضي في الخانات
+        document.addEventListener("DOMContentLoaded", () => {
+            const today = new Date().toISOString().split('T')[0];
+            if(document.getElementById('tripDate')) document.getElementById('tripDate').value = today;
+            if(document.getElementById('driverDate')) document.getElementById('driverDate').value = today;
+            if(document.getElementById('debtDueDate')) document.getElementById('debtDueDate').value = today;
+        });
 
-        async function handleLogin(e) {
+        function handleLogin(e) {
             e.preventDefault();
-            await fetchSystemPin();
             const pin = document.getElementById('pinInput').value;
-            if (pin === systemPin || pin === "123456" || pin === "000000") {
+            if (pin === systemPin) {
                 document.getElementById('loginSection').classList.add('hidden');
                 document.getElementById('mainDashboard').classList.remove('hidden');
                 loadAllData();
             } else {
                 document.getElementById('loginError').classList.remove('hidden');
-            }
-        }
-
-        async function changePasswordPrompt() {
-            const oldPin = prompt("أدخل كلمة المرور الحالية:");
-            if (oldPin !== systemPin && oldPin !== "123456") {
-                alert("كلمة المرور الحالية غير صحيحة!");
-                return;
-            }
-
-            const newPin = prompt("أدخل كلمة المرور الجديدة (4 أرقام على الأقل):");
-            if (newPin && newPin.length >= 4) {
-                const { error } = await dbClient.from('system_config').upsert({ id: 1, pin_code: newPin });
-                if (!error) {
-                    systemPin = newPin;
-                    alert("تم تغيير كلمة المرور بنجاح!");
-                } else {
-                    systemPin = newPin;
-                    alert("تم تحديث كلمة المرور محلياً بنجاح!");
-                }
             }
         }
 
@@ -508,253 +493,236 @@
             document.getElementById('pinInput').value = '';
         }
 
+        function changePasswordPrompt() {
+            const newPin = prompt("أدخل كلمة المرور (PIN) الجديدة:");
+            if (newPin) {
+                systemPin = newPin;
+                localStorage.setItem('systemPin', newPin);
+                alert("تم تغيير كلمة المرور بنجاح.");
+            }
+        }
+
         function switchTab(tab) {
-            ['Overview', 'Trips', 'Drivers', 'Debts', 'Maint'].forEach(t => {
-                const btn = document.getElementById(`btnTab${t}`);
-                if (btn) btn.className = 'px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-400 hover:text-white';
-            });
-
-            ['Overview', 'Trips', 'Drivers', 'Debts', 'Maintenance'].forEach(s => {
-                const sec = document.getElementById(`section${s}`);
+            ['overview', 'trips', 'drivers', 'debts', 'maintenance'].forEach(t => {
+                const sec = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
+                const btn = document.getElementById('btnTab' + t.charAt(0).toUpperCase() + t.slice(1));
                 if (sec) sec.classList.add('hidden');
+                if (btn) {
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                    btn.classList.add('bg-slate-800', 'text-slate-400');
+                }
             });
 
-            if (tab === 'overview') {
-                document.getElementById('sectionOverview').classList.remove('hidden');
-                document.getElementById('btnTabOverview').className = 'px-4 py-2 rounded-xl text-xs font-bold transition bg-blue-600 text-white';
-            } else if (tab === 'trips') {
-                document.getElementById('sectionTrips').classList.remove('hidden');
-                document.getElementById('btnTabTrips').className = 'px-4 py-2 rounded-xl text-xs font-bold transition bg-blue-600 text-white';
-            } else if (tab === 'drivers') {
-                document.getElementById('sectionDrivers').classList.remove('hidden');
-                document.getElementById('btnTabDrivers').className = 'px-4 py-2 rounded-xl text-xs font-bold transition bg-purple-600 text-white';
-            } else if (tab === 'debts') {
-                document.getElementById('sectionDebts').classList.remove('hidden');
-                document.getElementById('btnTabDebts').className = 'px-4 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white';
-            } else if (tab === 'maintenance') {
-                document.getElementById('sectionMaintenance').classList.remove('hidden');
-                document.getElementById('btnTabMaint').className = 'px-4 py-2 rounded-xl text-xs font-bold transition bg-amber-600 text-white';
+            const activeSec = document.getElementById('section' + tab.charAt(0).toUpperCase() + tab.slice(1));
+            const activeBtn = document.getElementById('btnTab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+            if (activeSec) activeSec.classList.remove('hidden');
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-800', 'text-slate-400');
+                activeBtn.classList.add('bg-blue-600', 'text-white');
             }
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
+        // ----------- حفظ البيانات في Supabase -----------
+
         async function saveTrip(e) {
             e.preventDefault();
-            const tripData = {
+            const data = {
+                date: document.getElementById('tripDate').value,
                 company: document.getElementById('tripCompany').value,
-                client_name: document.getElementById('tripClient').value,
-                driver_name: document.getElementById('tripDriver').value,
-                plate_number: document.getElementById('tripPlate').value,
+                client: document.getElementById('tripClient').value,
+                driver: document.getElementById('tripDriver').value,
+                plate: document.getElementById('tripPlate').value,
                 route: document.getElementById('tripRoute').value,
                 amount: parseFloat(document.getElementById('tripAmount').value) || 0
             };
 
-            const { error } = await dbClient.from('daily_trips').insert([tripData]);
-            if (error) {
-                console.error("خطأ في الحفظ السحابي:", error);
+            const { error } = await dbClient.from('trips').insert([data]);
+            if (error) { alert("حدث خطأ أثناء الحفظ: " + error.message); } 
+            else {
+                closeModal('tripModal');
+                loadAllData();
             }
-            closeModal('tripModal');
-            loadAllData();
-            switchTab('trips');
         }
 
         async function saveDriverExpense(e) {
             e.preventDefault();
-            await dbClient.from('driver_expenses').insert([{
+            const data = {
+                date: document.getElementById('driverDate').value,
                 company: document.getElementById('driverCompany').value,
-                driver_name: document.getElementById('driverName').value,
-                expense_type: document.getElementById('expenseType').value,
+                driver: document.getElementById('driverName').value,
+                type: document.getElementById('expenseType').value,
                 amount: parseFloat(document.getElementById('driverAmount').value) || 0,
                 notes: document.getElementById('driverNotes').value
-            }]);
-            closeModal('driverModal'); loadAllData(); switchTab('drivers');
+            };
+
+            const { error } = await dbClient.from('driver_expenses').insert([data]);
+            if (error) { alert("حدث خطأ أثناء الحفظ: " + error.message); } 
+            else {
+                closeModal('driverModal');
+                loadAllData();
+            }
         }
 
         async function saveDebt(e) {
             e.preventDefault();
-            await dbClient.from('debts_and_credits').insert([{
+            const data = {
                 company: document.getElementById('debtCompany').value,
-                entity_name: document.getElementById('debtEntity').value,
-                debt_type: document.getElementById('debtType').value,
+                entity: document.getElementById('debtEntity').value,
+                type: document.getElementById('debtType').value,
                 amount: parseFloat(document.getElementById('debtAmount').value) || 0,
                 due_date: document.getElementById('debtDueDate').value
-            }]);
-            closeModal('debtModal'); loadAllData(); switchTab('debts');
+            };
+
+            const { error } = await dbClient.from('debts').insert([data]);
+            if (error) { alert("حدث خطأ أثناء الحفظ: " + error.message); } 
+            else {
+                closeModal('debtModal');
+                loadAllData();
+            }
         }
 
         async function saveMaintenance(e) {
             e.preventDefault();
-            await dbClient.from('maintenance_logs').insert([{
+            const data = {
                 company: document.getElementById('maintCompany').value,
-                plate_number: document.getElementById('maintPlate').value,
-                maintenance_type: document.getElementById('maintType').value,
+                plate: document.getElementById('maintPlate').value,
+                type: document.getElementById('maintType').value,
                 cost: parseFloat(document.getElementById('maintCost').value) || 0,
-                vendor_name: document.getElementById('maintVendor').value
-            }]);
-            closeModal('maintModal'); loadAllData(); switchTab('maintenance');
+                vendor: document.getElementById('maintVendor').value
+            };
+
+            const { error } = await dbClient.from('maintenance').insert([data]);
+            if (error) { alert("حدث خطأ أثناء الحفظ: " + error.message); } 
+            else {
+                closeModal('maintModal');
+                loadAllData();
+            }
         }
+
+        // ----------- تحميل وعرض البيانات -----------
 
         async function loadAllData() {
             const filterCompany = document.getElementById('globalCompanyFilter').value;
 
-            // 1. الرحلات
-            let tripsQ = dbClient.from('daily_trips').select('*').order('created_at', { ascending: false });
-            if (filterCompany !== 'ALL') tripsQ = tripsQ.eq('company', filterCompany);
-            const { data: trips } = await tripsQ;
-            let totalTripsIncome = 0;
+            let queryTrips = dbClient.from('trips').select('*');
+            let queryDrivers = dbClient.from('driver_expenses').select('*');
+            let queryDebts = dbClient.from('debts').select('*');
+            let queryMaint = dbClient.from('maintenance').select('*');
 
-            const tripsTbody = document.getElementById('tripsTableBody');
-            if (trips && trips.length > 0) {
-                document.getElementById('statTotalTripsCount').innerText = trips.length;
-                tripsTbody.innerHTML = trips.map(t => {
-                    totalTripsIncome += (t.amount || 0);
-                    return `<tr class="hover:bg-slate-800/60">
-                        <td class="p-3.5 text-slate-400">${t.created_at ? new Date(t.created_at).toLocaleDateString('ar-SA') : '-'}</td>
-                        <td class="p-3.5 font-bold text-slate-400">${t.company || '-'}</td>
-                        <td class="p-3.5 font-bold text-blue-400">${t.client_name || 'عام'}</td>
-                        <td class="p-3.5 font-bold text-white">${t.driver_name || '-'}</td>
-                        <td class="p-3.5 text-amber-400 font-bold">${t.plate_number || '-'}</td>
-                        <td class="p-3.5 text-slate-300">${t.route || '-'}</td>
-                        <td class="p-3.5 font-bold text-emerald-400">${(t.amount || 0).toLocaleString()} ر.س</td>
-                    </tr>`;
-                }).join('');
-            } else {
-                document.getElementById('statTotalTripsCount').innerText = '0';
-                tripsTbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500">لا توجد رحلات يومية مسجلة</td></tr>`;
+            if (filterCompany !== 'ALL') {
+                queryTrips = queryTrips.eq('company', filterCompany);
+                queryDrivers = queryDrivers.eq('company', filterCompany);
+                queryDebts = queryDebts.eq('company', filterCompany);
+                queryMaint = queryMaint.eq('company', filterCompany);
             }
 
-            // 2. سحبيات السائقين
-            let driversQ = dbClient.from('driver_expenses').select('*').order('created_at', { ascending: false });
-            if (filterCompany !== 'ALL') driversQ = driversQ.eq('company', filterCompany);
-            const { data: drivers } = await driversQ;
-            let totalDriverDraws = 0;
+            const [tripsRes, driversRes, debtsRes, maintRes] = await Promise.all([
+                queryTrips, queryDrivers, queryDebts, queryMaint
+            ]);
 
-            const driversTbody = document.getElementById('driversTableBody');
-            if (drivers && drivers.length > 0) {
-                driversTbody.innerHTML = drivers.map(d => {
-                    totalDriverDraws += (d.amount || 0);
-                    return `<tr class="hover:bg-slate-800/60">
-                        <td class="p-3.5 text-slate-400">${d.created_at ? new Date(d.created_at).toLocaleDateString('ar-SA') : '-'}</td>
-                        <td class="p-3.5 font-bold text-slate-400">${d.company || '-'}</td>
-                        <td class="p-3.5 font-bold text-white">${d.driver_name || '-'}</td>
-                        <td class="p-3.5 text-purple-400 font-bold">${d.expense_type || '-'}</td>
-                        <td class="p-3.5 font-bold text-rose-400">${(d.amount || 0).toLocaleString()} ر.س</td>
-                        <td class="p-3.5 text-slate-400">${d.notes || '-'}</td>
-                    </tr>`;
-                }).join('');
-            } else {
-                driversTbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">لا توجد سحبيات مسجلة</td></tr>`;
-            }
+            const trips = tripsRes.data || [];
+            const drivers = driversRes.data || [];
+            const debts = debtsRes.data || [];
+            const maint = maintRes.data || [];
 
-            // 3. الديون
-            let debtQ = dbClient.from('debts_and_credits').select('*');
-            if (filterCompany !== 'ALL') debtQ = debtQ.eq('company', filterCompany);
-            const { data: debts } = await debtQ;
-            let totalRec = 0, totalPay = 0;
-
-            const debtsTbody = document.getElementById('debtsTableBody');
-            if (debts && debts.length > 0) {
-                debtsTbody.innerHTML = debts.map(d => {
-                    if (d.debt_type === 'receivable') totalRec += (d.amount || 0);
-                    else totalPay += (d.amount || 0);
-                    return `<tr class="hover:bg-slate-800/60">
-                        <td class="p-3.5 font-bold text-slate-400">${d.company || '-'}</td>
-                        <td class="p-3.5 font-bold text-white">${d.entity_name || '-'}</td>
-                        <td class="p-3.5">${d.debt_type === 'receivable' ? '<span class="text-emerald-400 font-bold">مستحق لنا</span>' : '<span class="text-rose-400 font-bold">التزام علينا</span>'}</td>
-                        <td class="p-3.5 font-bold ${d.debt_type === 'receivable' ? 'text-emerald-400' : 'text-rose-400'}">${(d.amount || 0).toLocaleString()} ر.س</td>
-                        <td class="p-3.5 text-slate-400">${d.due_date || '-'}</td>
-                    </tr>`;
-                }).join('');
-            } else {
-                debtsTbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500">لا توجد ديون مسجلة</td></tr>`;
-            }
-
-            // 4. الصيانة
-            let maintQ = dbClient.from('maintenance_logs').select('*');
-            if (filterCompany !== 'ALL') maintQ = maintQ.eq('company', filterCompany);
-            const { data: maints } = await maintQ;
-            let totalMaint = 0;
-
-            const maintTbody = document.getElementById('maintenanceTableBody');
-            if (maints && maints.length > 0) {
-                maintTbody.innerHTML = maints.map(m => {
-                    totalMaint += (m.cost || 0);
-                    return `<tr class="hover:bg-slate-800/60">
-                        <td class="p-3.5 font-bold text-slate-400">${m.company || '-'}</td>
-                        <td class="p-3.5 font-bold text-amber-400">${m.plate_number || '-'}</td>
-                        <td class="p-3.5 text-slate-200">${m.maintenance_type || '-'}</td>
-                        <td class="p-3.5 font-bold text-rose-400">${(m.cost || 0).toLocaleString()} ر.س</td>
-                        <td class="p-3.5 text-slate-400">${m.vendor_name || '-'}</td>
-                    </tr>`;
-                }).join('');
-            } else {
-                maintTbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500">لا توجد سجلات صيانة</td></tr>`;
-            }
-
-            // تحديث العدادات الرقمية
-            document.getElementById('statTripsIncome').innerHTML = `${totalTripsIncome.toLocaleString()} <span class="text-xs">ر.س</span>`;
-            document.getElementById('statDriverDraws').innerHTML = `${totalDriverDraws.toLocaleString()} <span class="text-xs">ر.س</span>`;
-            document.getElementById('statMaintenance').innerHTML = `${totalMaint.toLocaleString()} <span class="text-xs">ر.س</span>`;
-            document.getElementById('statNet').innerHTML = `${(totalTripsIncome + totalRec - totalDriverDraws - totalMaint - totalPay).toLocaleString()} <span class="text-xs">ر.س</span>`;
-
-            // تحديث الرسوم البيانية
-            renderCharts(totalTripsIncome, totalRec, totalDriverDraws, totalMaint, totalPay);
+            renderTrips(trips);
+            renderDrivers(drivers);
+            renderDebts(debts);
+            renderMaintenance(maint);
+            updateStats(trips, drivers, debts, maint);
         }
 
-        function renderCharts(income, rec, drivers, maint, pay) {
-            const ctx1 = document.getElementById('financialOverviewChart').getContext('2d');
-            if (barChartInstance) barChartInstance.destroy();
-
-            barChartInstance = new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: ['إيراد الرحلات', 'ديون لنا', 'سحبيات السائقين', 'مصروفات الصيانة', 'ديون علينا'],
-                    datasets: [{
-                        label: 'المبالغ الإجمالية (ر.س)',
-                        data: [income, rec, drivers, maint, pay],
-                        backgroundColor: ['#10b981', '#34d399', '#a855f7', '#f59e0b', '#f43f5e'],
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
-                        x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
-                    }
-                }
-            });
-
-            const ctx2 = document.getElementById('expensesPieChart').getContext('2d');
-            if (pieChartInstance) pieChartInstance.destroy();
-
-            pieChartInstance = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: ['سحبيات سائقين', 'صيانة وأعطال', 'التزامات جديدة'],
-                    datasets: [{
-                        data: [drivers || 1, maint || 1, pay || 1],
-                        backgroundColor: ['#a855f7', '#f59e0b', '#f43f5e'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } } }
-                }
-            });
+        function renderTrips(data) {
+            const tbody = document.getElementById('tripsTableBody');
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500">لا توجد رحلات مسجلة</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = data.map(row => `
+                <tr class="hover:bg-slate-800/60 transition">
+                    <td class="p-3.5 font-bold text-blue-400">${row.date || 'غير محدد'}</td>
+                    <td class="p-3.5">${row.company}</td>
+                    <td class="p-3.5 font-bold">${row.client}</td>
+                    <td class="p-3.5">${row.driver}</td>
+                    <td class="p-3.5">${row.plate}</td>
+                    <td class="p-3.5">${row.route}</td>
+                    <td class="p-3.5 font-bold text-emerald-400">${parseFloat(row.amount || 0).toFixed(2)} ر.س</td>
+                </tr>
+            `).join('');
         }
 
-        function filterTable(tbodyId, query) {
-            const rows = document.querySelectorAll(`#${tbodyId} tr`);
+        function renderDrivers(data) {
+            const tbody = document.getElementById('driversTableBody');
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">لا توجد سحبيات مسجلة</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = data.map(row => `
+                <tr class="hover:bg-slate-800/60 transition">
+                    <td class="p-3.5">${row.date || 'غير محدد'}</td>
+                    <td class="p-3.5">${row.company}</td>
+                    <td class="p-3.5 font-bold">${row.driver}</td>
+                    <td class="p-3.5">${row.type}</td>
+                    <td class="p-3.5 font-bold text-purple-400">${parseFloat(row.amount || 0).toFixed(2)} ر.س</td>
+                    <td class="p-3.5 text-slate-400">${row.notes || '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderDebts(data) {
+            const tbody = document.getElementById('debtsTableBody');
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500">لا توجد ديون مسجلة</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = data.map(row => `
+                <tr class="hover:bg-slate-800/60 transition">
+                    <td class="p-3.5">${row.company}</td>
+                    <td class="p-3.5 font-bold">${row.entity}</td>
+                    <td class="p-3.5"><span class="px-2 py-1 rounded-lg text-[10px] font-bold ${row.type === 'receivable' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}">${row.type === 'receivable' ? 'مستحق لنا' : 'التزام علينا'}</span></td>
+                    <td class="p-3.5 font-bold">${parseFloat(row.amount || 0).toFixed(2)} ر.س</td>
+                    <td class="p-3.5 text-slate-400">${row.due_date || 'غير محدد'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderMaintenance(data) {
+            const tbody = document.getElementById('maintenanceTableBody');
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500">لا توجد عمليات صيانة مسجلة</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = data.map(row => `
+                <tr class="hover:bg-slate-800/60 transition">
+                    <td class="p-3.5">${row.company}</td>
+                    <td class="p-3.5 font-bold">${row.plate}</td>
+                    <td class="p-3.5">${row.type}</td>
+                    <td class="p-3.5 font-bold text-amber-400">${parseFloat(row.cost || 0).toFixed(2)} ر.س</td>
+                    <td class="p-3.5 text-slate-400">${row.vendor || '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats(trips, drivers, debts, maint) {
+            const totalIncome = trips.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+            const totalDrivers = drivers.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+            const totalMaint = maint.reduce((sum, r) => sum + (parseFloat(r.cost) || 0), 0);
+            const net = totalIncome - (totalDrivers + totalMaint);
+
+            document.getElementById('statTotalTripsCount').innerHTML = `${trips.length} <span class="text-xs font-normal">رحلة</span>`;
+            document.getElementById('statTripsIncome').innerHTML = `${totalIncome.toFixed(2)} <span class="text-xs">ر.س</span>`;
+            document.getElementById('statDriverDraws').innerHTML = `${totalDrivers.toFixed(2)} <span class="text-xs">ر.س</span>`;
+            document.getElementById('statMaintenance').innerHTML = `${totalMaint.toFixed(2)} <span class="text-xs">ر.س</span>`;
+            document.getElementById('statNet').innerHTML = `${net.toFixed(2)} <span class="text-xs">ر.س</span>`;
+        }
+
+        function filterTable(tableId, query) {
+            const rows = document.querySelectorAll(`#${tableId} tr`);
             rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(query.toLowerCase()) ? '' : 'none';
+                row.style.display = row.innerText.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
             });
         }
     </script>
