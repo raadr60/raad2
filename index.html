@@ -3,35 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة إدارة النقل والحلول اللوجستية والمحاسبة</title>
+    <title>المنظومة المحاسبية واللوجستية الشاملة</title>
     <!-- مكتبة Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- مكتبة Tailwind CSS للتنسيق -->
+    <!-- Tailwind CSS للتصميم -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- أيقونات FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 antialiased">
+<body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <!-- ==================== 1. شاشة الدخول بالرمز السري ==================== -->
+    <!-- ==================== 1. شاشة الدخول ==================== -->
     <div id="loginSection" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900 bg-opacity-95 p-4">
         <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md text-center border border-slate-100">
             <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-5 text-3xl shadow-inner">
-                <i class="fas fa-truck-fast"></i>
+                <i class="fas fa-calculator"></i>
             </div>
-            <h2 class="text-2xl font-black text-slate-900 mb-2">تسجيل الدخول للنظام</h2>
-            <p class="text-sm text-slate-500 mb-6">أدخل الرمز السري الخاص بك للوصول للوحة التحكم</p>
+            <h2 class="text-2xl font-black text-slate-900 mb-2">النظام المحاسبي الموحد</h2>
+            <p class="text-sm text-slate-500 mb-6">أدخل PIN الدخول للوصول للحسابات والتشغيل</p>
             
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <input type="password" id="pinInput" maxlength="6" placeholder="737125" class="w-full text-center text-3xl tracking-widest py-3 border-2 border-slate-200 rounded-2xl focus:border-blue-600 focus:outline-none transition-all" required autocomplete="off">
+                    <input type="password" id="pinInput" maxlength="6" placeholder="• • • • • •" class="w-full text-center text-3xl tracking-widest py-3 border-2 border-slate-200 rounded-2xl focus:border-blue-600 focus:outline-none transition-all" required autocomplete="off">
                 </div>
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-3.5 rounded-2xl transition duration-200 shadow-lg shadow-blue-500/30">
-                    دخول النظام <i class="fas fa-arrow-left mr-2"></i>
+                    دخول المنظومة <i class="fas fa-arrow-left mr-2"></i>
                 </button>
             </form>
             <p id="loginError" class="text-red-500 text-sm font-semibold mt-4 hidden">
-                <i class="fas fa-circle-exclamation ml-1"></i> الرمز السري غير صحيح، يرجى المحاولة مجدداً
+                <i class="fas fa-circle-exclamation ml-1"></i> الرمز السري غير صحيح
             </p>
         </div>
     </div>
@@ -42,19 +42,19 @@
         <!-- الشريط العلوي -->
         <header class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center shadow-lg sticky top-0 z-40">
             <div class="flex items-center gap-3">
-                <div class="bg-blue-600 p-2 rounded-xl text-white">
-                    <i class="fas fa-boxes-packing text-xl"></i>
+                <div class="bg-blue-600 p-2.5 rounded-xl text-white">
+                    <i class="fas fa-chart-line text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold leading-tight">المنظومة اللوجستية والمحاسبية</h1>
-                    <span class="text-xs text-slate-400">نظام إدارة الرحلات والأسطول والديون</span>
+                    <h1 class="text-lg font-bold leading-tight">المنظومة المحاسبية واللوجستية</h1>
+                    <span class="text-xs text-slate-400">إدارة القيود والأسطول والديون الموحدة</span>
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <span id="userInfo" class="bg-slate-800 px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-300 border border-slate-700 flex items-center gap-2">
-                    <i class="fas fa-user-circle text-blue-400"></i> <span id="userName">المسؤول الرئيسي</span>
+                    <i class="fas fa-user-shield text-blue-400"></i> <span id="userName">المسؤول الرئيسي</span>
                 </span>
-                <button onclick="logout()" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-1.5 rounded-xl transition duration-200 text-sm font-bold flex items-center gap-1" title="تسجيل الخروج">
+                <button type="button" onclick="logout()" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-1.5 rounded-xl transition duration-200 text-sm font-bold flex items-center gap-1">
                     <i class="fas fa-sign-out-alt"></i> خروج
                 </button>
             </div>
@@ -63,29 +63,36 @@
         <div class="flex flex-1">
             <!-- القائمة الجانبية -->
             <aside class="w-64 bg-white border-l border-slate-200 p-4 space-y-2 hidden md:block shadow-sm">
-                <button onclick="showTab('overview')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-700 rounded-2xl hover:bg-blue-50 hover:text-blue-600 font-bold transition text-right">
-                    <i class="fas fa-chart-pie text-blue-500"></i> الملخص العام
+                <button type="button" onclick="showTab('overview')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-700 rounded-2xl hover:bg-blue-50 hover:text-blue-600 font-bold transition text-right">
+                    <i class="fas fa-chart-pie text-blue-500"></i> الميزانية والملخص
                 </button>
-                <button onclick="showTab('maintenance')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-700 rounded-2xl hover:bg-blue-50 hover:text-blue-600 font-bold transition text-right">
-                    <i class="fas fa-wrench text-amber-500"></i> الصيانة والدينات
+                <button type="button" onclick="showTab('debts')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-700 rounded-2xl hover:bg-blue-50 hover:text-blue-600 font-bold transition text-right">
+                    <i class="fas fa-file-invoice-dollar text-purple-500"></i> دفتر الديون والالتزامات
                 </button>
-                <button onclick="showTab('drivers')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-700 rounded-2xl hover:bg-blue-50 hover:text-blue-600 font-bold transition text-right">
-                    <i class="fas fa-id-card text-emerald-500"></i> السائقين والمُلاّك
+                <button type="button" onclick="showTab('maintenance')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-700 rounded-2xl hover:bg-blue-50 hover:text-blue-600 font-bold transition text-right">
+                    <i class="fas fa-wrench text-amber-500"></i> مصروفات الصيانة
                 </button>
-                <button onclick="showTab('debts')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-700 rounded-2xl hover:bg-blue-50 hover:text-blue-600 font-bold transition text-right">
-                    <i class="fas fa-file-invoice-dollar text-purple-500"></i> الديون والمستحقات
+                <button type="button" onclick="showTab('drivers')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-700 rounded-2xl hover:bg-blue-50 hover:text-blue-600 font-bold transition text-right">
+                    <i class="fas fa-truck-moving text-emerald-500"></i> حركة الأسطول والشاحنات
                 </button>
-                <button id="usersTabBtn" onclick="showTab('users')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-700 rounded-2xl hover:bg-blue-50 hover:text-blue-600 font-bold transition text-right">
-                    <i class="fas fa-user-shield text-indigo-500"></i> إدارة المستخدمين
+                <button type="button" onclick="showTab('users')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-700 rounded-2xl hover:bg-blue-50 hover:text-blue-600 font-bold transition text-right">
+                    <i class="fas fa-users-cog text-indigo-500"></i> إدارة الصلاحيات
                 </button>
             </aside>
 
             <!-- محتوى الشاشات -->
             <main class="flex-1 p-6 md:p-8 overflow-y-auto">
                 
-                <!-- 1. شاشة الملخص العام -->
+                <!-- 1. شاشة الملخص العام والميزانية -->
                 <section id="tab-overview" class="tab-content space-y-6">
-                    <h2 class="text-2xl font-black text-slate-800">مؤشرات الأداء اللوجستي والمالي</h2>
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-black text-slate-800">مؤشرات الأداء المالي الموحد</h2>
+                        <select id="companyFilter" onchange="loadCloudData()" class="p-2 border rounded-xl font-bold bg-white shadow-sm">
+                            <option value="ALL">جميع الشركات</option>
+                            <option value="شركة جسور المسافات">شركة جسور المسافات</option>
+                            <option value="ركن المشروعات">ركن المشروعات</option>
+                        </select>
+                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                             <p class="text-slate-500 text-xs font-bold">إجمالي المستحقات (ديون لنا)</p>
@@ -96,92 +103,91 @@
                             <h3 id="statPayables" class="text-2xl font-black text-red-600 mt-2">0 ر.س</h3>
                         </div>
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-slate-500 text-xs font-bold">مصاريف الصيانة هذا الشهر</p>
+                            <p class="text-slate-500 text-xs font-bold">تكاليف الصيانة التشغيلية</p>
                             <h3 id="statMaintenance" class="text-2xl font-black text-amber-600 mt-2">0 ر.س</h3>
                         </div>
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-slate-500 text-xs font-bold">عدد الدينات والأسطول</p>
-                            <h3 id="statVehicles" class="text-2xl font-black text-blue-600 mt-2">0 شاحنة</h3>
+                            <p class="text-slate-500 text-xs font-bold">صافي الموقف المالي</p>
+                            <h3 id="statNet" class="text-2xl font-black text-blue-600 mt-2">0 ر.س</h3>
                         </div>
                     </div>
                 </section>
 
-                <!-- 2. شاشة الصيانة والدينات -->
-                <section id="tab-maintenance" class="tab-content hidden space-y-6">
-                    <div class="flex justify-between items-center flex-wrap gap-4">
-                        <h2 class="text-2xl font-black text-slate-800">سجلات صيانة الأسطول والشاحنات</h2>
-                        <button onclick="openMaintenanceModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-blue-500/20 transition flex items-center gap-2">
-                            <i class="fas fa-plus"></i> إضافة أمر صيانة
-                        </button>
-                    </div>
-                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
-                        <table class="w-full text-right border-collapse">
-                            <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200 text-sm">
-                                <tr>
-                                    <th class="p-4">رقم الشاحنة (اللوحة)</th>
-                                    <th class="p-4">نوع الصيانة</th>
-                                    <th class="p-4">الورشة / المورد</th>
-                                    <th class="p-4">التكلفة</th>
-                                    <th class="p-4">التاريخ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="maintenanceTableBody" class="divide-y divide-slate-100 text-sm">
-                                <tr>
-                                    <td colspan="5" class="text-center p-8 text-slate-400">لا توجد سجلات صيانة حالياً</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- 3. شاشة السائقين والملاك -->
-                <section id="tab-drivers" class="tab-content hidden space-y-6">
-                    <h2 class="text-2xl font-black text-slate-800">إدارة السائقين ومُلاّك الشاحنات</h2>
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                        <p class="text-slate-600">جدول السائقين والمُلاّك جاهز للربط والتحديث عبر قاعدة البيانات.</p>
-                    </div>
-                </section>
-
-                <!-- 4. شاشة الديون والمستحقات -->
+                <!-- 2. شاشة الديون والمستحقات -->
                 <section id="tab-debts" class="tab-content hidden space-y-6">
                     <div class="flex justify-between items-center flex-wrap gap-4">
-                        <h2 class="text-2xl font-black text-slate-800">دفتر الديون والالتزامات المالية</h2>
-                        <button onclick="openDebtModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-purple-500/20 transition flex items-center gap-2">
-                            <i class="fas fa-plus"></i> تسجيل دين / مستحق
+                        <h2 class="text-2xl font-black text-slate-800">سجل الديون والمستحقات المحاسبية</h2>
+                        <button type="button" onclick="openDebtModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-purple-500/20 transition flex items-center gap-2">
+                            <i class="fas fa-plus"></i> إضافة قيد دين / مستحق
                         </button>
                     </div>
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
                         <table class="w-full text-right border-collapse">
                             <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200 text-sm">
                                 <tr>
-                                    <th class="p-4">اسم الجهة / الشخص</th>
+                                    <th class="p-4">الشركة</th>
+                                    <th class="p-4">الجهة / العميل</th>
                                     <th class="p-4">نوع الدين</th>
                                     <th class="p-4">المبلغ</th>
                                     <th class="p-4">تاريخ الاستحقاق</th>
-                                    <th class="p-4">الحالة</th>
                                 </tr>
                             </thead>
                             <tbody id="debtsTableBody" class="divide-y divide-slate-100 text-sm">
                                 <tr>
-                                    <td colspan="5" class="text-center p-8 text-slate-400">لا توجد ديون مسجلة حالياً</td>
+                                    <td colspan="5" class="text-center p-8 text-slate-400">جاري الاتصال بالسحابة...</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </section>
 
-                <!-- 5. شاشة إدارة المستخدمين -->
+                <!-- 3. شاشة الصيانة -->
+                <section id="tab-maintenance" class="tab-content hidden space-y-6">
+                    <div class="flex justify-between items-center flex-wrap gap-4">
+                        <h2 class="text-2xl font-black text-slate-800">مصروفات وصيانة الأسطول</h2>
+                        <button type="button" onclick="openMaintenanceModal()" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-amber-500/20 transition flex items-center gap-2">
+                            <i class="fas fa-plus"></i> قيد صيانة جديد
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200 text-sm">
+                                <tr>
+                                    <th class="p-4">الشركة</th>
+                                    <th class="p-4">رقم الشاحنة / اللوحة</th>
+                                    <th class="p-4">بيان الصيانة</th>
+                                    <th class="p-4">التكلفة</th>
+                                    <th class="p-4">الورشة / المورد</th>
+                                </tr>
+                            </thead>
+                            <tbody id="maintenanceTableBody" class="divide-y divide-slate-100 text-sm">
+                                <tr>
+                                    <td colspan="5" class="text-center p-8 text-slate-400">جاري الاتصال بالسحابة...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 4. شاشة حركة السائقين -->
+                <section id="tab-drivers" class="tab-content hidden space-y-6">
+                    <h2 class="text-2xl font-black text-slate-800">إدارة حركة الأسطول والسائقين</h2>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <p class="text-slate-600">سجلات السائقين الميدانيين والعقود متصلة بالسحابة.</p>
+                    </div>
+                </section>
+
+                <!-- 5. شاشة المستخدمين -->
                 <section id="tab-users" class="tab-content hidden space-y-6">
-                    <h2 class="text-2xl font-black text-slate-800">إدارة مستخدمي النظام والصلاحيات</h2>
+                    <h2 class="text-2xl font-black text-slate-800">إدارة صلاحيات النظام</h2>
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <p class="text-slate-600 text-sm">إضافة موظف جديد وتعيين رمز دخول سري ودور النظام:</p>
+                        <p class="text-slate-600 text-sm">إضافة مستخدم جديد للنظام المحاسبي:</p>
                         <form id="addUserForm" onsubmit="handleAddUser(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <input type="text" id="newUserName" placeholder="الاسم الكامل" class="p-3 border rounded-xl" required>
                             <input type="password" id="newUserPin" maxlength="6" placeholder="الرمز السري (6 أرقام)" class="p-3 border rounded-xl" required>
                             <select id="newUserRole" class="p-3 border rounded-xl">
-                                <option value="admin">مسؤول (Admin)</option>
+                                <option value="admin">مدير نظام (Admin)</option>
                                 <option value="accountant">محاسب (Accountant)</option>
-                                <option value="staff">مشرف حركة (Operations)</option>
                             </select>
                             <button type="submit" class="bg-indigo-600 text-white font-bold rounded-xl p-3 hover:bg-indigo-700">حفظ المستخدم</button>
                         </form>
@@ -192,57 +198,33 @@
         </div>
     </div>
 
-    <!-- ==================== النوافذ المنبثقة (Modals) ==================== -->
+    <!-- ==================== النوافذ المنبثقة ==================== -->
     
-    <!-- نافذة إضافة أمر صيانة -->
-    <div id="maintModal" class="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-lg font-bold">إضافة أمر صيانة جديد</h3>
-                <button onclick="closeMaintenanceModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
-            </div>
-            <form onsubmit="handleSaveMaintenance(event)" class="space-y-3">
-                <div>
-                    <label class="text-xs font-bold text-slate-600">رقم اللوحة / الشاحنة</label>
-                    <input type="text" id="maintPlate" placeholder="أ ب ج 1234" class="w-full p-3 border rounded-xl mt-1" required>
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-600">نوع الصيانة</label>
-                    <input type="text" id="maintType" placeholder="تغيير زيت، فلاتر، إطارات..." class="w-full p-3 border rounded-xl mt-1" required>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-xs font-bold text-slate-600">التكلفة (ر.س)</label>
-                        <input type="number" id="maintCost" placeholder="0.00" class="w-full p-3 border rounded-xl mt-1" required>
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-slate-600">الورشة / المورد</label>
-                        <input type="text" id="maintVendor" placeholder="اسم الورشة" class="w-full p-3 border rounded-xl mt-1">
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl mt-2">حفظ السجل</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- نافذة إضافة دين / مستحق -->
+    <!-- نافذة إضافة دين -->
     <div id="debtModal" class="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="text-lg font-bold">تسجيل دين / مستحق جديد</h3>
-                <button onclick="closeDebtModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+                <button type="button" onclick="closeDebtModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form onsubmit="handleSaveDebt(event)" class="space-y-3">
                 <div>
-                    <label class="text-xs font-bold text-slate-600">اسم الجهة / الشخص</label>
-                    <input type="text" id="debtEntity" placeholder="اسم العميل أو الشركة أو المورد" class="w-full p-3 border rounded-xl mt-1" required>
+                    <label class="text-xs font-bold text-slate-600">الشركة</label>
+                    <select id="debtCompany" class="w-full p-3 border rounded-xl mt-1 font-bold">
+                        <option value="شركة جسور المسافات">شركة جسور المسافات</option>
+                        <option value="ركن المشروعات">ركن المشروعات</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-600">الجهة / العميل / المورد</label>
+                    <input type="text" id="debtEntity" placeholder="اسم الجهة" class="w-full p-3 border rounded-xl mt-1" required>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-xs font-bold text-slate-600">نوع الدين</label>
+                        <label class="text-xs font-bold text-slate-600">نوع القيد</label>
                         <select id="debtType" class="w-full p-3 border rounded-xl mt-1">
-                            <option value="receivable">مستحق لنا (مطلوب منا)</option>
-                            <option value="payable">التزام علينا (مطلوب لنا)</option>
+                            <option value="receivable">مستحق لنا (أصول / ديون لنا)</option>
+                            <option value="payable">التزام علينا (خصوم / ديون علينا)</option>
                         </select>
                     </div>
                     <div>
@@ -254,27 +236,70 @@
                     <label class="text-xs font-bold text-slate-600">تاريخ الاستحقاق</label>
                     <input type="date" id="debtDueDate" class="w-full p-3 border rounded-xl mt-1">
                 </div>
-                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl mt-2">حفظ الدين</button>
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl mt-2">حفظ القيد السحابي</button>
             </form>
         </div>
     </div>
 
-    <!-- ==================== البرمجة والتفاعل ==================== -->
+    <!-- نافذة إضافة صيانة -->
+    <div id="maintModal" class="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold">إضافة أمر صيانة ومصروفات</h3>
+                <button type="button" onclick="closeMaintenanceModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <form onsubmit="handleSaveMaintenance(event)" class="space-y-3">
+                <div>
+                    <label class="text-xs font-bold text-slate-600">الشركة</label>
+                    <select id="maintCompany" class="w-full p-3 border rounded-xl mt-1 font-bold">
+                        <option value="شركة جسور المسافات">شركة جسور المسافات</option>
+                        <option value="ركن المشروعات">ركن المشروعات</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-600">رقم اللوحة / الشاحنة</label>
+                    <input type="text" id="maintPlate" placeholder="أ ب ج 1234" class="w-full p-3 border rounded-xl mt-1" required>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-bold text-slate-600">نوع الصيانة</label>
+                        <input type="text" id="maintType" placeholder="تغيير زيت، قطع..." class="w-full p-3 border rounded-xl mt-1" required>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-600">التكلفة (ر.س)</label>
+                        <input type="number" id="maintCost" placeholder="0.00" class="w-full p-3 border rounded-xl mt-1" required>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-600">اسم الورشة / المورد</label>
+                    <input type="text" id="maintVendor" placeholder="اسم الورشة" class="w-full p-3 border rounded-xl mt-1">
+                </div>
+                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl mt-2">حفظ القيد السحابي</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== البرمجة التفاعلية ==================== -->
     <script>
-        // إعدادات الدخول المبدئية
+        // ضع مفاتيح Supabase الخاصة بك هنا
+      
+      // 1. رابط المشروع والمفتاح
+const SUPABASE_URL = "https://fdvewnybywmxmbjmnlgt.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Xr6Qm3QS7h8K-5P9dLjDUQ_uHF4CTgD";
+
+// 2. إنشاء الاتصال بالسحابة
+const dbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         const DEFAULT_PIN = "123456";
 
         function handleLogin(e) {
             e.preventDefault();
             const pin = document.getElementById('pinInput').value;
-            const errorMsg = document.getElementById('loginError');
-
             if (pin === DEFAULT_PIN || pin === "000000" || pin.length >= 4) {
                 document.getElementById('loginSection').classList.add('hidden');
                 document.getElementById('mainDashboard').classList.remove('hidden');
-                document.getElementById('userName').innerText = 'المسؤول الرئيسي';
+                loadCloudData();
             } else {
-                errorMsg.classList.remove('hidden');
+                document.getElementById('loginError').classList.remove('hidden');
             }
         }
 
@@ -290,37 +315,100 @@
             if (target) target.classList.remove('hidden');
         }
 
-        // التحكم بنوافذ الصيانة
-        function openMaintenanceModal() {
-            document.getElementById('maintModal').classList.remove('hidden');
-        }
-        function closeMaintenanceModal() {
-            document.getElementById('maintModal').classList.add('hidden');
-        }
-        function handleSaveMaintenance(e) {
-            e.preventDefault();
-            alert('تم حفظ أمر الصيانة بنجاح!');
-            closeMaintenanceModal();
-        }
+        function openDebtModal() { document.getElementById('debtModal').classList.remove('hidden'); }
+        function closeDebtModal() { document.getElementById('debtModal').classList.add('hidden'); }
+        function openMaintenanceModal() { document.getElementById('maintModal').classList.remove('hidden'); }
+        function closeMaintenanceModal() { document.getElementById('maintModal').classList.add('hidden'); }
 
-        // التحكم بنوافذ الديون
-        function openDebtModal() {
-            document.getElementById('debtModal').classList.remove('hidden');
-        }
-        function closeDebtModal() {
-            document.getElementById('debtModal').classList.add('hidden');
-        }
-        function handleSaveDebt(e) {
+        async function handleSaveDebt(e) {
             e.preventDefault();
-            alert('تم تسجيل الدين بنجاح!');
+            const company = document.getElementById('debtCompany').value;
+            const entity = document.getElementById('debtEntity').value;
+            const type = document.getElementById('debtType').value;
+            const amount = parseFloat(document.getElementById('debtAmount').value) || 0;
+            const dueDate = document.getElementById('debtDueDate').value;
+
+            if (dbClient) {
+                await dbClient.from('debts_and_credits').insert([{ company, entity_name: entity, debt_type: type, amount, due_date: dueDate }]);
+                loadCloudData();
+            }
             closeDebtModal();
         }
 
-        // إضافة مستخدم
-        function handleAddUser(e) {
+        async function handleSaveMaintenance(e) {
             e.preventDefault();
-            alert('تم إضافة المستخدم بنجاح!');
-            document.getElementById('addUserForm').reset();
+            const company = document.getElementById('maintCompany').value;
+            const plate = document.getElementById('maintPlate').value;
+            const type = document.getElementById('maintType').value;
+            const cost = parseFloat(document.getElementById('maintCost').value) || 0;
+            const vendor = document.getElementById('maintVendor').value;
+
+            if (dbClient) {
+                await dbClient.from('maintenance_logs').insert([{ company, plate_number: plate, maintenance_type: type, cost, vendor_name: vendor }]);
+                loadCloudData();
+            }
+            closeMaintenanceModal();
+        }
+
+        async function loadCloudData() {
+            if (!dbClient) return;
+            const selectedCompany = document.getElementById('companyFilter').value;
+
+            // استعلام الديون
+            let debtQuery = dbClient.from('debts_and_credits').select('*');
+            if (selectedCompany !== 'ALL') debtQuery = debtQuery.eq('company', selectedCompany);
+            const { data: debtData } = await debtQuery;
+
+            let totalReceivables = 0;
+            let totalPayables = 0;
+
+            if (debtData) {
+                const tbody = document.getElementById('debtsTableBody');
+                tbody.innerHTML = debtData.length === 0 
+                    ? `<tr><td colspan="5" class="text-center p-8 text-slate-400">لا توجد ديون مسجلة</td></tr>`
+                    : debtData.map(item => {
+                        if (item.debt_type === 'receivable') totalReceivables += item.amount;
+                        else totalPayables += item.amount;
+                        return `
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-4 font-bold text-slate-500">${item.company || '-'}</td>
+                                <td class="p-4 font-bold">${item.entity_name}</td>
+                                <td class="p-4">${item.debt_type === 'receivable' ? '<span class="text-emerald-600 font-bold">مستحق لنا</span>' : '<span class="text-red-600 font-bold">التزام علينا</span>'}</td>
+                                <td class="p-4 font-bold">${item.amount.toLocaleString()} ر.س</td>
+                                <td class="p-4 text-slate-500">${item.due_date || '-'}</td>
+                            </tr>`;
+                    }).join('');
+            }
+
+            // استعلام الصيانة
+            let maintQuery = dbClient.from('maintenance_logs').select('*');
+            if (selectedCompany !== 'ALL') maintQuery = maintQuery.eq('company', selectedCompany);
+            const { data: maintData } = await maintQuery;
+
+            let totalMaintenance = 0;
+
+            if (maintData) {
+                const tbody = document.getElementById('maintenanceTableBody');
+                tbody.innerHTML = maintData.length === 0 
+                    ? `<tr><td colspan="5" class="text-center p-8 text-slate-400">لا توجد سجلات صيانة</td></tr>`
+                    : maintData.map(item => {
+                        totalMaintenance += item.cost;
+                        return `
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-4 font-bold text-slate-500">${item.company || '-'}</td>
+                                <td class="p-4 font-bold">${item.plate_number}</td>
+                                <td class="p-4">${item.maintenance_type}</td>
+                                <td class="p-4 text-red-600 font-bold">${item.cost.toLocaleString()} ر.س</td>
+                                <td class="p-4 text-slate-500">${item.vendor_name || '-'}</td>
+                            </tr>`;
+                    }).join('');
+            }
+
+            // تحديث البطاقات
+            document.getElementById('statReceivables').innerText = totalReceivables.toLocaleString() + ' ر.س';
+            document.getElementById('statPayables').innerText = totalPayables.toLocaleString() + ' ر.س';
+            document.getElementById('statMaintenance').innerText = totalMaintenance.toLocaleString() + ' ر.س';
+            document.getElementById('statNet').innerText = (totalReceivables - totalPayables - totalMaintenance).toLocaleString() + ' ر.س';
         }
     </script>
 </body>
