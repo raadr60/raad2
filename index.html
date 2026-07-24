@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة النقليات الموحدة - إدارة الملاك والمستخدمين والتحليلات</title>
+    <title>منظومة إدارة النقليات الموحدة - إدارة الصلاحيات</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,42 +13,39 @@
 
     <style>
         body { font-family: 'Cairo', sans-serif; }
-        .glass-panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col antialiased">
 
-    <!-- ==================== شاشة تسجيل الدخول ==================== -->
+    <!-- ==================== شاشة الدخول ==================== -->
     <div id="loginSection" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-4">
-        <div class="glass-panel p-8 rounded-3xl shadow-2xl w-full max-w-md text-slate-100 border border-slate-800 relative overflow-hidden">
-            <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500"></div>
+        <div class="glass-panel p-8 rounded-3xl shadow-2xl w-full max-w-md text-slate-800 border border-slate-700/30 relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600"></div>
             
             <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-blue-600/20 border border-blue-500/30 text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg text-2xl">
-                    <i class="fas fa-truck-monster"></i>
+                <div class="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-blue-500/30 text-2xl">
+                    <i class="fas fa-user-shield"></i>
                 </div>
-                <h2 class="text-2xl font-black">منظومة الإدارة اللوجستية</h2>
-                <p class="text-xs text-slate-400 font-semibold mt-1">شركة جسور المسافات | ركن المشروعات</p>
+                <h2 class="text-2xl font-black text-slate-900">تسجيل الدخول للمنظومة</h2>
+                <p class="text-xs text-slate-500 font-semibold mt-1">شركة جسور المسافات | ركن المشروعات</p>
             </div>
 
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1">اسم المستخدم</label>
-                    <input type="text" id="usernameInput" placeholder="أدخل اسم المستخدم" class="w-full bg-slate-900/90 text-center text-base font-bold py-2.5 border border-slate-700 rounded-2xl focus:border-blue-500 focus:outline-none transition" required autocomplete="off">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">اسم المستخدم</label>
+                    <input type="text" id="usernameInput" placeholder="أدخل اسم المستخدم (مثال: admin)" class="w-full text-center text-base font-bold py-2.5 border-2 border-slate-200 rounded-2xl focus:border-blue-600 focus:outline-none transition" required autocomplete="off">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1">رمز الدخول (PIN)</label>
-                    <input type="password" id="pinInput" placeholder="أدخل الرمز الخاص بك" class="w-full bg-slate-900/90 text-center text-2xl font-bold tracking-widest py-2.5 border border-slate-700 rounded-2xl focus:border-blue-500 focus:outline-none transition" required autocomplete="off">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">رمز الدخول (PIN)</label>
+                    <input type="password" id="pinInput" placeholder="أدخل الرمز الخاص بك" class="w-full text-center text-2xl font-bold tracking-widest py-2.5 border-2 border-slate-200 rounded-2xl focus:border-blue-600 focus:outline-none transition" required autocomplete="off">
                 </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-2xl transition duration-300 shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
+                <button type="submit" class="w-full bg-slate-900 hover:bg-blue-600 text-white font-bold py-3.5 rounded-2xl transition duration-300 shadow-xl flex items-center justify-center gap-2">
                     <span>دخول النظام</span>
                     <i class="fas fa-arrow-left text-sm"></i>
                 </button>
             </form>
-            <p id="loginError" class="text-red-400 text-xs text-center font-bold mt-4 hidden">
+            <p id="loginError" class="text-red-500 text-xs text-center font-bold mt-4 hidden">
                 <i class="fas fa-exclamation-circle ml-1"></i> اسم المستخدم أو رمز الدخول غير صحيح
             </p>
         </div>
@@ -58,23 +55,22 @@
     <div id="mainDashboard" class="hidden flex-1 flex flex-col min-h-screen">
         
         <!-- الشريط العلوي -->
-        <header class="bg-slate-900/90 border-b border-slate-800 px-6 py-3 sticky top-0 z-40 backdrop-blur-md flex justify-between items-center flex-wrap gap-3">
-            <div class="flex items-center gap-3">
-                <div class="bg-gradient-to-tr from-blue-600 to-cyan-500 text-white p-2.5 rounded-xl shadow-lg">
-                    <i class="fas fa-chart-pie text-lg"></i>
+        <header class="bg-slate-950/80 border-b border-slate-800 px-6 py-3 sticky top-0 z-40 backdrop-blur-md flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="bg-gradient-to-tr from-blue-600 to-indigo-600 text-white p-2.5 rounded-xl shadow-lg">
+                    <i class="fas fa-chart-line text-xl"></i>
                 </div>
                 <div>
                     <h1 class="text-base font-black text-white leading-tight">مركز التحكم والإدارة الموحد</h1>
                     <div class="flex items-center gap-2 mt-0.5">
-                        <span id="userInfoTag" class="text-xs text-cyan-400 font-bold">مرحباً: -</span>
+                        <span id="userInfoTag" class="text-xs text-blue-400 font-bold">مرحباً: -</span>
                     </div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-3 flex-wrap">
-                <!-- اختيار الشركة العام -->
-                <div class="bg-slate-950 border border-slate-800 rounded-xl p-1 flex items-center">
-                    <i class="fas fa-building text-slate-500 mr-2 text-xs"></i>
+            <div class="flex items-center gap-3">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-1 flex items-center gap-1">
+                    <i class="fas fa-building text-slate-400 mr-2 text-xs"></i>
                     <select id="globalCompanyFilter" onchange="loadAllData()" class="bg-transparent text-white text-xs font-bold focus:outline-none px-2 py-1">
                         <option value="ALL" class="bg-slate-900">جميع الشركات</option>
                         <option value="شركة جسور المسافات" class="bg-slate-900">شركة جسور المسافات</option>
@@ -82,9 +78,9 @@
                     </select>
                 </div>
 
-                <!-- زر إدارة المستخدمين -->
+                <!-- زر إدارة المستخدمين (يظهر للمدير فقط) -->
                 <button id="btnManageUsers" onclick="openModal('usersModal')" class="bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-xs font-bold px-3 py-2 rounded-xl border border-indigo-500/30 transition flex items-center gap-1.5 hidden">
-                    <i class="fas fa-users-cog text-indigo-400"></i> المستخدمين والصلاحيات
+                    <i class="fas fa-users-cog text-indigo-400"></i> إدارة المستخدمين
                 </button>
 
                 <button onclick="logout()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold px-3 py-2 rounded-xl border border-red-500/20 transition">
@@ -96,148 +92,81 @@
         <!-- المحتوى الرئيسي -->
         <main class="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
             
-            <!-- أزرار القوائم الرئيسية -->
-            <div class="flex justify-between items-center bg-slate-900/60 p-3 rounded-2xl border border-slate-800/80 flex-wrap gap-2">
+            <!-- أزرار التبديل والإضافة -->
+            <div class="flex justify-between items-center bg-slate-800/30 p-4 rounded-2xl border border-slate-800 flex-wrap gap-3">
                 <div class="flex gap-2 flex-wrap">
-                    <button onclick="switchTab('overview')" id="btnTabOverview" class="px-3.5 py-2 rounded-xl text-xs font-bold transition bg-blue-600 text-white">
-                        <i class="fas fa-gauge-high ml-1"></i> الملخص والتحليلات
+                    <button onclick="switchTab('overview')" id="btnTabOverview" class="px-4 py-2 rounded-xl text-xs font-bold transition bg-blue-600 text-white">
+                        <i class="fas fa-gauge-high ml-1"></i> العدادات والتحكم
                     </button>
-                    <button onclick="switchTab('owners')" id="btnTabOwners" class="px-3.5 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-400 hover:text-white">
-                        <i class="fas fa-truck-front text-amber-400 ml-1"></i> قسم المُلاّك والدينات
+                    <button onclick="switchTab('trips')" id="btnTabTrips" class="px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-400 hover:text-white">
+                        <i class="fas fa-route ml-1"></i> الرحلات اليومية
                     </button>
-                    <button onclick="switchTab('trips')" id="btnTabTrips" class="px-3.5 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-400 hover:text-white">
-                        <i class="fas fa-route text-blue-400 ml-1"></i> الرحلات اليومية
+                    <button onclick="switchTab('drivers')" id="btnTabDrivers" class="px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-400 hover:text-white">
+                        <i class="fas fa-id-card ml-1"></i> سحبيات السائقين
                     </button>
-                    <button onclick="switchTab('drivers')" id="btnTabDrivers" class="px-3.5 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-400 hover:text-white">
-                        <i class="fas fa-id-card text-purple-400 ml-1"></i> السائقين والسحبيات
+                    <button onclick="switchTab('debts')" id="btnTabDebts" class="px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-400 hover:text-white">
+                        <i class="fas fa-receipt ml-1"></i> الديون والالتزامات
                     </button>
-                    <button onclick="switchTab('maintenance')" id="btnTabMaint" class="px-3.5 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-400 hover:text-white">
-                        <i class="fas fa-wrench text-rose-400 ml-1"></i> الصيانة والمصاريف
+                    <button onclick="switchTab('maintenance')" id="btnTabMaint" class="px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-400 hover:text-white">
+                        <i class="fas fa-wrench ml-1"></i> الصيانة
                     </button>
                 </div>
 
-                <!-- أزرار الإضافة السريعة -->
                 <div class="flex gap-2 flex-wrap">
-                    <button onclick="openModal('ownerModal')" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg">
-                        <i class="fas fa-user-tie"></i> إضافة مالك
-                    </button>
-                    <button onclick="openModal('truckModal')" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg">
-                        <i class="fas fa-truck"></i> إضافة شاحنة/دينا
-                    </button>
                     <button onclick="openModal('tripModal')" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg">
-                        <i class="fas fa-plus-circle"></i> رحلة جديدة
+                        <i class="fas fa-plus"></i> رحلة جديدة
+                    </button>
+                    <button onclick="openModal('driverModal')" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg">
+                        <i class="fas fa-hand-holding-dollar"></i> سحب سائق
+                    </button>
+                    <button onclick="openModal('debtModal')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg">
+                        <i class="fas fa-file-invoice"></i> قيد دين
+                    </button>
+                    <button onclick="openModal('maintModal')" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg">
+                        <i class="fas fa-tools"></i> صيانة
                     </button>
                 </div>
             </div>
 
-            <!-- ==================== قسم الملخص والتحليلات والرسوم البيانية ==================== -->
+            <!-- ==================== قسم الإحصائيات (العدادات) ==================== -->
             <div id="sectionOverview" class="space-y-6">
-                
-                <!-- العدادات والإحصائيات -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                    <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl">
-                        <span class="text-xs font-bold text-slate-400 block mb-1">إجمالي الإيرادات</span>
-                        <h3 id="statTotalIncome" class="text-2xl font-black text-emerald-400">0.00 <span class="text-xs font-normal">ر.س</span></h3>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div class="bg-slate-800/50 border border-slate-700/50 p-5 rounded-2xl relative overflow-hidden">
+                        <span class="text-xs font-bold text-slate-400 block mb-1">إجمالي الرحلات</span>
+                        <h3 id="statTotalTripsCount" class="text-3xl font-black text-white">0 <span class="text-xs font-normal">رحلة</span></h3>
                     </div>
 
-                    <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl">
+                    <div class="bg-slate-800/50 border border-slate-700/50 p-5 rounded-2xl relative overflow-hidden">
+                        <span class="text-xs font-bold text-slate-400 block mb-1">إجمالي الإيراد</span>
+                        <h3 id="statTripsIncome" class="text-2xl font-black text-emerald-400">0.00 <span class="text-xs">ر.س</span></h3>
+                    </div>
+
+                    <div class="bg-slate-800/50 border border-slate-700/50 p-5 rounded-2xl relative overflow-hidden">
                         <span class="text-xs font-bold text-slate-400 block mb-1">سحبيات السائقين</span>
-                        <h3 id="statDriverDraws" class="text-2xl font-black text-purple-400">0.00 <span class="text-xs font-normal">ر.س</span></h3>
+                        <h3 id="statDriverDraws" class="text-2xl font-black text-purple-400">0.00 <span class="text-xs">ر.س</span></h3>
                     </div>
 
-                    <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl">
-                        <span class="text-xs font-bold text-slate-400 block mb-1">مصاريف الصيانة</span>
-                        <h3 id="statMaintenance" class="text-2xl font-black text-rose-400">0.00 <span class="text-xs font-normal">ر.س</span></h3>
+                    <div class="bg-slate-800/50 border border-slate-700/50 p-5 rounded-2xl relative overflow-hidden">
+                        <span class="text-xs font-bold text-slate-400 block mb-1">تكاليف الصيانة</span>
+                        <h3 id="statMaintenance" class="text-2xl font-black text-amber-400">0.00 <span class="text-xs">ر.س</span></h3>
                     </div>
 
-                    <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl">
-                        <span class="text-xs font-bold text-slate-400 block mb-1">صافي الأرباح</span>
-                        <h3 id="statNetProfit" class="text-2xl font-black text-cyan-400">0.00 <span class="text-xs font-normal">ر.س</span></h3>
-                    </div>
-
-                    <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl">
-                        <span class="text-xs font-bold text-slate-400 block mb-1">عدد الدينات المسجلة</span>
-                        <h3 id="statTrucksCount" class="text-2xl font-black text-amber-400">0 <span class="text-xs font-normal">شاحنة</span></h3>
-                    </div>
-                </div>
-
-                <!-- الرسوم البيانية للتحليلات -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-3">
-                        <h3 class="text-xs font-bold text-slate-300 flex items-center gap-2">
-                            <i class="fas fa-chart-line text-blue-400"></i> المقارنة الماليّة (إيرادات vs مصاريف vs صافي)
-                        </h3>
-                        <div class="h-64 relative">
-                            <canvas id="financialChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-3">
-                        <h3 class="text-xs font-bold text-slate-300 flex items-center gap-2">
-                            <i class="fas fa-chart-pie text-cyan-400"></i> الإيرادات حسب الشركة
-                        </h3>
-                        <div class="h-64 relative flex items-center justify-center">
-                            <canvas id="companyDistributionChart"></canvas>
-                        </div>
+                    <div class="bg-slate-800/50 border border-slate-700/50 p-5 rounded-2xl relative overflow-hidden">
+                        <span class="text-xs font-bold text-slate-400 block mb-1">صافي المتبقي</span>
+                        <h3 id="statNet" class="text-2xl font-black text-blue-400">0.00 <span class="text-xs">ر.س</span></h3>
                     </div>
                 </div>
             </div>
 
-            <!-- ==================== قسم المُلاّك والدينات والسائقين والتحليل الخاص بـهم ==================== -->
-            <section id="sectionOwners" class="space-y-6 hidden">
-                
-                <!-- هيدر قسم الملاك -->
-                <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex justify-between items-center flex-wrap gap-3">
-                    <div>
-                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                            <i class="fas fa-user-tie text-amber-400"></i> دليل المُلاّك والشاحنات (الدينات)
-                        </h3>
-                        <p class="text-xs text-slate-400 mt-0.5">متابعة حسابات المالكين وسواقينهم والتكاليف والصافي المستحق لكل مالك</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <input type="text" onkeyup="filterOwners(this.value)" placeholder="بحث عن مالك أو لوحة..." class="bg-slate-950 border border-slate-800 text-xs px-3 py-2 rounded-xl text-white focus:outline-none w-56">
-                    </div>
-                </div>
-
-                <!-- بطاقات وجداول الملاك والتفاصيل -->
-                <div id="ownersCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- سيتم ملؤها تلقائياً بالبيانات -->
-                </div>
-
-                <!-- جدول الدينات الشامل -->
-                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-                    <div class="p-4 border-b border-slate-800 font-bold text-xs text-white flex justify-between items-center">
-                        <span><i class="fas fa-truck text-cyan-400 ml-1"></i> قائمة الشاحنات والدينات المسجلة</span>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right text-xs">
-                            <thead class="bg-slate-950 text-slate-400 font-bold border-b border-slate-800">
-                                <tr>
-                                    <th class="p-3.5">رقم اللوحة</th>
-                                    <th class="p-3.5">المالك</th>
-                                    <th class="p-3.5">السائق الحالي</th>
-                                    <th class="p-3.5">نوع المعدة/الشاحنة</th>
-                                    <th class="p-3.5">الشركة</th>
-                                    <th class="p-3.5">إجمالي الإيراد</th>
-                                    <th class="p-3.5">إجمالي المصاريف</th>
-                                    <th class="p-3.5">الصافي للمالك</th>
-                                </tr>
-                            </thead>
-                            <tbody id="trucksTableBody" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ==================== جدول الرحلات ==================== -->
-            <section id="sectionTrips" class="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-xl hidden">
+            <!-- ==================== جداول البيانات ==================== -->
+            <section id="sectionTrips" class="bg-slate-800/40 border border-slate-800 rounded-2xl overflow-hidden shadow-xl hidden">
                 <div class="p-4 border-b border-slate-800 flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-white"><i class="fas fa-route text-blue-400 ml-1"></i> سجل الرحلات اليومية والنولون</h3>
-                    <input type="text" onkeyup="filterTable('tripsTableBody', this.value)" placeholder="بحث بالرحلات..." class="bg-slate-950 border border-slate-800 text-xs px-3 py-1.5 rounded-xl text-white focus:outline-none w-56">
+                    <h3 class="text-sm font-bold text-white"><i class="fas fa-route text-blue-400"></i> سجل الرحلات والنولون</h3>
+                    <input type="text" onkeyup="filterTable('tripsTableBody', this.value)" placeholder="بحث..." class="bg-slate-900 border border-slate-700 text-xs px-3 py-1.5 rounded-xl text-white focus:outline-none w-56">
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-right text-xs">
-                        <thead class="bg-slate-950 text-slate-400 font-bold border-b border-slate-800">
+                        <thead class="bg-slate-900/80 text-slate-400 font-bold border-b border-slate-800">
                             <tr>
                                 <th class="p-3.5">التاريخ</th>
                                 <th class="p-3.5">الشركة</th>
@@ -248,55 +177,68 @@
                                 <th class="p-3.5">المبلغ</th>
                             </tr>
                         </thead>
-                        <tbody id="tripsTableBody" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
+                        <tbody id="tripsTableBody" class="divide-y divide-slate-800 text-slate-300"></tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- ==================== قسم السائقين والسحبيات ==================== -->
-            <section id="sectionDrivers" class="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-xl hidden">
+            <section id="sectionDrivers" class="bg-slate-800/40 border border-slate-800 rounded-2xl overflow-hidden shadow-xl hidden">
                 <div class="p-4 border-b border-slate-800 flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-white"><i class="fas fa-wallet text-purple-400 ml-1"></i> سجل سحبيات ومصروفات السائقين</h3>
-                    <button onclick="openModal('driverDrawModal')" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition">
-                        <i class="fas fa-plus"></i> قيد سحب سائق
-                    </button>
+                    <h3 class="text-sm font-bold text-white"><i class="fas fa-wallet text-purple-400"></i> سجل سحبيات السائقين</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-right text-xs">
-                        <thead class="bg-slate-950 text-slate-400 font-bold border-b border-slate-800">
+                        <thead class="bg-slate-900/80 text-slate-400 font-bold border-b border-slate-800">
                             <tr>
                                 <th class="p-3.5">التاريخ</th>
+                                <th class="p-3.5">الشركة</th>
                                 <th class="p-3.5">السائق</th>
-                                <th class="p-3.5">الشركة</th>
-                                <th class="p-3.5">البيان / السبب</th>
+                                <th class="p-3.5">النوع</th>
                                 <th class="p-3.5">المبلغ</th>
+                                <th class="p-3.5">ملاحظات</th>
                             </tr>
                         </thead>
-                        <tbody id="driversTableBody" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
+                        <tbody id="driversTableBody" class="divide-y divide-slate-800 text-slate-300"></tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- ==================== قسم الصيانة ==================== -->
-            <section id="sectionMaintenance" class="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-xl hidden">
+            <section id="sectionDebts" class="bg-slate-800/40 border border-slate-800 rounded-2xl overflow-hidden shadow-xl hidden">
                 <div class="p-4 border-b border-slate-800 flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-white"><i class="fas fa-wrench text-rose-400 ml-1"></i> سجل صيانة المعدات والشاحنات</h3>
-                    <button onclick="openModal('maintModal')" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition">
-                        <i class="fas fa-plus"></i> إضافة صيانة
-                    </button>
+                    <h3 class="text-sm font-bold text-white"><i class="fas fa-file-invoice text-emerald-400"></i> سجل الديون والالتزامات</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-right text-xs">
-                        <thead class="bg-slate-950 text-slate-400 font-bold border-b border-slate-800">
+                        <thead class="bg-slate-900/80 text-slate-400 font-bold border-b border-slate-800">
                             <tr>
-                                <th class="p-3.5">التاريخ</th>
-                                <th class="p-3.5">رقم اللوحة</th>
                                 <th class="p-3.5">الشركة</th>
-                                <th class="p-3.5">نوع الصيانة / الورشة</th>
-                                <th class="p-3.5">التكلفة</th>
+                                <th class="p-3.5">الجهة</th>
+                                <th class="p-3.5">النوع</th>
+                                <th class="p-3.5">المبلغ</th>
+                                <th class="p-3.5">تاريخ الاستحقاق</th>
                             </tr>
                         </thead>
-                        <tbody id="maintenanceTableBody" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
+                        <tbody id="debtsTableBody" class="divide-y divide-slate-800 text-slate-300"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="sectionMaintenance" class="bg-slate-800/40 border border-slate-800 rounded-2xl overflow-hidden shadow-xl hidden">
+                <div class="p-4 border-b border-slate-800 flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-white"><i class="fas fa-wrench text-amber-400"></i> سجل الصيانة</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-900/80 text-slate-400 font-bold border-b border-slate-800">
+                            <tr>
+                                <th class="p-3.5">الشركة</th>
+                                <th class="p-3.5">رقم اللوحة</th>
+                                <th class="p-3.5">نوع الصيانة</th>
+                                <th class="p-3.5">التكلفة</th>
+                                <th class="p-3.5">الورشة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="maintenanceTableBody" class="divide-y divide-slate-800 text-slate-300"></tbody>
                     </table>
                 </div>
             </section>
@@ -304,243 +246,105 @@
         </main>
     </div>
 
-    <!-- ==================== النوافذ المنبثقة (Modals) ==================== -->
-
-    <!-- 1. نافذة إضافة مالك جديد -->
-    <div id="ownerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-bold text-white"><i class="fas fa-user-tie text-amber-400 ml-1"></i> إضافة مالك جديد</h3>
-                <button onclick="closeModal('ownerModal')" class="text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
-            </div>
-            <form onsubmit="saveOwner(event)" class="space-y-3 text-xs">
-                <div>
-                    <label class="font-bold text-slate-400">اسم المالك الكامل</label>
-                    <input type="text" id="ownerName" placeholder="مثال: عبد الله السليمان" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="font-bold text-slate-400">رقم الجوال</label>
-                        <input type="text" id="ownerPhone" placeholder="05XXXXXXXX" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
-                    </div>
-                    <div>
-                        <label class="font-bold text-slate-400">الشركة المتعاقد معها</label>
-                        <select id="ownerCompany" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-bold">
-                            <option value="شركة جسور المسافات">شركة جسور المسافات</option>
-                            <option value="ركن المشروعات">ركن المشروعات</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label class="font-bold text-slate-400">ملاحظات أو شروط اتفاقية النسب/العمولة</label>
-                    <textarea id="ownerNotes" placeholder="أدخل تفاصيل الاتفاقية أو الحساب البنكي..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white h-20"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 font-bold py-3 rounded-xl transition text-white">حفظ بيانات المالك</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- 2. نافذة إضافة شاحنة / دينا وتعيين سائقها والمالك -->
-    <div id="truckModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-bold text-white"><i class="fas fa-truck text-cyan-400 ml-1"></i> إضافة شاحنة / دينا جديدة</h3>
-                <button onclick="closeModal('truckModal')" class="text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
-            </div>
-            <form onsubmit="saveTruck(event)" class="space-y-3 text-xs">
-                <div>
-                    <label class="font-bold text-slate-400">رقم اللوحة</label>
-                    <input type="text" id="truckPlate" placeholder="مثال: أ ب ج 1234" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="font-bold text-slate-400">المالك</label>
-                        <select id="truckOwnerSelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-bold" required>
-                            <!-- سيتم تعبئته تلقائياً من الملاك -->
-                        </select>
-                    </div>
-                    <div>
-                        <label class="font-bold text-slate-400">اسم السائق التابع</label>
-                        <input type="text" id="truckDriver" placeholder="اسم السائق" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="font-bold text-slate-400">نوع الشاحنة/المعدة</label>
-                        <input type="text" id="truckType" placeholder="دينا / تريلة / سطحة" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
-                    </div>
-                    <div>
-                        <label class="font-bold text-slate-400">الشركة</label>
-                        <select id="truckCompany" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-bold">
-                            <option value="شركة جسور المسافات">شركة جسور المسافات</option>
-                            <option value="ركن المشروعات">ركن المشروعات</option>
-                        </select>
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-cyan-600 hover:bg-cyan-500 font-bold py-3 rounded-xl transition text-white">حفظ الشاحنة</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- 3. نافذة تسجيل رحلة جديدة -->
-    <div id="tripModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-bold text-white"><i class="fas fa-route text-blue-400 ml-1"></i> رحلة جديدة</h3>
-                <button onclick="closeModal('tripModal')" class="text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
-            </div>
-            <form onsubmit="saveTrip(event)" class="space-y-3 text-xs">
-                <div><label class="font-bold text-slate-400">التاريخ</label><input type="date" id="tripDate" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required></div>
-                <div>
-                    <label class="font-bold text-slate-400">الشركة</label>
-                    <select id="tripCompany" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-bold">
-                        <option value="شركة جسور المسافات">شركة جسور المسافات</option>
-                        <option value="ركن المشروعات">ركن المشروعات</option>
-                    </select>
-                </div>
-                <div><label class="font-bold text-slate-400">العميل</label><input type="text" id="tripClient" placeholder="اسم العميل" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required></div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="font-bold text-slate-400">السائق</label><input type="text" id="tripDriver" placeholder="اسم السائق" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required></div>
-                    <div><label class="font-bold text-slate-400">رقم اللوحة</label><input type="text" id="tripPlate" placeholder="رقم اللوحة" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required></div>
-                </div>
-                <div><label class="font-bold text-slate-400">خط السير</label><input type="text" id="tripRoute" placeholder="من - إلى" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required></div>
-                <div><label class="font-bold text-slate-400">المبلغ الإجمالي</label><input type="number" step="0.01" id="tripAmount" placeholder="0.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required></div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 font-bold py-3 rounded-xl transition text-white">حفظ الرحلة</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- 4. نافذة سحب سائق -->
-    <div id="driverDrawModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-bold text-white"><i class="fas fa-hand-holding-dollar text-purple-400 ml-1"></i> قيد سحب / مصاريف سائق</h3>
-                <button onclick="closeModal('driverDrawModal')" class="text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
-            </div>
-            <form onsubmit="saveDriverDraw(event)" class="space-y-3 text-xs">
-                <div><label class="font-bold text-slate-400">التاريخ</label><input type="date" id="drawDate" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required></div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="font-bold text-slate-400">اسم السائق</label><input type="text" id="drawDriver" placeholder="اسم السائق" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required></div>
-                    <div>
-                        <label class="font-bold text-slate-400">الشركة</label>
-                        <select id="drawCompany" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-bold">
-                            <option value="شركة جسور المسافات">شركة جسور المسافات</option>
-                            <option value="ركن المشروعات">ركن المشروعات</option>
-                        </select>
-                    </div>
-                </div>
-                <div><label class="font-bold text-slate-400">المبلغ المسحوب</label><input type="number" step="0.01" id="drawAmount" placeholder="0.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required></div>
-                <div><label class="font-bold text-slate-400">البيان / السبب (مثل: ديزل، مصروف طريق...)</label><input type="text" id="drawNotes" placeholder="تفاصيل المصروف" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"></div>
-                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 font-bold py-3 rounded-xl transition text-white">تسجيل المصروف</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- 5. نافذة تسجيل صيانة -->
-    <div id="maintModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-bold text-white"><i class="fas fa-wrench text-rose-400 ml-1"></i> تسجيل فاتورة صيانة</h3>
-                <button onclick="closeModal('maintModal')" class="text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
-            </div>
-            <form onsubmit="saveMaintenance(event)" class="space-y-3 text-xs">
-                <div><label class="font-bold text-slate-400">التاريخ</label><input type="date" id="maintDate" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required></div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="font-bold text-slate-400">رقم اللوحة</label><input type="text" id="maintPlate" placeholder="رقم اللوحة" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required></div>
-                    <div>
-                        <label class="font-bold text-slate-400">الشركة</label>
-                        <select id="maintCompany" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-bold">
-                            <option value="شركة جسور المسافات">شركة جسور المسافات</option>
-                            <option value="ركن المشروعات">ركن المشروعات</option>
-                        </select>
-                    </div>
-                </div>
-                <div><label class="font-bold text-slate-400">تفاصيل الصيانة / اسم الورشة</label><input type="text" id="maintDetails" placeholder="مثال: غيار زيت - تغيير إطارات" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required></div>
-                <div><label class="font-bold text-slate-400">التكلفة</label><input type="number" step="0.01" id="maintCost" placeholder="0.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required></div>
-                <button type="submit" class="w-full bg-rose-600 hover:bg-rose-500 font-bold py-3 rounded-xl transition text-white">حفظ الصيانة</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- 6. نافذة إدارة المستخدمين -->
+    <!-- ==================== نافذة إدارة المستخدمين (للمدير فقط) ==================== -->
     <div id="usersModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-lg shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-bold text-white"><i class="fas fa-users-cog text-indigo-400 ml-1"></i> إدارة المستخدمين الصلاحيات</h3>
+                <h3 class="text-sm font-bold text-white"><i class="fas fa-users-cog text-indigo-400 ml-1"></i> إضافة مستخدم جديد وتحديد الصلاحيات</h3>
                 <button onclick="closeModal('usersModal')" class="text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
             </div>
+            
             <form onsubmit="addUser(event)" class="space-y-3 text-xs border-b border-slate-800 pb-4">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="font-bold text-slate-400">اسم المستخدم (Login)</label>
-                        <input type="text" id="newUsername" placeholder="مثال: ahmed" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required>
+                        <label class="font-bold text-slate-400">اسم المستخدم (للدخول)</label>
+                        <input type="text" id="newUsername" placeholder="مثال: ahmed" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-white" required>
                     </div>
                     <div>
                         <label class="font-bold text-slate-400">رمز الدخول (PIN)</label>
-                        <input type="text" id="newPin" placeholder="مثال: 5544" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required>
+                        <input type="text" id="newPin" placeholder="مثال: 4433" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-white" required>
                     </div>
                 </div>
                 <div>
-                    <label class="font-bold text-slate-400">الاسم الكامل للموظف</label>
-                    <input type="text" id="newFullName" placeholder="اسم الموظف" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white" required>
+                    <label class="font-bold text-slate-400">الاسم الكامل</label>
+                    <input type="text" id="newFullName" placeholder="اسم الموظف" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-white" required>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="font-bold text-slate-400">الشركة المسموح بها</label>
-                        <select id="newCompany" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-bold">
+                        <label class="font-bold text-slate-400">الشركة المصرح له بها</label>
+                        <select id="newCompany" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-white font-bold">
                             <option value="ALL">جميع الشركات</option>
-                            <option value="شركة جسور المسافات">شركة جسور المسافات</option>
-                            <option value="ركن المشروعات">ركن المشروعات</option>
+                            <option value="شركة جسور المسافات">شركة جسور المسافات فقط</option>
+                            <option value="ركن المشروعات">ركن المشروعات فقط</option>
                         </select>
                     </div>
                     <div>
                         <label class="font-bold text-slate-400">مستوى الصلاحية</label>
-                        <select id="newRole" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-bold">
-                            <option value="entry">مدخل بيانات</option>
-                            <option value="admin">مدير نظام</option>
+                        <select id="newRole" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 mt-1 text-white font-bold">
+                            <option value="entry">مدخل بيانات (عرض وإضافة فقط)</option>
+                            <option value="admin">مدير نظام (صلاحيات كاملة)</option>
                         </select>
                     </div>
                 </div>
                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-2.5 rounded-xl transition text-white">إضافة المستخدم</button>
             </form>
+
+            <!-- قائمة المستخدمين الحاليين -->
             <div>
-                <h4 class="text-xs font-bold text-slate-400 mb-2">قائمة المستخدمين المسجلين</h4>
+                <h4 class="text-xs font-bold text-slate-400 mb-2">المستخدمون الحاليون</h4>
                 <div id="usersList" class="space-y-2 max-h-40 overflow-y-auto text-xs"></div>
             </div>
         </div>
     </div>
 
-    <!-- ==================== البرمجة وربط Supabase والمخططات ==================== -->
+    <!-- النوافذ المنبثقة للإدخال (الرحلات، السحبيات، الديون، الصيانة) -->
+    <div id="tripModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-white"><i class="fas fa-route text-blue-500 ml-1"></i> رحلة جديدة</h3>
+                <button onclick="closeModal('tripModal')" class="text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="saveTrip(event)" class="space-y-3 text-xs">
+                <div><label class="font-bold text-slate-400">التاريخ</label><input type="date" id="tripDate" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white" required></div>
+                <div>
+                    <label class="font-bold text-slate-400">الشركة</label>
+                    <select id="tripCompany" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-bold">
+                        <option value="شركة جسور المسافات">شركة جسور المسافات</option>
+                        <option value="ركن المشروعات">ركن المشروعات</option>
+                    </select>
+                </div>
+                <div><label class="font-bold text-slate-400">العميل</label><input type="text" id="tripClient" placeholder="اسم العميل" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white" required></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="font-bold text-slate-400">السائق</label><input type="text" id="tripDriver" placeholder="اسم السائق" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white" required></div>
+                    <div><label class="font-bold text-slate-400">اللوحة</label><input type="text" id="tripPlate" placeholder="رقم اللوحة" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white" required></div>
+                </div>
+                <div><label class="font-bold text-slate-400">خط السير</label><input type="text" id="tripRoute" placeholder="من - إلى" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white" required></div>
+                <div><label class="font-bold text-slate-400">المبلغ</label><input type="number" step="0.01" id="tripAmount" placeholder="0.00" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white" required></div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 font-bold py-3 rounded-xl transition text-white">حفظ الرحلة</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- البرمجة -->
     <script>
         const SUPABASE_URL = "https://fdvewnybywmxmbjmnlgt.supabase.co";
         const SUPABASE_KEY = "sb_publishable_Xr6Qm3QS7h8K-5P9dLjDUQ_uHF4CTgD";
         const dbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentUser = null;
-        let financialChartInstance = null;
-        let companyChartInstance = null;
-
-        // مصفوفات البيانات المؤقتة
-        let rawOwners = [];
-        let rawTrucks = [];
-        let rawTrips = [];
-        let rawDraws = [];
-        let rawMaint = [];
 
         document.addEventListener("DOMContentLoaded", () => {
             const today = new Date().toISOString().split('T')[0];
-            ['tripDate', 'drawDate', 'maintDate'].forEach(id => {
-                if(document.getElementById(id)) document.getElementById(id).value = today;
-            });
+            if(document.getElementById('tripDate')) document.getElementById('tripDate').value = today;
         });
 
-        // تسجيل الدخول
+        // تسجيل الدخول مع التحقق من جدول المستخدمين
         async function handleLogin(e) {
             e.preventDefault();
             const username = document.getElementById('usernameInput').value.trim();
             const pin = document.getElementById('pinInput').value.trim();
 
-            const { data } = await dbClient
+            const { data, error } = await dbClient
                 .from('system_users')
                 .select('*')
                 .eq('username', username)
@@ -552,14 +356,18 @@
                 document.getElementById('loginSection').classList.add('hidden');
                 document.getElementById('mainDashboard').classList.remove('hidden');
                 
-                document.getElementById('userInfoTag').innerText = `المستخدم: ${currentUser.full_name} (${currentUser.role === 'admin' ? 'مدير' : 'مُدخل'})`;
+                document.getElementById('userInfoTag').innerText = `المستخدم: ${currentUser.full_name} (${currentUser.role === 'admin' ? 'مدير' : 'مدخل بيانات'})`;
 
+                // تحجيم القائمة وتثبيت شركة المستخدم إذا كان حسابه لشركة محددة فقط
                 const companyFilter = document.getElementById('globalCompanyFilter');
                 if (currentUser.company !== 'ALL') {
                     companyFilter.value = currentUser.company;
                     companyFilter.disabled = true;
+                } else {
+                    companyFilter.disabled = false;
                 }
 
+                // إظهار زر إدارة المستخدمين للمدير فقط
                 if (currentUser.role === 'admin') {
                     document.getElementById('btnManageUsers').classList.remove('hidden');
                 }
@@ -578,337 +386,7 @@
             document.getElementById('pinInput').value = '';
         }
 
-        // جلب البيانات بالكامل
-        async function loadAllData() {
-            let company = document.getElementById('globalCompanyFilter').value;
-            if (currentUser && currentUser.company !== 'ALL') {
-                company = currentUser.company;
-            }
-
-            // استعلامات الجداول
-            let qOwners = dbClient.from('owners').select('*');
-            let qTrucks = dbClient.from('trucks').select('*');
-            let qTrips = dbClient.from('trips').select('*');
-            let qDraws = dbClient.from('driver_draws').select('*');
-            let qMaint = dbClient.from('maintenance').select('*');
-
-            if (company !== 'ALL') {
-                qOwners = qOwners.eq('company', company);
-                qTrucks = qTrucks.eq('company', company);
-                qTrips = qTrips.eq('company', company);
-                qDraws = qDraws.eq('company', company);
-                qMaint = qMaint.eq('company', company);
-            }
-
-            const [resOwners, resTrucks, resTrips, resDraws, resMaint] = await Promise.all([
-                qOwners, qTrucks, qTrips, qDraws, qMaint
-            ]);
-
-            rawOwners = resOwners.data || [];
-            rawTrucks = resTrucks.data || [];
-            rawTrips = resTrips.data || [];
-            rawDraws = resDraws.data || [];
-            rawMaint = resMaint.data || [];
-
-            renderOwnersHub();
-            renderTrucksTable();
-            renderTrips();
-            renderDriverDraws();
-            renderMaintenance();
-            updateCalculationsAndCharts();
-            populateOwnerSelects();
-        }
-
-        // تعبئة الملاك في القوائم المنسدلة
-        function populateOwnerSelects() {
-            const select = document.getElementById('truckOwnerSelect');
-            if (!select) return;
-            select.innerHTML = rawOwners.map(o => `<option value="${o.name}">${o.name} (${o.company})</option>`).join('');
-        }
-
-        // بناء صفحة وخلايا الملاك والدينات
-        function renderOwnersHub() {
-            const container = document.getElementById('ownersCardsContainer');
-            if(!container) return;
-
-            if(rawOwners.length === 0) {
-                container.innerHTML = `<div class="col-span-3 text-center py-8 text-slate-500 font-bold text-xs">لا يوجد ملاك مسجلين حالياً. اضغط "إضافة مالك" للبدء.</div>`;
-                return;
-            }
-
-            container.innerHTML = rawOwners.map(owner => {
-                const ownerTrucks = rawTrucks.filter(t => t.owner_name === owner.name);
-                const plates = ownerTrucks.map(t => t.plate);
-
-                // حساب إيرادات المالك ومصاريفه
-                const ownerTrips = rawTrips.filter(t => plates.includes(t.plate));
-                const totalIncome = ownerTrips.reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
-                
-                const ownerMaint = rawMaint.filter(m => plates.includes(m.plate));
-                const totalMaintCost = ownerMaint.reduce((sum, m) => sum + (parseFloat(m.cost) || 0), 0);
-
-                const driversNames = ownerTrucks.map(t => t.driver_name).filter(Boolean);
-                const ownerDraws = rawDraws.filter(d => driversNames.includes(d.driver_name));
-                const totalDraws = ownerDraws.reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
-
-                const totalExpenses = totalMaintCost + totalDraws;
-                const netForOwner = totalIncome - totalExpenses;
-
-                return `
-                    <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl space-y-3 hover:border-amber-500/40 transition">
-                        <div class="flex justify-between items-start border-b border-slate-800/80 pb-2.5">
-                            <div>
-                                <h4 class="font-black text-amber-400 text-sm">${owner.name}</h4>
-                                <span class="text-[10px] text-slate-400 font-semibold">${owner.company} | ${owner.phone || 'بدون رقم'}</span>
-                            </div>
-                            <span class="bg-amber-500/10 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-md border border-amber-500/20">
-                                ${ownerTrucks.length} شاحنة
-                            </span>
-                        </div>
-
-                        <!-- قائمة الشاحنات والسواقين -->
-                        <div class="space-y-1.5 text-xs">
-                            <div class="text-slate-400 font-bold text-[11px]">الدينات والسائقين التابعين:</div>
-                            ${ownerTrucks.map(t => `
-                                <div class="bg-slate-950/70 p-2 rounded-xl flex justify-between items-center text-[11px] border border-slate-800/50">
-                                    <span class="font-bold text-cyan-300"><i class="fas fa-truck text-[9px] ml-1"></i>${t.plate}</span>
-                                    <span class="text-slate-300"><i class="fas fa-id-card text-[9px] ml-1 text-purple-400"></i>${t.driver_name || 'غير محدد'}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-
-                        <!-- كشف المصاريف والصافي -->
-                        <div class="bg-slate-950 p-3 rounded-xl space-y-1.5 text-xs font-semibold border border-slate-800">
-                            <div class="flex justify-between text-emerald-400"><span>الإيرادات:</span> <span>${totalIncome.toFixed(2)} ر.س</span></div>
-                            <div class="flex justify-between text-rose-400"><span>مصاريف الصيانة:</span> <span>${totalMaintCost.toFixed(2)} ر.س</span></div>
-                            <div class="flex justify-between text-purple-400"><span>سحبيات السواقين:</span> <span>${totalDraws.toFixed(2)} ر.س</span></div>
-                            <div class="flex justify-between pt-1 border-t border-slate-800 text-cyan-300 font-bold">
-                                <span>صافي مستحق للمالك:</span> 
-                                <span>${netForOwner.toFixed(2)} ر.س</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // عرض جدول الشاحنات
-        function renderTrucksTable() {
-            const tbody = document.getElementById('trucksTableBody');
-            if(!tbody) return;
-
-            tbody.innerHTML = rawTrucks.map(t => {
-                const trips = rawTrips.filter(tr => tr.plate === t.plate);
-                const totalIncome = trips.reduce((sum, tr) => sum + (parseFloat(tr.amount) || 0), 0);
-
-                const maint = rawMaint.filter(m => m.plate === t.plate);
-                const totalMaint = maint.reduce((sum, m) => sum + (parseFloat(m.cost) || 0), 0);
-
-                const draws = rawDraws.filter(d => d.driver_name === t.driver_name);
-                const totalDraws = draws.reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
-
-                const totalExp = totalMaint + totalDraws;
-                const net = totalIncome - totalExp;
-
-                return `
-                    <tr class="hover:bg-slate-800/40 transition">
-                        <td class="p-3.5 font-bold text-cyan-300">${t.plate}</td>
-                        <td class="p-3.5 font-bold text-amber-400">${t.owner_name}</td>
-                        <td class="p-3.5 text-purple-300">${t.driver_name || '-'}</td>
-                        <td class="p-3.5">${t.type || 'دينا'}</td>
-                        <td class="p-3.5">${t.company}</td>
-                        <td class="p-3.5 font-bold text-emerald-400">${totalIncome.toFixed(2)} ر.س</td>
-                        <td class="p-3.5 text-rose-400">${totalExp.toFixed(2)} ر.س</td>
-                        <td class="p-3.5 font-bold text-blue-400">${net.toFixed(2)} ر.س</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function renderTrips() {
-            const tbody = document.getElementById('tripsTableBody');
-            if(!tbody) return;
-            tbody.innerHTML = rawTrips.map(r => `
-                <tr class="hover:bg-slate-800/40 transition">
-                    <td class="p-3.5 font-bold text-blue-400">${r.date || '-'}</td>
-                    <td class="p-3.5">${r.company}</td>
-                    <td class="p-3.5 font-bold">${r.client}</td>
-                    <td class="p-3.5">${r.driver}</td>
-                    <td class="p-3.5 text-cyan-300 font-bold">${r.plate}</td>
-                    <td class="p-3.5">${r.route}</td>
-                    <td class="p-3.5 font-bold text-emerald-400">${parseFloat(r.amount || 0).toFixed(2)} ر.س</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderDriverDraws() {
-            const tbody = document.getElementById('driversTableBody');
-            if(!tbody) return;
-            tbody.innerHTML = rawDraws.map(d => `
-                <tr class="hover:bg-slate-800/40 transition">
-                    <td class="p-3.5 font-bold text-slate-400">${d.date || '-'}</td>
-                    <td class="p-3.5 font-bold text-purple-300">${d.driver_name}</td>
-                    <td class="p-3.5">${d.company}</td>
-                    <td class="p-3.5">${d.notes || '-'}</td>
-                    <td class="p-3.5 font-bold text-purple-400">${parseFloat(d.amount || 0).toFixed(2)} ر.س</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderMaintenance() {
-            const tbody = document.getElementById('maintenanceTableBody');
-            if(!tbody) return;
-            tbody.innerHTML = rawMaint.map(m => `
-                <tr class="hover:bg-slate-800/40 transition">
-                    <td class="p-3.5 font-bold text-slate-400">${m.date || '-'}</td>
-                    <td class="p-3.5 font-bold text-cyan-300">${m.plate}</td>
-                    <td class="p-3.5">${m.company}</td>
-                    <td class="p-3.5">${m.details || '-'}</td>
-                    <td class="p-3.5 font-bold text-rose-400">${parseFloat(m.cost || 0).toFixed(2)} ر.س</td>
-                </tr>
-            `).join('');
-        }
-
-        // تحديث العدادات والمخططات البيانية
-        function updateCalculationsAndCharts() {
-            const totalIncome = rawTrips.reduce((s, t) => s + (parseFloat(t.amount) || 0), 0);
-            const totalDraws = rawDraws.reduce((s, d) => s + (parseFloat(d.amount) || 0), 0);
-            const totalMaint = rawMaint.reduce((s, m) => s + (parseFloat(m.cost) || 0), 0);
-            const netProfit = totalIncome - (totalDraws + totalMaint);
-
-            document.getElementById('statTotalIncome').innerHTML = `${totalIncome.toFixed(2)} <span class="text-xs">ر.س</span>`;
-            document.getElementById('statDriverDraws').innerHTML = `${totalDraws.toFixed(2)} <span class="text-xs">ر.س</span>`;
-            document.getElementById('statMaintenance').innerHTML = `${totalMaint.toFixed(2)} <span class="text-xs">ر.س</span>`;
-            document.getElementById('statNetProfit').innerHTML = `${netProfit.toFixed(2)} <span class="text-xs">ر.س</span>`;
-            document.getElementById('statTrucksCount').innerHTML = `${rawTrucks.length} <span class="text-xs">شاحنة</span>`;
-
-            // رسم بياني مالي
-            const ctx1 = document.getElementById('financialChart').getContext('2d');
-            if(financialChartInstance) financialChartInstance.destroy();
-
-            financialChartInstance = new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: ['إجمالي الإيراد', 'سحبيات السواقين', 'تكاليف الصيانة', 'صافي الربح'],
-                    datasets: [{
-                        data: [totalIncome, totalDraws, totalMaint, netProfit],
-                        backgroundColor: ['#10b981', '#c084fc', '#f43f5e', '#06b6d4'],
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
-                        x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
-                    }
-                }
-            });
-
-            // رسم بياني للشركات
-            const jasurIncome = rawTrips.filter(t => t.company === 'شركة جسور المسافات').reduce((s, t) => s + (parseFloat(t.amount)||0), 0);
-            const ruknIncome = rawTrips.filter(t => t.company === 'ركن المشروعات').reduce((s, t) => s + (parseFloat(t.amount)||0), 0);
-
-            const ctx2 = document.getElementById('companyDistributionChart').getContext('2d');
-            if(companyChartInstance) companyChartInstance.destroy();
-
-            companyChartInstance = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: ['شركة جسور المسافات', 'ركن المشروعات'],
-                    datasets: [{
-                        data: [jasurIncome, ruknIncome],
-                        backgroundColor: ['#2563eb', '#06b6d4'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#e2e8f0', font: { family: 'Cairo' } } } }
-                }
-            });
-        }
-
-        // حفظ بيانات مالك جديد
-        async function saveOwner(e) {
-            e.preventDefault();
-            const data = {
-                name: document.getElementById('ownerName').value.trim(),
-                phone: document.getElementById('ownerPhone').value.trim(),
-                company: document.getElementById('ownerCompany').value,
-                notes: document.getElementById('ownerNotes').value.trim()
-            };
-            const { error } = await dbClient.from('owners').insert([data]);
-            if(error) alert('خطأ أثناء الحفظ: ' + error.message);
-            else { closeModal('ownerModal'); loadAllData(); }
-        }
-
-        // حفظ بيانات شاحنة جديدة
-        async function saveTruck(e) {
-            e.preventDefault();
-            const data = {
-                plate: document.getElementById('truckPlate').value.trim(),
-                owner_name: document.getElementById('truckOwnerSelect').value,
-                driver_name: document.getElementById('truckDriver').value.trim(),
-                type: document.getElementById('truckType').value.trim(),
-                company: document.getElementById('truckCompany').value
-            };
-            const { error } = await dbClient.from('trucks').insert([data]);
-            if(error) alert('خطأ أثناء الحفظ: ' + error.message);
-            else { closeModal('truckModal'); loadAllData(); }
-        }
-
-        // حفظ الرحلة
-        async function saveTrip(e) {
-            e.preventDefault();
-            const data = {
-                date: document.getElementById('tripDate').value,
-                company: document.getElementById('tripCompany').value,
-                client: document.getElementById('tripClient').value.trim(),
-                driver: document.getElementById('tripDriver').value.trim(),
-                plate: document.getElementById('tripPlate').value.trim(),
-                route: document.getElementById('tripRoute').value.trim(),
-                amount: parseFloat(document.getElementById('tripAmount').value) || 0
-            };
-            await dbClient.from('trips').insert([data]);
-            closeModal('tripModal');
-            loadAllData();
-        }
-
-        // حفظ سحب سائق
-        async function saveDriverDraw(e) {
-            e.preventDefault();
-            const data = {
-                date: document.getElementById('drawDate').value,
-                driver_name: document.getElementById('drawDriver').value.trim(),
-                company: document.getElementById('drawCompany').value,
-                amount: parseFloat(document.getElementById('drawAmount').value) || 0,
-                notes: document.getElementById('drawNotes').value.trim()
-            };
-            await dbClient.from('driver_draws').insert([data]);
-            closeModal('driverDrawModal');
-            loadAllData();
-        }
-
-        // حفظ الصيانة
-        async function saveMaintenance(e) {
-            e.preventDefault();
-            const data = {
-                date: document.getElementById('maintDate').value,
-                plate: document.getElementById('maintPlate').value.trim(),
-                company: document.getElementById('maintCompany').value,
-                details: document.getElementById('maintDetails').value.trim(),
-                cost: parseFloat(document.getElementById('maintCost').value) || 0
-            };
-            await dbClient.from('maintenance').insert([data]);
-            closeModal('maintModal');
-            loadAllData();
-        }
-
-        // إضافة مستخدم
+        // إضافة مستخدم جديد (خاص بالمدير)
         async function addUser(e) {
             e.preventDefault();
             if (!currentUser || currentUser.role !== 'admin') return;
@@ -922,8 +400,12 @@
             };
 
             const { error } = await dbClient.from('system_users').insert([newUser]);
-            if (error) alert("خطأ: " + error.message);
-            else { alert("تم إضافة المستخدم بنجاح."); loadUsersList(); }
+            if (error) {
+                alert("خطأ أثناء إضافة المستخدم: " + error.message);
+            } else {
+                alert("تم إضافة المستخدم بنجاح.");
+                loadUsersList();
+            }
         }
 
         async function loadUsersList() {
@@ -942,26 +424,13 @@
             }
         }
 
-        // التبديل بين التبويبات
         function switchTab(tab) {
-            ['overview', 'owners', 'trips', 'drivers', 'maintenance'].forEach(t => {
+            ['overview', 'trips', 'drivers', 'debts', 'maintenance'].forEach(t => {
                 const sec = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
                 if (sec) sec.classList.add('hidden');
-                const btn = document.getElementById('btnTab' + t.charAt(0).toUpperCase() + t.slice(1));
-                if (btn) {
-                    btn.classList.remove('bg-blue-600', 'text-white');
-                    btn.classList.add('bg-slate-800', 'text-slate-400');
-                }
             });
-
             const activeSec = document.getElementById('section' + tab.charAt(0).toUpperCase() + tab.slice(1));
             if (activeSec) activeSec.classList.remove('hidden');
-
-            const activeBtn = document.getElementById('btnTab' + tab.charAt(0).toUpperCase() + tab.slice(1));
-            if (activeBtn) {
-                activeBtn.classList.add('bg-blue-600', 'text-white');
-                activeBtn.classList.remove('bg-slate-800', 'text-slate-400');
-            }
         }
 
         function openModal(id) { 
@@ -970,12 +439,48 @@
         }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        function filterTable(tableBodyId, query) {
-            const rows = document.querySelectorAll(`#${tableBodyId} tr`);
-            query = query.toLowerCase();
-            rows.forEach(row => {
-                row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
-            });
+        async function loadAllData() {
+            let company = document.getElementById('globalCompanyFilter').value;
+            if (currentUser && currentUser.company !== 'ALL') {
+                company = currentUser.company;
+            }
+
+            let qTrips = dbClient.from('trips').select('*');
+            if (company !== 'ALL') qTrips = qTrips.eq('company', company);
+
+            const { data: trips } = await qTrips;
+            renderTrips(trips || []);
+        }
+
+        function renderTrips(data) {
+            const tbody = document.getElementById('tripsTableBody');
+            tbody.innerHTML = data.map(row => `
+                <tr class="hover:bg-slate-800/60 transition">
+                    <td class="p-3.5 font-bold text-blue-400">${row.date || '-'}</td>
+                    <td class="p-3.5">${row.company}</td>
+                    <td class="p-3.5 font-bold">${row.client}</td>
+                    <td class="p-3.5">${row.driver}</td>
+                    <td class="p-3.5">${row.plate}</td>
+                    <td class="p-3.5">${row.route}</td>
+                    <td class="p-3.5 font-bold text-emerald-400">${parseFloat(row.amount || 0).toFixed(2)} ر.س</td>
+                </tr>
+            `).join('');
+        }
+
+        async function saveTrip(e) {
+            e.preventDefault();
+            const data = {
+                date: document.getElementById('tripDate').value,
+                company: document.getElementById('tripCompany').value,
+                client: document.getElementById('tripClient').value,
+                driver: document.getElementById('tripDriver').value,
+                plate: document.getElementById('tripPlate').value,
+                route: document.getElementById('tripRoute').value,
+                amount: parseFloat(document.getElementById('tripAmount').value) || 0
+            };
+            await dbClient.from('trips').insert([data]);
+            closeModal('tripModal');
+            loadAllData();
         }
     </script>
 </body>
