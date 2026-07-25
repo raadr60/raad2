@@ -83,6 +83,42 @@
         </header>
 
         <main class="max-w-7xl w-full mx-auto p-4 space-y-6 flex-1">
+            
+            <!-- لوحة الملخصات الذكية (Dashboard Overview Cards) -->
+            <div id="analytics-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
+                <div class="bg-slate-800/80 border border-slate-700/60 p-4 rounded-2xl shadow-lg flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-400 font-bold">إجمالي الإيرادات (رحلات + فواتير)</p>
+                        <h3 id="stat-total-revenue" class="text-lg font-black text-emerald-400 mt-1">0 SAR</h3>
+                    </div>
+                    <div class="w-10 h-10 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-chart-line"></i></div>
+                </div>
+
+                <div class="bg-slate-800/80 border border-slate-700/60 p-4 rounded-2xl shadow-lg flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-400 font-bold">إجمالي المصروفات والصيانة</p>
+                        <h3 id="stat-total-expenses" class="text-lg font-black text-rose-400 mt-1">0 SAR</h3>
+                    </div>
+                    <div class="w-10 h-10 bg-rose-500/10 text-rose-400 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-wallet"></i></div>
+                </div>
+
+                <div class="bg-slate-800/80 border border-slate-700/60 p-4 rounded-2xl shadow-lg flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-400 font-bold">إجمالي سحبيات السائقين/العمال</p>
+                        <h3 id="stat-total-draws" class="text-lg font-black text-amber-400 mt-1">0 SAR</h3>
+                    </div>
+                    <div class="w-10 h-10 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
+                </div>
+
+                <div class="bg-slate-800/80 border border-slate-700/60 p-4 rounded-2xl shadow-lg flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-400 font-bold">صافي رصيد العمليات التقديري</p>
+                        <h3 id="stat-net-balance" class="text-lg font-black text-blue-400 mt-1">0 SAR</h3>
+                    </div>
+                    <div class="w-10 h-10 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-scale-balanced"></i></div>
+                </div>
+            </div>
+
             <!-- شريط البحث والتصفية -->
             <div class="bg-slate-800/60 border border-slate-700/50 p-4 rounded-2xl space-y-3 no-print">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -211,7 +247,26 @@
             store.expenses = (e.data || []).filter(x => !x.is_deleted);
             store.invoices = (i.data || []).filter(x => !x.is_deleted);
 
+            updateAnalyticsDashboard();
             renderCurrentTab();
+        }
+
+        function updateAnalyticsDashboard() {
+            let totalTrips = store.trips.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            let totalInvoices = store.invoices.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            let totalRevenue = totalTrips + totalInvoices;
+
+            let totalMaintenance = store.maintenance.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            let totalExpenses = store.expenses.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            let totalOutExpenses = totalMaintenance + totalExpenses;
+
+            let totalDraws = store.draws.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            let netBalance = totalRevenue - (totalOutExpenses + totalDraws);
+
+            document.getElementById('stat-total-revenue').innerText = totalRevenue.toLocaleString() + ' SAR';
+            document.getElementById('stat-total-expenses').innerText = totalOutExpenses.toLocaleString() + ' SAR';
+            document.getElementById('stat-total-draws').innerText = totalDraws.toLocaleString() + ' SAR';
+            document.getElementById('stat-net-balance').innerText = netBalance.toLocaleString() + ' SAR';
         }
 
         function switchTab(tab) {
@@ -359,14 +414,10 @@
 
             const { error } = await db.from(dbTable).insert([payload]);
             if (error) {
-                // محاولة ثانية بدون عمود التاريخ إذا لم يكن موجوداً في هذا الجدول تحديداً
                 if (error.message.includes('date')) {
                     delete payload.date;
                     const { error: err2 } = await db.from(dbTable).insert([payload]);
-                    if (err2) {
-                        alert('خطأ أثناء الحفظ: ' + err2.message);
-                        return;
-                    }
+                    if (err2) { alert('خطأ أثناء الحفظ: ' + err2.message); return; }
                 } else {
                     alert('خطأ أثناء الحفظ: ' + error.message);
                     return;
@@ -381,7 +432,6 @@
             if (confirm('هل أنت متأكد من الحذف؟ يمكنك استرجاعه لاحقاً من سلة المهملات.')) {
                 let { error } = await db.from(table).update({ is_deleted: true }).eq('id', id);
                 if (error) {
-                    // إذا لم يوجد عمود is_deleted يتم حذفه نهائياً أو التعامل معه
                     await db.from(table).delete().eq('id', id);
                 }
                 await loadAllData();
