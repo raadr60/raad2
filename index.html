@@ -27,7 +27,6 @@
                 </div>
                 <h2 class="text-2xl font-black text-white">تسجيل الدخول الآمن</h2>
                 <p class="text-xs text-slate-400">منظومة الحسابات والعمليات اللوجستية</p>
-                <p class="text-[11px] font-bold text-blue-400 pt-1">المطور رعد الشغدري</p>
             </div>
             
             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
@@ -38,7 +37,7 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور</label>
                     <div class="relative">
-                        <input type="password" id="login-password" value="" placeholder="أدخل كلمة المرور" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 pl-10 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="password" id="login-password" value="737125" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 pl-10 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
                         <button type="button" onclick="togglePasswordVisibility('login-password', 'login-eye-icon')" class="absolute left-3 top-3.5 text-slate-400 hover:text-white">
                             <i id="login-eye-icon" class="fa-solid fa-eye"></i>
                         </button>
@@ -490,8 +489,167 @@
         function buildDynamicFormFields(targetTable) {
             const container = document.getElementById('dynamic-fields-container');
             const today = new Date().toISOString().split('T')[0];
-            // باقي دوال بناء الحقول الإضافية مستمرة حسب نظامك البرمجي السابق...
+
+            if (targetTable === 'trips') {
+                container.innerHTML = `
+                    <div><label class="block text-xs text-slate-400 mb-1">التاريخ</label><input type="date" id="f-date" value="${today}" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">اسم السائق</label><input type="text" id="f-driver" placeholder="اسم السائق" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">الشركة التابع لها</label><input type="text" id="f-company" placeholder="الشركة التابع لها" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">الشركة المنقول لها</label><input type="text" id="f-client" placeholder="الشركة المنقول لها" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">سعر الرحلة</label><input type="number" step="0.01" id="f-amount" placeholder="سعر الرحلة" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div><label class="block text-xs text-slate-400 mb-1">من</label><input type="text" id="f-from" placeholder="من وين" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                        <div><label class="block text-xs text-slate-400 mb-1">إلى</label><input type="text" id="f-to" placeholder="إلى" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    </div>
+                    <div><label class="block text-xs text-slate-400 mb-1">ملاحظات</label><textarea id="f-notes" placeholder="ملاحظات" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></textarea></div>
+                `;
+            } else if (targetTable === 'draws') {
+                container.innerHTML = `
+                    <div><label class="block text-xs text-slate-400 mb-1">التاريخ</label><input type="date" id="f-date" value="${today}" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">الشركة</label><input type="text" id="f-company" placeholder="الشركة" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">الاسم</label><input type="text" id="f-person" placeholder="الاسم" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">النوع</label><input type="text" id="f-person-type" placeholder="سائق / عامل" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">نوع السحبية</label><input type="text" id="f-draw-type" placeholder="من الراتب / مصاريف" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">المبلغ</label><input type="number" step="0.01" id="f-amount" placeholder="المبلغ" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">ملاحظات</label><textarea id="f-notes" placeholder="ملاحظات" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></textarea></div>
+                `;
+            } else {
+                let labelName = 'البيان / الاسم / العنوان';
+                if(targetTable === 'maintenance') labelName = 'نوع الصيانة / الورشة';
+                if(targetTable === 'rentals') labelName = 'اسم الشركة المستأجرة';
+                if(targetTable === 'debts') labelName = 'اسم الشخص / الجهة';
+                if(targetTable === 'expenses') labelName = 'نوع المصروف';
+                if(targetTable === 'invoices') labelName = 'رقم الفاتورة';
+
+                container.innerHTML = `
+                    <div><label class="block text-xs text-slate-400 mb-1">التاريخ</label><input type="date" id="f-date" value="${today}" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">${labelName}</label><input type="text" id="f-title" placeholder="${labelName}" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">المبلغ</label><input type="number" step="0.01" id="f-amount" placeholder="المبلغ" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">ملاحظات</label><textarea id="f-notes" placeholder="ملاحظات" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></textarea></div>
+                `;
+            }
         }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const targetTable = document.getElementById('form-target-table').value;
+            let dbTable = `app_${targetTable}`;
+            let payload = {};
+
+            const dateVal = document.getElementById('f-date').value;
+            const amountVal = parseFloat(document.getElementById('f-amount').value || 0);
+            const notesVal = document.getElementById('f-notes').value;
+
+            if (targetTable === 'trips') {
+                payload = {
+                    date: dateVal,
+                    driver_name: document.getElementById('f-driver').value,
+                    company_name: document.getElementById('f-company').value,
+                    client_name: document.getElementById('f-client').value,
+                    amount: amountVal,
+                    route_from: document.getElementById('f-from').value,
+                    route_to: document.getElementById('f-to').value,
+                    notes: notesVal
+                };
+            } else if (targetTable === 'draws') {
+                payload = {
+                    date: dateVal,
+                    company_name: document.getElementById('f-company').value,
+                    person_name: document.getElementById('f-person').value,
+                    person_type: document.getElementById('f-person-type').value,
+                    draw_type: document.getElementById('f-draw-type').value,
+                    amount: amountVal,
+                    notes: notesVal
+                };
+            } else {
+                let titleVal = document.getElementById('f-title').value;
+                payload = {
+                    amount: amountVal,
+                    notes: notesVal
+                };
+                if(dateVal) payload.date = dateVal;
+
+                if(targetTable === 'maintenance') payload.service_type = titleVal;
+                if(targetTable === 'rentals') payload.owner_name = titleVal;
+                if(targetTable === 'debts') payload.person_name = titleVal;
+                if(targetTable === 'expenses') payload.expense_type = titleVal;
+                if(targetTable === 'invoices') payload.invoice_number = titleVal;
+            }
+
+            const { error } = await db.from(dbTable).insert([payload]);
+            if (error) {
+                if (error.message.includes('date')) {
+                    delete payload.date;
+                    const { error: err2 } = await db.from(dbTable).insert([payload]);
+                    if (err2) { alert('خطأ أثناء الحفظ: ' + err2.message); return; }
+                } else {
+                    alert('خطأ أثناء الحفظ: ' + error.message);
+                    return;
+                }
+            }
+
+            closeModal('modal-add-entry');
+            await loadAllData();
+        }
+
+        async function softDelete(table, id) {
+            if (confirm('هل أنت متأكد من الحذف؟ يمكنك استرجاعه لاحقاً من سلة المهملات.')) {
+                let { error } = await db.from(table).update({ is_deleted: true }).eq('id', id);
+                if (error) {
+                    await db.from(table).delete().eq('id', id);
+                }
+                await loadAllData();
+            }
+        }
+
+        async function openTrashModal() {
+            const list = document.getElementById('trash-list');
+            list.innerHTML = 'جاري التحميل...';
+            openModal('modal-trash');
+
+            const tables = ['app_trips', 'app_draws', 'app_maintenance', 'app_rentals', 'app_debts', 'app_expenses', 'app_invoices'];
+            let allTrash = [];
+
+            for (let t of tables) {
+                let res = await db.from(t).select('*').eq('is_deleted', true);
+                if (res.data) {
+                    allTrash.push(...res.data.map(x => ({ ...x, tableName: t })));
+                }
+            }
+
+            list.innerHTML = '';
+            if(!allTrash.length) { list.innerHTML = '<p class="text-slate-500 text-center py-4">لا توجد محذوفات</p>'; return; }
+
+            allTrash.forEach(item => {
+                let name = item.driver_name || item.person_name || item.service_type || item.owner_name || item.expense_type || item.invoice_number || 'سجل';
+                list.innerHTML += `<div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700"><div><span class="text-white font-bold">${name}</span><span class="text-slate-400 mr-2">(${item.amount || 0} SAR)</span></div><button onclick="restoreRecord('${item.tableName}', '${item.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-rotate-left"></i> استرجاع</button></div>`;
+            });
+        }
+
+        async function restoreRecord(table, id) {
+            await db.from(table).update({ is_deleted: false }).eq('id', id);
+            closeModal('modal-trash');
+            await loadAllData();
+        }
+
+        function shareWhatsApp() {
+            const text = `تقرير منظومة الحسابات والعمليات اللوجستية النشطة.`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function exportToExcel() {
+            const wb = XLSX.utils.table_to_book(document.getElementById('data-table'), { sheet: activeTab });
+            XLSX.writeFile(wb, `تقرير_${activeTab}.xlsx`);
+        }
+
+        function resetFilters() {
+            document.getElementById('search-query').value = '';
+            document.getElementById('filter-month').value = '';
+            renderCurrentTab();
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
     </script>
 </body>
 </html>
