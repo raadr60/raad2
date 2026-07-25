@@ -3,253 +3,427 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة إدارة النقليات</title>
+    <title>نظام إدارة اللوجستيات والحسابات المتقدم</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Cairo', sans-serif; }
-        .glass-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .tab-btn.active { background-color: #2563eb !important; color: #ffffff !important; }
-    </style>
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
+<body class="bg-slate-100 font-sans p-3 md:p-6 text-slate-800">
 
-    <!-- الشريط العلوي -->
-    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center flex-wrap gap-4">
-        <div class="flex items-center gap-3">
-            <div class="bg-blue-600 text-white p-3 rounded-2xl"><i class="fas fa-truck text-xl"></i></div>
-            <div>
-                <h1 class="text-lg font-black">مركز التحكم والمتابعة المباشر</h1>
-                <p class="text-xs text-blue-400 font-bold">المستخدم: raad • <span class="text-emerald-400">مباشر</span></p>
-            </div>
-        </div>
-        <div class="flex items-center gap-3">
-            <select id="companyFilter" onchange="renderAll()" class="bg-slate-950 border border-slate-800 text-xs font-bold px-4 py-2.5 rounded-xl text-white">
-                <option value="ALL">جميع الشركات (جسور & ركن)</option>
-                <option value="شركة جسور المسافات">شركة جسور المسافات</option>
-                <option value="ركن المشروعات">ركن المشروعات</option>
-            </select>
-        </div>
-    </header>
-
-    <!-- أزرار التنقل الرئيسية -->
-    <nav class="bg-slate-900/50 border-b border-slate-800 px-6 py-3 flex gap-2 overflow-x-auto text-xs font-bold">
-        <button onclick="showTab('dashboardTab', this)" class="tab-btn active px-4 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition"><i class="fas fa-chart-pie ml-1"></i> الرئيسية (الاستراحة)</button>
-        <button onclick="showTab('tripsTab', this)" class="tab-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition"><i class="fas fa-route ml-1"></i> الرحلات (النولون)</button>
-        <button onclick="showTab('drawsTab', this)" class="tab-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition"><i class="fas fa-hand-holding-usd ml-1"></i> سحبيات السائقين</button>
-        <button onclick="showTab('expensesTab', this)" class="tab-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition"><i class="fas fa-wrench ml-1"></i> المصاريف والصيانة</button>
-    </nav>
-
-    <!-- المحتوى الرئيسي -->
-    <main class="p-6 max-w-7xl mx-auto w-full space-y-6 flex-1">
+    <div class="max-w-7xl mx-auto space-y-6">
         
-        <!-- 1. الرئيسية -->
-        <div id="dashboardTab" class="tab-content space-y-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="glass-card p-5 rounded-2xl">
-                    <span class="text-xs font-bold text-slate-400">إجمالي الإيرادات</span>
-                    <h3 id="statInc" class="text-2xl font-black text-emerald-400 mt-2">0.00 ر.س</h3>
-                </div>
-                <div class="glass-card p-5 rounded-2xl">
-                    <span class="text-xs font-bold text-slate-400">سحبيات السائقين</span>
-                    <h3 id="statDrw" class="text-2xl font-black text-purple-400 mt-2">0.00 ر.س</h3>
-                </div>
-                <div class="glass-card p-5 rounded-2xl">
-                    <span class="text-xs font-bold text-slate-400">المصاريف والصيانة</span>
-                    <h3 id="statExp" class="text-2xl font-black text-rose-400 mt-2">0.00 ر.س</h3>
-                </div>
-                <div class="glass-card p-5 rounded-2xl">
-                    <span class="text-xs font-bold text-slate-400">صافي الأرباح</span>
-                    <h3 id="statNet" class="text-2xl font-black text-cyan-400 mt-2">0.00 ر.س</h3>
-                </div>
+        <!-- الهيدر الرئيسي -->
+        <header class="bg-slate-900 text-white p-5 rounded-2xl shadow-md flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold">نظام الإدارة المالية والتشغيلية الموحد</h1>
+                <p class="text-xs text-slate-400 mt-1">مُهيأ للتعامل مع ملايين الرحلات والعمليات بدقة متناهية</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span id="connection-status" class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-3 py-1.5 rounded-full font-medium">جاري الاتصال بـ Supabase...</span>
+            </div>
+        </header>
+
+        <!-- كروت الإحصائيات المالية المباشرة -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <p class="text-xs font-semibold text-slate-500">إجمالي الإيرادات (النولون)</p>
+                <h3 id="stat-income" class="text-xl md:text-2xl font-bold text-emerald-600 mt-1">0.00</h3>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <p class="text-xs font-semibold text-slate-500">إجمالي سحبيات السائقين</p>
+                <h3 id="stat-draws" class="text-xl md:text-2xl font-bold text-amber-600 mt-1">0.00</h3>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <p class="text-xs font-semibold text-slate-500">مصاريف الصيانة والتشغيل</p>
+                <h3 id="stat-expenses" class="text-xl md:text-2xl font-bold text-rose-600 mt-1">0.00</h3>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <p class="text-xs font-semibold text-slate-500">صافي الأرباح</p>
+                <h3 id="stat-profit" class="text-xl md:text-2xl font-bold text-blue-600 mt-1">0.00</h3>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 col-span-2 md:col-span-1">
+                <p class="text-xs font-semibold text-slate-500">عدد الرحلات المنجزة</p>
+                <h3 id="stat-trips" class="text-xl md:text-2xl font-bold text-indigo-600 mt-1">0</h3>
             </div>
         </div>
 
-        <!-- 2. الرحلات -->
-        <div id="tripsTab" class="tab-content hidden space-y-4">
-            <div class="glass-card p-4 rounded-2xl space-y-3">
-                <h3 class="text-sm font-bold text-blue-400">+ تسجيل رحلة جديدة</h3>
-                <form onsubmit="addTrip(event)" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
-                    <input type="date" id="tDate" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
-                    <select id="tComp" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white">
-                        <option value="شركة جسور المسافات">شركة جسور المسافات</option>
-                        <option value="ركن المشروعات">ركن المشروعات</option>
-                    </select>
-                    <input type="text" id="tClient" placeholder="العميل" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
-                    <input type="text" id="tDriver" placeholder="السائق" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
-                    <input type="number" id="tAmount" placeholder="المبلغ" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
-                    <button type="submit" class="bg-blue-600 font-bold p-2.5 rounded-xl text-white">حفظ الرحلة</button>
-                </form>
+        <!-- شريط الفلاتر السريعة والبحث الذكي -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+            <div class="flex justify-between items-center">
+                <h2 class="text-base font-bold text-slate-800">الفلاتر والتحليل الشهري</h2>
+                <button onclick="resetFilters()" class="text-xs text-blue-600 hover:underline">إعادة تعيين الفلاتر</button>
             </div>
-            <div class="glass-card rounded-2xl overflow-x-auto border border-slate-800">
-                <table class="w-full text-right text-xs">
-                    <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
-                        <tr><th class="p-3">التاريخ</th><th class="p-3">الشركة</th><th class="p-3">العميل</th><th class="p-3">السائق</th><th class="p-3">المبلغ</th><th class="p-3">إجراء</th></tr>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                
+                <!-- فلتر الشركات -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">تصفية حسب الشركة</label>
+                    <select id="filter-company" class="w-full border rounded-lg p-2 text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">جميع الشركات</option>
+                    </select>
+                </div>
+
+                <!-- فلتر السائقين -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">تصفية حسب السائق</label>
+                    <select id="filter-driver" class="w-full border rounded-lg p-2 text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">جميع السائقين</option>
+                    </select>
+                </div>
+
+                <!-- فلتر الشهر والسنة -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">تحديد الشهر / السنة</label>
+                    <input type="month" id="filter-month" class="w-full border rounded-lg p-2 text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <!-- البحث الشامل -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">البحث المباشر</label>
+                    <input type="text" id="filter-search" placeholder="رقم الرحلة، البوليسة..." class="w-full border rounded-lg p-2 text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+            </div>
+        </div>
+
+        <!-- التبويبات للتنقل بين أجزاء النظام -->
+        <div class="flex border-b border-slate-300 gap-2 overflow-x-auto text-sm font-medium">
+            <button onclick="switchTab('trips')" id="tab-trips" class="tab-btn px-4 py-2 border-b-2 border-blue-600 text-blue-600 font-bold whitespace-nowrap">الرحلات والنولون</button>
+            <button onclick="switchTab('draws')" id="tab-draws" class="tab-btn px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">سحبيات السائقين</button>
+            <button onclick="switchTab('maintenance')" id="tab-maintenance" class="tab-btn px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">الصيانة والمصاريف</button>
+            <button onclick="switchTab('debts')" id="tab-debts" class="tab-btn px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">الديون والالتزامات</button>
+        </div>
+
+        <!-- محتوى عرض البيانات -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                    <thead id="table-head" class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase">
+                        <!-- يتم تغييره عبر JS -->
                     </thead>
-                    <tbody id="tripsTable" class="divide-y divide-slate-800"></tbody>
+                    <tbody id="table-body" class="divide-y divide-slate-100 text-sm text-slate-700">
+                        <!-- جلب البيانات -->
+                    </tbody>
                 </table>
             </div>
-        </div>
 
-        <!-- 3. السحبيات -->
-        <div id="drawsTab" class="tab-content hidden space-y-4">
-            <div class="glass-card p-4 rounded-2xl space-y-3">
-                <h3 class="text-sm font-bold text-purple-400">+ تسجيل سحب/سلفة سائق</h3>
-                <form onsubmit="addDraw(event)" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2 text-xs">
-                    <input type="date" id="dDate" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
-                    <select id="dComp" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white">
-                        <option value="شركة جسور المسافات">شركة جسور المسافات</option>
-                        <option value="ركن المشروعات">ركن المشروعات</option>
-                    </select>
-                    <input type="text" id="dDriver" placeholder="اسم السائق" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
-                    <input type="number" id="dAmount" placeholder="المبلغ" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
-                    <button type="submit" class="bg-purple-600 font-bold p-2.5 rounded-xl text-white">حفظ السحب</button>
-                </form>
-            </div>
-            <div class="glass-card rounded-2xl overflow-x-auto border border-slate-800">
-                <table class="w-full text-right text-xs">
-                    <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
-                        <tr><th class="p-3">التاريخ</th><th class="p-3">الشركة</th><th class="p-3">السائق</th><th class="p-3">المبلغ</th><th class="p-3">إجراء</th></tr>
-                    </thead>
-                    <tbody id="drawsTable" class="divide-y divide-slate-800"></tbody>
-                </table>
+            <!-- التنقل بين الصفحات -->
+            <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center text-xs md:text-sm">
+                <button id="btn-prev" onclick="changePage(-1)" class="px-4 py-2 border rounded-lg bg-white shadow-sm disabled:opacity-50 font-medium">السابق</button>
+                <span id="page-indicator" class="text-slate-600 font-medium">الصفحة 1</span>
+                <button id="btn-next" onclick="changePage(1)" class="px-4 py-2 border rounded-lg bg-white shadow-sm disabled:opacity-50 font-medium">التالي</button>
             </div>
         </div>
 
-        <!-- 4. المصاريف -->
-        <div id="expensesTab" class="tab-content hidden space-y-4">
-            <div class="glass-card p-4 rounded-2xl space-y-3">
-                <h3 class="text-sm font-bold text-rose-400">+ تسجيل مصروف/صيانة</h3>
-                <form onsubmit="addExpense(event)" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2 text-xs">
-                    <input type="date" id="eDate" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
-                    <select id="eComp" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white">
-                        <option value="شركة جسور المسافات">شركة جسور المسافات</option>
-                        <option value="ركن المشروعات">ركن المشروعات</option>
-                    </select>
-                    <input type="text" id="eTitle" placeholder="بند المصروف" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
-                    <input type="number" id="eAmount" placeholder="المبلغ" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
-                    <button type="submit" class="bg-rose-600 font-bold p-2.5 rounded-xl text-white">حفظ المصروف</button>
-                </form>
-            </div>
-            <div class="glass-card rounded-2xl overflow-x-auto border border-slate-800">
-                <table class="w-full text-right text-xs">
-                    <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
-                        <tr><th class="p-3">التاريخ</th><th class="p-3">الشركة</th><th class="p-3">البيان</th><th class="p-3">المبلغ</th><th class="p-3">إجراء</th></tr>
-                    </thead>
-                    <tbody id="expensesTable" class="divide-y divide-slate-800"></tbody>
-                </table>
-            </div>
-        </div>
-
-    </main>
+    </div>
 
     <script>
-        // مصفوفات البيانات المحلية الفورية
-        let trips = JSON.parse(localStorage.getItem('my_trips') || '[]');
-        let draws = JSON.parse(localStorage.getItem('my_draws') || '[]');
-        let expenses = JSON.parse(localStorage.getItem('my_expenses') || '[]');
+        // ==========================================
+        // الربط المباشر بقاعدة بيانات Supabase
+        // ==========================================
+        const SUPABASE_URL = 'https://fdvewnybywmxmbjmnlgt.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_Xr6Qm3QS7h8K-5P9dLjDUQ_uHF4CTgD';
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // تعيين تاريخ اليوم في المدخلات
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('tDate').value = today;
-        document.getElementById('dDate').value = today;
-        document.getElementById('eDate').value = today;
+        let currentTab = 'trips';
+        let currentPage = 1;
+        const pageSize = 50;
 
-        function showTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.remove('hidden');
-            btn.classList.add('active');
-        }
+        document.addEventListener('DOMContentLoaded', async () => {
+            checkConnection();
+            await loadDropdowns();
+            await refreshView();
 
-        function addTrip(e) {
-            e.preventDefault();
-            trips.unshift({
-                date: document.getElementById('tDate').value,
-                comp: document.getElementById('tComp').value,
-                client: document.getElementById('tClient').value,
-                driver: document.getElementById('tDriver').value,
-                amount: parseFloat(document.getElementById('tAmount').value || 0)
-            });
-            localStorage.setItem('my_trips', JSON.stringify(trips));
-            e.target.reset();
-            document.getElementById('tDate').value = today;
-            renderAll();
-        }
+            document.getElementById('filter-company').addEventListener('change', () => { currentPage = 1; refreshView(); });
+            document.getElementById('filter-driver').addEventListener('change', () => { currentPage = 1; refreshView(); });
+            document.getElementById('filter-month').addEventListener('change', () => { currentPage = 1; refreshView(); });
+            document.getElementById('filter-search').addEventListener('input', debounce(() => { currentPage = 1; refreshView(); }, 300));
+        });
 
-        function addDraw(e) {
-            e.preventDefault();
-            draws.unshift({
-                date: document.getElementById('dDate').value,
-                comp: document.getElementById('dComp').value,
-                driver: document.getElementById('dDriver').value,
-                amount: parseFloat(document.getElementById('dAmount').value || 0)
-            });
-            localStorage.setItem('my_draws', JSON.stringify(draws));
-            e.target.reset();
-            document.getElementById('dDate').value = today;
-            renderAll();
-        }
-
-        function addExpense(e) {
-            e.preventDefault();
-            expenses.unshift({
-                date: document.getElementById('eDate').value,
-                comp: document.getElementById('eComp').value,
-                title: document.getElementById('eTitle').value,
-                amount: parseFloat(document.getElementById('eAmount').value || 0)
-            });
-            localStorage.setItem('my_expenses', JSON.stringify(expenses));
-            e.target.reset();
-            document.getElementById('eDate').value = today;
-            renderAll();
-        }
-
-        function deleteItem(type, index) {
-            if (confirm('تأكيد الحذف؟')) {
-                if (type === 'trips') trips.splice(index, 1);
-                if (type === 'draws') draws.splice(index, 1);
-                if (type === 'expenses') expenses.splice(index, 1);
-                
-                localStorage.setItem('my_trips', JSON.stringify(trips));
-                localStorage.setItem('my_draws', JSON.stringify(draws));
-                localStorage.setItem('my_expenses', JSON.stringify(expenses));
-                renderAll();
+        async function checkConnection() {
+            const statusEl = document.getElementById('connection-status');
+            try {
+                const { error } = await db.from('companies').select('id').limit(1);
+                if (!error) {
+                    statusEl.textContent = 'متصل بـ Supabase بنجاح';
+                    statusEl.className = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs px-3 py-1.5 rounded-full font-medium';
+                } else {
+                    throw error;
+                }
+            } catch (err) {
+                statusEl.textContent = 'خطأ في الاتصال';
+                statusEl.className = 'bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs px-3 py-1.5 rounded-full font-medium';
             }
         }
 
-        function renderAll() {
-            const comp = document.getElementById('companyFilter').value;
+        async function loadDropdowns() {
+            const { data: companies } = await db.from('companies').select('id, name');
+            const { data: drivers } = await db.from('drivers').select('id, name');
 
-            const filteredTrips = comp === 'ALL' ? trips : trips.filter(x => x.comp === comp);
-            const filteredDraws = comp === 'ALL' ? draws : draws.filter(x => x.comp === comp);
-            const filteredExpenses = comp === 'ALL' ? expenses : expenses.filter(x => x.comp === comp);
+            const compSelect = document.getElementById('filter-company');
+            companies?.forEach(c => compSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`);
 
-            const totalInc = filteredTrips.reduce((s, x) => s + x.amount, 0);
-            const totalDrw = filteredDraws.reduce((s, x) => s + x.amount, 0);
-            const totalExp = filteredExpenses.reduce((s, x) => s + x.amount, 0);
-
-            document.getElementById('statInc').innerText = `${totalInc.toFixed(2)} ر.س`;
-            document.getElementById('statDrw').innerText = `${totalDrw.toFixed(2)} ر.س`;
-            document.getElementById('statExp').innerText = `${totalExp.toFixed(2)} ر.س`;
-            document.getElementById('statNet').innerText = `${(totalInc - (totalDrw + totalExp)).toFixed(2)} ر.س`;
-
-            // جداول
-            document.getElementById('tripsTable').innerHTML = filteredTrips.map((t, i) => `
-                <tr><td class="p-3">${t.date}</td><td class="p-3">${t.comp}</td><td class="p-3 text-amber-400 font-bold">${t.client}</td><td class="p-3">${t.driver}</td><td class="p-3 font-bold text-emerald-400">${t.amount.toFixed(2)} ر.س</td><td class="p-3"><button onclick="deleteItem('trips', ${i})" class="text-red-400 font-bold">حذف</button></td></tr>
-            `).join('');
-
-            document.getElementById('drawsTable').innerHTML = filteredDraws.map((d, i) => `
-                <tr><td class="p-3">${d.date}</td><td class="p-3">${d.comp}</td><td class="p-3 text-purple-400 font-bold">${d.driver}</td><td class="p-3 font-bold text-purple-400">${d.amount.toFixed(2)} ر.س</td><td class="p-3"><button onclick="deleteItem('draws', ${i})" class="text-red-400 font-bold">حذف</button></td></tr>
-            `).join('');
-
-            document.getElementById('expensesTable').innerHTML = filteredExpenses.map((e, i) => `
-                <tr><td class="p-3">${e.date}</td><td class="p-3">${e.comp}</td><td class="p-3 text-rose-400 font-bold">${e.title}</td><td class="p-3 font-bold text-rose-400">${e.amount.toFixed(2)} ر.س</td><td class="p-3"><button onclick="deleteItem('expenses', ${i})" class="text-red-400 font-bold">حذف</button></td></tr>
-            `).join('');
+            const driverSelect = document.getElementById('filter-driver');
+            drivers?.forEach(d => driverSelect.innerHTML += `<option value="${d.id}">${d.name}</option>`);
         }
 
-        renderAll();
+        async function refreshView() {
+            await fetchFinancialSummary();
+            await fetchTableData();
+        }
+
+        async function fetchFinancialSummary() {
+            const companyId = document.getElementById('filter-company').value || null;
+            const driverId = document.getElementById('filter-driver').value || null;
+            const monthVal = document.getElementById('filter-month').value;
+
+            let startDate = null, endDate = null;
+            if (monthVal) {
+                const [year, month] = monthVal.split('-');
+                startDate = `${year}-${month}-01`;
+                endDate = new Date(year, month, 0).toISOString().split('T')[0];
+            }
+
+            const { data } = await db.rpc('get_full_financial_summary', {
+                p_company_id: companyId,
+                p_driver_id: driverId,
+                p_start_date: startDate,
+                p_end_date: endDate
+            });
+
+            if (data && data.length > 0) {
+                const s = data[0];
+                document.getElementById('stat-income').textContent = Number(s.total_income).toLocaleString('ar-SA', {minimumFractionDigits:2});
+                document.getElementById('stat-draws').textContent = Number(s.total_draws).toLocaleString('ar-SA', {minimumFractionDigits:2});
+                document.getElementById('stat-expenses').textContent = Number(s.total_expenses).toLocaleString('ar-SA', {minimumFractionDigits:2});
+                document.getElementById('stat-profit').textContent = Number(s.net_profit).toLocaleString('ar-SA', {minimumFractionDigits:2});
+                document.getElementById('stat-trips').textContent = s.total_trips;
+            }
+        }
+
+        async function fetchTableData() {
+            const companyId = document.getElementById('filter-company').value || null;
+            const driverId = document.getElementById('filter-driver').value || null;
+            const monthVal = document.getElementById('filter-month').value;
+            const searchVal = document.getElementById('filter-search').value.trim();
+
+            let startDate = null, endDate = null;
+            if (monthVal) {
+                const [year, month] = monthVal.split('-');
+                startDate = `${year}-${month}-01`;
+                endDate = new Date(year, month, 0).toISOString().split('T')[0];
+            }
+
+            const thead = document.getElementById('table-head');
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-slate-400">جاري جلب البيانات...</td></tr>';
+
+            const from = (currentPage - 1) * pageSize;
+            const to = from + pageSize - 1;
+
+            if (currentTab === 'trips') {
+                thead.innerHTML = `
+                    <tr>
+                        <th class="p-3">رقم الرحلة</th>
+                        <th class="p-3">التاريخ</th>
+                        <th class="p-3">الشركة</th>
+                        <th class="p-3">السائق</th>
+                        <th class="p-3">النولون (المدخول)</th>
+                        <th class="p-3">رقم البوليسة</th>
+                        <th class="p-3">المسار</th>
+                    </tr>
+                `;
+
+                let q = db.from('trips').select('*, companies(name), drivers(name)', { count: 'exact' });
+                if (companyId) q = q.eq('company_id', companyId);
+                if (driverId) q = q.eq('driver_id', driverId);
+                if (startDate && endDate) q = q.gte('trip_date', startDate).lte('trip_date', endDate);
+                if (searchVal) q = q.or(`trip_number.ilike.%${searchVal}%,waybill_number.ilike.%${searchVal}%`);
+
+                const { data, count } = await q.order('trip_date', { ascending: false }).range(from, to);
+                renderTrips(data);
+                updatePagination(count);
+
+            } else if (currentTab === 'draws') {
+                thead.innerHTML = `
+                    <tr>
+                        <th class="p-3">التاريخ</th>
+                        <th class="p-3">السائق</th>
+                        <th class="p-3">الشركة</th>
+                        <th class="p-3">المبلغ (المخروج)</th>
+                        <th class="p-3">السبب / البيان</th>
+                    </tr>
+                `;
+
+                let q = db.from('driver_draws').select('*, companies(name), drivers(name)', { count: 'exact' });
+                if (companyId) q = q.eq('company_id', companyId);
+                if (driverId) q = q.eq('driver_id', driverId);
+                if (startDate && endDate) q = q.gte('draw_date', startDate).lte('draw_date', endDate);
+                if (searchVal) q = q.ilike('reason', `%${searchVal}%`);
+
+                const { data, count } = await q.order('draw_date', { ascending: false }).range(from, to);
+                renderDraws(data);
+                updatePagination(count);
+
+            } else if (currentTab === 'maintenance') {
+                thead.innerHTML = `
+                    <tr>
+                        <th class="p-3">التاريخ</th>
+                        <th class="p-3">الشركة</th>
+                        <th class="p-3">الشاحنة / الدينا</th>
+                        <th class="p-3">نوع المصروف</th>
+                        <th class="p-3">المبلغ</th>
+                        <th class="p-3">التفاصيل</th>
+                    </tr>
+                `;
+
+                let q = db.from('maintenance_and_expenses').select('*, companies(name), trucks(plate_number)', { count: 'exact' });
+                if (companyId) q = q.eq('company_id', companyId);
+                if (startDate && endDate) q = q.gte('expense_date', startDate).lte('expense_date', endDate);
+                if (searchVal) q = q.ilike('description', `%${searchVal}%`);
+
+                const { data, count } = await q.order('expense_date', { ascending: false }).range(from, to);
+                renderMaintenance(data);
+                updatePagination(count);
+
+            } else if (currentTab === 'debts') {
+                thead.innerHTML = `
+                    <tr>
+                        <th class="p-3">التاريخ</th>
+                        <th class="p-3">الشركة</th>
+                        <th class="p-3">الجهة / الشخص</th>
+                        <th class="p-3">النوع</th>
+                        <th class="p-3">المبلغ الإجمالي</th>
+                        <th class="p-3">المدفوع</th>
+                        <th class="p-3">الحالة</th>
+                    </tr>
+                `;
+
+                let q = db.from('debts').select('*, companies(name)', { count: 'exact' });
+                if (companyId) q = q.eq('company_id', companyId);
+                if (searchVal) q = q.ilike('entity_name', `%${searchVal}%`);
+
+                const { data, count } = await q.order('debt_date', { ascending: false }).range(from, to);
+                renderDebts(data);
+                updatePagination(count);
+            }
+        }
+
+        function renderTrips(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4">لا توجد رحلات مطابقة</td></tr>'; return; }
+            data.forEach(t => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 font-bold text-slate-800">${t.trip_number || '-'}</td>
+                        <td class="p-3">${t.trip_date}</td>
+                        <td class="p-3">${t.companies?.name || '-'}</td>
+                        <td class="p-3">${t.drivers?.name || '-'}</td>
+                        <td class="p-3 font-semibold text-emerald-600">${Number(t.income_amount).toFixed(2)}</td>
+                        <td class="p-3">${t.waybill_number || '-'}</td>
+                        <td class="p-3 text-xs text-slate-500">${t.origin || '-'} ⬅️ ${t.destination || '-'}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderDraws(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">لا توجد سحبيات مطابقة</td></tr>'; return; }
+            data.forEach(d => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3">${d.draw_date}</td>
+                        <td class="p-3 font-semibold">${d.drivers?.name || '-'}</td>
+                        <td class="p-3">${d.companies?.name || '-'}</td>
+                        <td class="p-3 font-semibold text-amber-600">${Number(d.amount).toFixed(2)}</td>
+                        <td class="p-3 text-xs text-slate-600">${d.reason || '-'}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderMaintenance(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">لا توجد مصاريف صيانة مطابقة</td></tr>'; return; }
+            data.forEach(m => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3">${m.expense_date}</td>
+                        <td class="p-3">${m.companies?.name || '-'}</td>
+                        <td class="p-3 font-semibold">${m.trucks?.plate_number || '-'}</td>
+                        <td class="p-3"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-xs">${m.expense_type || 'صيانة'}</span></td>
+                        <td class="p-3 font-semibold text-rose-600">${Number(m.amount).toFixed(2)}</td>
+                        <td class="p-3 text-xs text-slate-600">${m.description || '-'}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderDebts(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4">لا توجد ديون مطابقة</td></tr>'; return; }
+            data.forEach(d => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3">${d.debt_date}</td>
+                        <td class="p-3">${d.companies?.name || '-'}</td>
+                        <td class="p-3 font-semibold">${d.entity_name}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-xs ${d.debt_type === 'علينا' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">${d.debt_type}</span></td>
+                        <td class="p-3 font-semibold">${Number(d.amount).toFixed(2)}</td>
+                        <td class="p-3 text-emerald-600">${Number(d.paid_amount).toFixed(2)}</td>
+                        <td class="p-3 text-xs font-semibold">${d.status}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            currentPage = 1;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-blue-600', 'text-blue-600', 'font-bold');
+                btn.classList.add('border-transparent', 'text-slate-500');
+            });
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            activeBtn.classList.remove('border-transparent', 'text-slate-500');
+            activeBtn.classList.add('border-blue-600', 'text-blue-600', 'font-bold');
+            fetchTableData();
+        }
+
+        function updatePagination(totalCount) {
+            const maxPages = Math.ceil((totalCount || 1) / pageSize);
+            document.getElementById('page-indicator').textContent = `الصفحة ${currentPage} من ${maxPages}`;
+            document.getElementById('btn-prev').disabled = currentPage === 1;
+            document.getElementById('btn-next').disabled = (currentPage * pageSize) >= (totalCount || 0);
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            fetchTableData();
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-company').value = '';
+            document.getElementById('filter-driver').value = '';
+            document.getElementById('filter-month').value = '';
+            document.getElementById('filter-search').value = '';
+            currentPage = 1;
+            refreshView();
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
     </script>
 </body>
 </html>
