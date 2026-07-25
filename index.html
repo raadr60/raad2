@@ -194,22 +194,22 @@
 
         async function loadAllData() {
             const [t, d, m, r, b, e, i] = await Promise.all([
-                db.from('app_trips').select('*').eq('is_deleted', false).order('created_at', {ascending:false}),
-                db.from('app_draws').select('*').eq('is_deleted', false).order('created_at', {ascending:false}),
-                db.from('app_maintenance').select('*').eq('is_deleted', false).order('created_at', {ascending:false}),
-                db.from('app_rentals').select('*').eq('is_deleted', false).order('created_at', {ascending:false}),
-                db.from('app_debts').select('*').eq('is_deleted', false).order('created_at', {ascending:false}),
-                db.from('app_expenses').select('*').eq('is_deleted', false).order('created_at', {ascending:false}),
-                db.from('app_invoices').select('*').eq('is_deleted', false).order('created_at', {ascending:false})
+                db.from('app_trips').select('*').order('created_at', {ascending:false}),
+                db.from('app_draws').select('*').order('created_at', {ascending:false}),
+                db.from('app_maintenance').select('*').order('created_at', {ascending:false}),
+                db.from('app_rentals').select('*').order('created_at', {ascending:false}),
+                db.from('app_debts').select('*').order('created_at', {ascending:false}),
+                db.from('app_expenses').select('*').order('created_at', {ascending:false}),
+                db.from('app_invoices').select('*').order('created_at', {ascending:false})
             ]);
 
-            store.trips = t.data || [];
-            store.draws = d.data || [];
-            store.maintenance = m.data || [];
-            store.rentals = r.data || [];
-            store.debts = b.data || [];
-            store.expenses = e.data || [];
-            store.invoices = i.data || [];
+            store.trips = (t.data || []).filter(x => !x.is_deleted);
+            store.draws = (d.data || []).filter(x => !x.is_deleted);
+            store.maintenance = (m.data || []).filter(x => !x.is_deleted);
+            store.rentals = (r.data || []).filter(x => !x.is_deleted);
+            store.debts = (b.data || []).filter(x => !x.is_deleted);
+            store.expenses = (e.data || []).filter(x => !x.is_deleted);
+            store.invoices = (i.data || []).filter(x => !x.is_deleted);
 
             renderCurrentTab();
         }
@@ -233,7 +233,7 @@
 
             let data = store[activeTab] || [];
             if (query) data = data.filter(i => JSON.stringify(i).toLowerCase().includes(query));
-            if (monthVal) data = data.filter(i => i.date && i.date.startsWith(monthVal));
+            if (monthVal) data = data.filter(i => (i.date && i.date.startsWith(monthVal)) || (i.created_at && i.created_at.startsWith(monthVal)));
 
             tbody.innerHTML = '';
             tfoot.innerHTML = '';
@@ -244,7 +244,7 @@
                 thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">السائق</th><th class="p-3">التابعة لها</th><th class="p-3">المنقول لها</th><th class="p-3">السعر</th><th class="p-3">من والى</th><th class="p-3">ملاحظات</th><th class="p-3 no-print">إجراءات</th></tr>`;
                 data.forEach(item => {
                     totalAmount += Number(item.amount || 0);
-                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||'-'}</td><td class="p-3 font-bold text-white">${item.driver_name||'-'}</td><td class="p-3">${item.company_name||'-'}</td><td class="p-3 text-blue-400">${item.client_name||'-'}</td><td class="p-3 font-bold text-emerald-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.route_from||'-'} ⬅️ ${item.route_to||'-'}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td><td class="p-3 no-print"><button onclick="softDelete('app_trips', '${item.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||item.created_at?.split('T')[0]||'-'}</td><td class="p-3 font-bold text-white">${item.driver_name||'-'}</td><td class="p-3">${item.company_name||'-'}</td><td class="p-3 text-blue-400">${item.client_name||'-'}</td><td class="p-3 font-bold text-emerald-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.route_from||'-'} ⬅️ ${item.route_to||'-'}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td><td class="p-3 no-print"><button onclick="softDelete('app_trips', '${item.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 });
                 tfoot.innerHTML = `<tr><td colspan="4" class="p-3 text-left font-bold">إجمالي الرحلات:</td><td colspan="4" class="p-3 font-bold text-emerald-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
 
@@ -252,7 +252,7 @@
                 thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">الشركة</th><th class="p-3">الاسم</th><th class="p-3">النوع</th><th class="p-3">نوع السحبية</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th><th class="p-3 no-print">إجراءات</th></tr>`;
                 data.forEach(item => {
                     totalAmount += Number(item.amount || 0);
-                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||'-'}</td><td class="p-3">${item.company_name||'-'}</td><td class="p-3 font-bold text-white">${item.person_name||'-'}</td><td class="p-3 text-amber-400">${item.person_type||'-'}</td><td class="p-3">${item.draw_type||'-'}</td><td class="p-3 font-bold text-amber-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td><td class="p-3 no-print"><button onclick="softDelete('app_draws', '${item.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||item.created_at?.split('T')[0]||'-'}</td><td class="p-3">${item.company_name||'-'}</td><td class="p-3 font-bold text-white">${item.person_name||'-'}</td><td class="p-3 text-amber-400">${item.person_type||'-'}</td><td class="p-3">${item.draw_type||'-'}</td><td class="p-3 font-bold text-amber-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td><td class="p-3 no-print"><button onclick="softDelete('app_draws', '${item.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 });
                 tfoot.innerHTML = `<tr><td colspan="5" class="p-3 text-left font-bold">إجمالي السحبيات:</td><td colspan="3" class="p-3 font-bold text-amber-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
 
@@ -261,7 +261,7 @@
                 data.forEach(item => {
                     totalAmount += Number(item.amount || 0);
                     let title = item.service_type || item.owner_name || item.person_name || item.expense_type || item.invoice_number || '-';
-                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||'-'}</td><td class="p-3 font-bold text-white">${title}</td><td class="p-3 font-bold text-emerald-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td><td class="p-3 no-print"><button onclick="softDelete('app_${activeTab}', '${item.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||item.created_at?.split('T')[0]||'-'}</td><td class="p-3 font-bold text-white">${title}</td><td class="p-3 font-bold text-emerald-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td><td class="p-3 no-print"><button onclick="softDelete('app_${activeTab}', '${item.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 });
                 tfoot.innerHTML = `<tr><td colspan="2" class="p-3 text-left font-bold">الإجمالي العام للقسم:</td><td colspan="3" class="p-3 font-bold text-emerald-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
             }
@@ -345,10 +345,11 @@
             } else {
                 let titleVal = document.getElementById('f-title').value;
                 payload = {
-                    date: dateVal,
                     amount: amountVal,
                     notes: notesVal
                 };
+                if(dateVal) payload.date = dateVal;
+
                 if(targetTable === 'maintenance') payload.service_type = titleVal;
                 if(targetTable === 'rentals') payload.owner_name = titleVal;
                 if(targetTable === 'debts') payload.person_name = titleVal;
@@ -357,16 +358,32 @@
             }
 
             const { error } = await db.from(dbTable).insert([payload]);
-            if (error) alert('خطأ أثناء الحفظ: ' + error.message);
-            else {
-                closeModal('modal-add-entry');
-                await loadAllData();
+            if (error) {
+                // محاولة ثانية بدون عمود التاريخ إذا لم يكن موجوداً في هذا الجدول تحديداً
+                if (error.message.includes('date')) {
+                    delete payload.date;
+                    const { error: err2 } = await db.from(dbTable).insert([payload]);
+                    if (err2) {
+                        alert('خطأ أثناء الحفظ: ' + err2.message);
+                        return;
+                    }
+                } else {
+                    alert('خطأ أثناء الحفظ: ' + error.message);
+                    return;
+                }
             }
+
+            closeModal('modal-add-entry');
+            await loadAllData();
         }
 
         async function softDelete(table, id) {
             if (confirm('هل أنت متأكد من الحذف؟ يمكنك استرجاعه لاحقاً من سلة المهملات.')) {
-                await db.from(table).update({ is_deleted: true }).eq('id', id);
+                let { error } = await db.from(table).update({ is_deleted: true }).eq('id', id);
+                if (error) {
+                    // إذا لم يوجد عمود is_deleted يتم حذفه نهائياً أو التعامل معه
+                    await db.from(table).delete().eq('id', id);
+                }
                 await loadAllData();
             }
         }
