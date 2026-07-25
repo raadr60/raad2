@@ -31,7 +31,6 @@
             </div>
             
             <form id="login-form" onsubmit="handleLogin(event)" autocomplete="off" class="space-y-4">
-                <!-- حقول وهمية مخفية لخداع المتصفح ومنع التعبئة التلقائية الكسولة -->
                 <input type="text" style="display:none" name="fakeusernameremembered">
                 <input type="password" style="display:none" name="fakepasswordremembered">
 
@@ -294,8 +293,11 @@
                 return;
             }
 
-            const { data, error } = await db.from('app_users').select('*').eq('username', usernameInput).eq('password', passwordInput);
-            if (data && data.length > 0) {
+            // التحقق من المستخدمين المحليين الإضافيين
+            let extraUsers = JSON.parse(localStorage.getItem('sys_extra_users') || '[]');
+            let foundUser = extraUsers.find(u => u.username === usernameInput && u.password === passwordInput);
+
+            if (foundUser) {
                 localStorage.setItem('sys_current_user', usernameInput);
                 showMainApp(usernameInput);
             } else {
@@ -351,16 +353,13 @@
             renderCurrentTab();
         }
 
-        async function openUsersModal() {
+        function openUsersModal() {
             openModal('modal-users');
-            await renderUsersList();
+            renderUsersList();
         }
 
-        async function renderUsersList() {
+        function renderUsersList() {
             const container = document.getElementById('users-list-container');
-            container.innerHTML = '<p class="text-slate-400 text-xs">جاري التحميل...</p>';
-
-            const { data, error } = await db.from('app_users').select('*');
             container.innerHTML = '';
 
             container.innerHTML += `
@@ -373,22 +372,21 @@
                 </div>
             `;
 
-            if (data && data.length > 0) {
-                data.forEach(user => {
-                    container.innerHTML += `
-                        <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
-                            <div>
-                                <span class="text-white font-bold">${user.username}</span>
-                                <span class="bg-purple-500/20 text-purple-400 text-[10px] px-2 py-0.5 rounded-md mr-2">${user.role === 'admin' ? 'مدير مشارك' : 'مستخدم عادي'}</span>
-                            </div>
-                            <button onclick="deleteUser('${user.id}')" class="text-rose-400 hover:text-rose-300 text-xs font-bold bg-rose-500/10 px-2.5 py-1 rounded-lg">إزالة</button>
+            let extraUsers = JSON.parse(localStorage.getItem('sys_extra_users') || '[]');
+            extraUsers.forEach((user, index) => {
+                container.innerHTML += `
+                    <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
+                        <div>
+                            <span class="text-white font-bold">${user.username}</span>
+                            <span class="bg-purple-500/20 text-purple-400 text-[10px] px-2 py-0.5 rounded-md mr-2">${user.role === 'admin' ? 'مدير مشارك' : 'مستخدم عادي'}</span>
                         </div>
-                    `;
-                });
-            }
+                        <button onclick="deleteLocalUser(${index})" class="text-rose-400 hover:text-rose-300 text-xs font-bold bg-rose-500/10 px-2.5 py-1 rounded-lg">إزالة</button>
+                    </div>
+                `;
+            });
         }
 
-        async function handleCreateUser(e) {
+        function handleCreateUser(e) {
             e.preventDefault();
             const username = document.getElementById('new-username').value.trim();
             const password = document.getElementById('new-password').value.trim();
@@ -399,21 +397,27 @@
                 return;
             }
 
-            const { error } = await db.from('app_users').insert([{ username, password, role }]);
-            if (error) {
-                alert('خطأ أثناء إضافة المستخدم: ' + error.message);
+            let extraUsers = JSON.parse(localStorage.getItem('sys_extra_users') || '[]');
+            if (extraUsers.some(u => u.username === username)) {
+                alert('اسم المستخدم موجود مسبقاً!');
                 return;
             }
 
+            extraUsers.push({ username, password, role });
+            localStorage.setItem('sys_extra_users', JSON.stringify(extraUsers));
+
             document.getElementById('new-username').value = '';
             document.getElementById('new-password').value = '';
-            await renderUsersList();
+            renderUsersList();
+            alert('تم إضافة المستخدم بنجاح!');
         }
 
-        async function deleteUser(id) {
+        function deleteLocalUser(index) {
             if (confirm('هل أنت متأكد من إزالة هذا المستخدم؟')) {
-                await db.from('app_users').delete().eq('id', id);
-                await renderUsersList();
+                let extraUsers = JSON.parse(localStorage.getItem('sys_extra_users') || '[]');
+                extraUsers.splice(index, 1);
+                localStorage.setItem('sys_extra_users', JSON.stringify(extraUsers));
+                renderUsersList();
             }
         }
 
