@@ -36,7 +36,12 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور</label>
-                    <input type="password" id="login-password" value="737125" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                    <div class="relative">
+                        <input type="password" id="login-password" value="737125" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 pl-10 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        <button type="button" onclick="togglePasswordVisibility('login-password', 'login-eye-icon')" class="absolute left-3 top-3.5 text-slate-400 hover:text-white">
+                            <i id="login-eye-icon" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/30 transition">
                     دخول المنظومة
@@ -55,13 +60,17 @@
                     </div>
                     <div>
                         <h1 class="text-base font-black tracking-wide">لوحة التحكم اللوجستية الذكية</h1>
-                        <span class="text-xs text-blue-400 font-medium">المدير العام</span>
+                        <span id="current-user-badge" class="text-xs text-blue-400 font-medium">المدير العام</span>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2 flex-wrap">
                     <button onclick="openModal('modal-add-entry')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg">
                         <i class="fa-solid fa-plus"></i> إضافة عملية يدوية
+                    </button>
+                    <!-- زر إدارة المستخدمين يظهر فقط للمالك (raad) -->
+                    <button id="admin-users-btn" onclick="openUsersModal()" class="hidden bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-xl text-xs font-bold items-center gap-1.5">
+                        <i class="fa-solid fa-users-gear"></i> إدارة المستخدمين
                     </button>
                     <button onclick="exportToExcel()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
                         <i class="fa-solid fa-file-excel text-emerald-400"></i> تصدير Excel
@@ -84,7 +93,7 @@
 
         <main class="max-w-7xl w-full mx-auto p-4 space-y-6 flex-1">
             
-            <!-- لوحة الملخصات الذكية (Dashboard Overview Cards) -->
+            <!-- لوحة الملخصات الذكية -->
             <div id="analytics-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
                 <div class="bg-slate-800/80 border border-slate-700/60 p-4 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
@@ -160,6 +169,50 @@
         </main>
     </div>
 
+    <!-- نافذة إدارة المستخدمين (خاصة بالمالك raad) -->
+    <div id="modal-users" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-purple-400 text-sm"><i class="fa-solid fa-users-gear"></i> إدارة المستخدمين والصلاحيات</h3>
+                <button onclick="closeModal('modal-users')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- نموذج إضافة مستخدم جديد -->
+            <form id="new-user-form" onsubmit="handleCreateUser(event)" class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700 space-y-3">
+                <h4 class="text-xs font-bold text-white">إضافة مستخدم جديد للنظام</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">اسم المستخدم</label>
+                        <input type="text" id="new-username" required placeholder="اسم المستخدم" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">كلمة المرور</label>
+                        <div class="relative">
+                            <input type="password" id="new-password" required placeholder="كلمة المرور" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 pl-10 text-xs text-white outline-none">
+                            <button type="button" onclick="togglePasswordVisibility('new-password', 'new-eye-icon')" class="absolute left-3 top-2.5 text-slate-400 hover:text-white">
+                                <i id="new-eye-icon" class="fa-solid fa-eye text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">المستوى والصلاحية</label>
+                    <select id="new-role" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                        <option value="user">مستخدم عادي</option>
+                        <option value="admin">مدير مشارك</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2.5 rounded-xl text-xs transition">إضافة وحفظ المستخدم</button>
+            </form>
+
+            <!-- قائمة المستخدمين الحاليين -->
+            <div class="space-y-2">
+                <h4 class="text-xs font-bold text-slate-300">المستخدمون المسجلون حالياً:</h4>
+                <div id="users-list-container" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- نافذة الإدخال اليدوي -->
     <div id="modal-add-entry" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
@@ -207,24 +260,72 @@
         let store = { trips:[], draws:[], maintenance:[], rentals:[], debts:[], expenses:[], invoices:[] };
 
         document.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('sys_logged')) showMainApp();
+            const loggedUser = localStorage.getItem('sys_current_user');
+            if (loggedUser) {
+                showMainApp(loggedUser);
+            }
             buildDynamicFormFields('trips');
         });
 
-        function handleLogin(e) {
+        // دالة إخفاء وإظهار كلمة المرور
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        async function handleLogin(e) {
             e.preventDefault();
-            localStorage.setItem('sys_logged', 'true');
-            showMainApp();
+            const usernameInput = document.getElementById('login-username').value.trim();
+            const passwordInput = document.getElementById('login-password').value.trim();
+
+            // التحقق من الحساب الرئيسي للمالك
+            if (usernameInput === 'raad' && passwordInput === '737125') {
+                localStorage.setItem('sys_current_user', 'raad');
+                showMainApp('raad');
+                return;
+            }
+
+            // التحقق من الجدول في قاعدة البيانات للمستخدمين الآخرين
+            const { data, error } = await db.from('app_users').select('*').eq('username', usernameInput).eq('password', passwordInput);
+            if (data && data.length > 0) {
+                localStorage.setItem('sys_current_user', usernameInput);
+                showMainApp(usernameInput);
+            } else {
+                alert('خطأ في اسم المستخدم أو كلمة المرور!');
+            }
         }
 
         function handleLogout() {
-            localStorage.removeItem('sys_logged');
+            localStorage.removeItem('sys_current_user');
             location.reload();
         }
 
-        async function showMainApp() {
+        async function showMainApp(username) {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
+
+            const badge = document.getElementById('current-user-badge');
+            const adminBtn = document.getElementById('admin-users-btn');
+
+            if (username === 'raad') {
+                badge.innerText = 'المدير العام (صلاحيات كاملة)';
+                adminBtn.classList.remove('hidden');
+                adminBtn.classList.add('flex');
+            } else {
+                badge.innerText = `مستخدم النظام: ${username}`;
+                adminBtn.classList.add('hidden');
+                adminBtn.classList.remove('flex');
+            }
+
             await loadAllData();
         }
 
@@ -249,6 +350,75 @@
 
             updateAnalyticsDashboard();
             renderCurrentTab();
+        }
+
+        // إدارة المستخدمين (إضافة وحذف)
+        async function openUsersModal() {
+            openModal('modal-users');
+            await renderUsersList();
+        }
+
+        async function renderUsersList() {
+            const container = document.getElementById('users-list-container');
+            container.innerHTML = '<p class="text-slate-400 text-xs">جاري التحميل...</p>';
+
+            // التأكد من وجود جدول app_users أو عرضه
+            const { data, error } = await db.from('app_users').select('*');
+            container.innerHTML = '';
+
+            // عرض حساب المالك الأساسي دائماً
+            container.innerHTML += `
+                <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
+                    <div>
+                        <span class="text-white font-bold">raad</span>
+                        <span class="bg-blue-500/20 text-blue-400 text-[10px] px-2 py-0.5 rounded-md mr-2">المالك (صلاحيات مطلقة)</span>
+                    </div>
+                    <span class="text-slate-500 text-xs">حساب رئيسي</span>
+                </div>
+            `;
+
+            if (data && data.length > 0) {
+                data.forEach(user => {
+                    container.innerHTML += `
+                        <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
+                            <div>
+                                <span class="text-white font-bold">${user.username}</span>
+                                <span class="bg-purple-500/20 text-purple-400 text-[10px] px-2 py-0.5 rounded-md mr-2">${user.role === 'admin' ? 'مدير مشارك' : 'مستخدم عادي'}</span>
+                            </div>
+                            <button onclick="deleteUser('${user.id}')" class="text-rose-400 hover:text-rose-300 text-xs font-bold bg-rose-500/10 px-2.5 py-1 rounded-lg">إزالة</button>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        async function handleCreateUser(e) {
+            e.preventDefault();
+            const username = document.getElementById('new-username').value.trim();
+            const password = document.getElementById('new-password').value.trim();
+            const role = document.getElementById('new-role').value;
+
+            if (username === 'raad') {
+                alert('هذا الاسم محجوز للمالك الأساسي!');
+                return;
+            }
+
+            const { error } = await db.from('app_users').insert([{ username, password, role }]);
+            if (error) {
+                alert('خطأ أثناء إضافة المستخدم (تأكد من إنشاء جدول app_users في سوبابيس): ' + error.message);
+                return;
+            }
+
+            document.getElementById('new-username').value = '';
+            document.getElementById('new-password').value = '';
+            await renderUsersList();
+        }
+
+        async function deleteUser(id) {
+            if (confirm('هل أنت متأكد من إزالة هذا المستخدم؟')) {
+                await db.from('app_users').delete().eq('id', id);
+                await renderUsersList();
+            }
         }
 
         function updateAnalyticsDashboard() {
@@ -475,7 +645,7 @@
 
         function exportToExcel() {
             const wb = XLSX.utils.table_to_book(document.getElementById('data-table'), { sheet: activeTab });
-            XLSX.writeFile(wb, `تقرير_${activeTab}.xlsx`);
+            XXLX.writeFile(wb, `تقرير_${activeTab}.xlsx`);
         }
 
         function resetFilters() {
