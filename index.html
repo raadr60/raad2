@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- مكتبة تصدير Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @media print {
@@ -42,29 +42,9 @@
                 <div id="login-error" class="text-xs text-rose-600 font-semibold hidden text-center"></div>
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/30 transition">دخول للنظام</button>
             </form>
-           <!-- شاشة تسجيل الدخول -->
-    <div id="login-screen" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full space-y-6">
-            <div class="text-center space-y-2">
-                <div class="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-lg shadow-blue-500/30">
-                    <i class="fa-solid fa-truck-fast"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-900">تسجيل الدخول للنظام</h2>
-                <p class="text-xs text-slate-500">منظومة إدارة النقليات والحسابات الشاملة</p>
+            <div class="text-center text-xs text-slate-400">
+                الحساب الافتراضي: <span class="font-mono text-slate-600">admin</span> | كلمة المرور: <span class="font-mono text-slate-600">admin123</span>
             </div>
-            
-            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">اسم المستخدم</label>
-                    <input type="text" id="login-username" required class="w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" placeholder="أدخل اسم المستخدم">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">كلمة المرور</label>
-                    <input type="password" id="login-password" required class="w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" placeholder="••••••••">
-                </div>
-                <div id="login-error" class="text-xs text-rose-600 font-semibold hidden text-center"></div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/30 transition">دخول للنظام</button>
-            </form>
         </div>
     </div>
 
@@ -472,7 +452,6 @@
             }
         }
 
-        // عرض الملخص السنوي
         async function fetchAnnualReport() {
             const year = document.getElementById('filter-year').value || 2026;
             const companyId = document.getElementById('filter-company').value || null;
@@ -486,157 +465,259 @@
             const { data } = await db.rpc('get_annual_summary', { p_year: parseInt(year), p_company_id: companyId });
 
             tbody.innerHTML = '';
-            if (!data?.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">لا توجد بيانات لهذه السنة</td></tr>'; return; }
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-6 text-slate-400">لا توجد بيانات لهذا العام</td></tr>';
+                return;
+            }
 
             const monthNames = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+            let tInc = 0, tDraw = 0, tExp = 0, tProf = 0, tTrips = 0;
 
-            data.forEach(r => {
+            data.forEach(m => {
+                tInc += Number(m.income || 0);
+                tDraw += Number(m.draws || 0);
+                tExp += Number(m.expenses || 0);
+                tProf += Number(m.profit || 0);
+                tTrips += Number(m.trips || 0);
+
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3 font-bold">${monthNames[r.month_num - 1]} (${r.month_num})</td>
-                        <td class="p-3 font-semibold text-emerald-600">${Number(r.total_income).toLocaleString('ar-SA')}</td>
-                        <td class="p-3 font-semibold text-amber-600">${Number(r.total_draws).toLocaleString('ar-SA')}</td>
-                        <td class="p-3 font-semibold text-rose-600">${Number(r.total_expenses).toLocaleString('ar-SA')}</td>
-                        <td class="p-3 font-bold text-blue-600">${Number(r.net_profit).toLocaleString('ar-SA')}</td>
-                        <td class="p-3 font-bold">${r.total_trips}</td>
+                    <tr class="hover:bg-slate-50 border-b">
+                        <td class="p-3 font-bold text-slate-800">${monthNames[m.month - 1]} (${m.month})</td>
+                        <td class="p-3 text-emerald-600 font-semibold">${Number(m.income).toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
+                        <td class="p-3 text-amber-600 font-semibold">${Number(m.draws).toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
+                        <td class="p-3 text-rose-600 font-semibold">${Number(m.expenses).toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
+                        <td class="p-3 text-blue-600 font-bold">${Number(m.profit).toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
+                        <td class="p-3 font-semibold">${m.trips}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML += `
+                <tr class="bg-slate-100 font-extrabold text-slate-900 border-t-2 border-slate-300">
+                    <td class="p-3">الإجمالي السنوي</td>
+                    <td class="p-3 text-emerald-700">${tInc.toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
+                    <td class="p-3 text-amber-700">${tDraw.toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
+                    <td class="p-3 text-rose-700">${tExp.toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
+                    <td class="p-3 text-blue-700">${tProf.toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
+                    <td class="p-3">${tTrips}</td>
+                </tr>
+            `;
+        }
+
+        function renderTrips(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            if (!data?.length) { tbody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-slate-400">لا توجد رحلات مسجلة</td></tr>'; return; }
+            data.forEach(item => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 border-b">
+                        <td class="p-3 font-medium">${item.trip_number || '-'}</td>
+                        <td class="p-3">${item.trip_date}</td>
+                        <td class="p-3">${item.companies?.name || '-'}</td>
+                        <td class="p-3">${item.drivers?.name || '-'}</td>
+                        <td class="p-3 font-bold text-emerald-600">${Number(item.amount).toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
+                        <td class="p-3">${item.waybill_number || '-'}</td>
+                        <td class="p-3 no-print">
+                            <button onclick="deleteRecord('trips', '${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                        </td>
                     </tr>
                 `;
             });
         }
 
-        // إدراج وحفظ البيانات
-        async function submitTrip(e) { e.preventDefault(); await db.from('trips').insert([{ company_id: document.getElementById('trip-company').value, driver_id: document.getElementById('trip-driver').value, income_amount: document.getElementById('trip-amount').value, trip_number: document.getElementById('trip-number').value, waybill_number: document.getElementById('trip-waybill').value, trip_date: document.getElementById('trip-date').value }]); closeModal('modal-add-entry'); refreshView(); }
-        async function submitDraw(e) { e.preventDefault(); await db.from('driver_draws').insert([{ driver_id: document.getElementById('draw-driver').value, company_id: document.getElementById('draw-company').value, amount: document.getElementById('draw-amount').value, draw_date: document.getElementById('draw-date').value, reason: document.getElementById('draw-reason').value }]); closeModal('modal-add-entry'); refreshView(); }
-        async function submitExpense(e) { e.preventDefault(); await db.from('maintenance_and_expenses').insert([{ company_id: document.getElementById('expense-company').value, expense_type: document.getElementById('expense-type').value, amount: document.getElementById('expense-amount').value, expense_date: document.getElementById('expense-date').value }]); closeModal('modal-add-entry'); refreshView(); }
-        async function submitDebt(e) { e.preventDefault(); await db.from('debts').insert([{ company_id: document.getElementById('debt-company').value, entity_name: document.getElementById('debt-entity').value, amount: document.getElementById('debt-amount').value, debt_date: document.getElementById('debt-date').value }]); closeModal('modal-add-entry'); refreshView(); }
-
-        // عمليات التعديل والحذف
-        async function deleteRecord(table, id) {
-            if (confirm('هل أنت تأكد من رغبتك في حذف هذا السجل بشكل نهائي؟')) {
-                await db.from(table).delete().eq('id', id);
-                refreshView();
-            }
-        }
-
-        async function openEditModal(table, id) {
-            document.getElementById('edit-table').value = table;
-            document.getElementById('edit-id').value = id;
-
-            const { data } = await db.from(table).select('*').eq('id', id).single();
-            const container = document.getElementById('edit-fields-container');
-            container.innerHTML = '';
-
-            if (table === 'trips') {
-                container.innerHTML = `
-                    <div><label class="block text-xs font-bold mb-1">المبلغ</label><input type="number" id="edit-val-1" value="${data.income_amount}" class="w-full border p-2 text-xs rounded"></div>
-                    <div><label class="block text-xs font-bold mb-1">رقم الرحلة</label><input type="text" id="edit-val-2" value="${data.trip_number || ''}" class="w-full border p-2 text-xs rounded"></div>
-                `;
-            } else if (table === 'driver_draws' || table === 'maintenance_and_expenses' || table === 'debts') {
-                container.innerHTML = `
-                    <div><label class="block text-xs font-bold mb-1">المبلغ</label><input type="number" id="edit-val-1" value="${data.amount}" class="w-full border p-2 text-xs rounded"></div>
-                `;
-            }
-
-            openModal('modal-edit-entry');
-        }
-
-        async function submitEdit(e) {
-            e.preventDefault();
-            const table = document.getElementById('edit-table').value;
-            const id = document.getElementById('edit-id').value;
-
-            if (table === 'trips') {
-                await db.from('trips').update({ income_amount: document.getElementById('edit-val-1').value, trip_number: document.getElementById('edit-val-2').value }).eq('id', id);
-            } else if (table === 'driver_draws') {
-                await db.from('driver_draws').update({ amount: document.getElementById('edit-val-1').value }).eq('id', id);
-            } else if (table === 'maintenance_and_expenses') {
-                await db.from('maintenance_and_expenses').update({ amount: document.getElementById('edit-val-1').value }).eq('id', id);
-            } else if (table === 'debts') {
-                await db.from('debts').update({ amount: document.getElementById('edit-val-1').value }).eq('id', id);
-            }
-
-            closeModal('modal-edit-entry');
-            refreshView();
-        }
-
-        // عرض القوائم والأزرار
-        function renderTrips(data) {
-            const tbody = document.getElementById('table-body'); tbody.innerHTML = '';
-            data?.forEach(t => {
-                tbody.innerHTML += `<tr><td class="p-3 font-bold">${t.trip_number || '-'}</td><td class="p-3">${t.trip_date}</td><td class="p-3">${t.companies?.name || '-'}</td><td class="p-3">${t.drivers?.name || '-'}</td><td class="p-3 text-emerald-600 font-bold">${Number(t.income_amount).toFixed(2)}</td><td class="p-3">${t.waybill_number || '-'}</td><td class="p-3 no-print flex gap-2"><button onclick="openEditModal('trips', ${t.id})" class="text-blue-600 hover:underline text-xs"><i class="fa-solid fa-pen"></i></button><button onclick="deleteRecord('trips', ${t.id})" class="text-rose-600 hover:underline text-xs"><i class="fa-solid fa-trash"></i></button></td></tr>`;
-            });
-        }
-
         function renderDraws(data) {
-            const tbody = document.getElementById('table-body'); tbody.innerHTML = '';
-            data?.forEach(d => {
-                tbody.innerHTML += `<tr><td class="p-3">${d.draw_date}</td><td class="p-3 font-bold">${d.drivers?.name || '-'}</td><td class="p-3">${d.companies?.name || '-'}</td><td class="p-3 text-amber-600 font-bold">${Number(d.amount).toFixed(2)}</td><td class="p-3 text-xs">${d.reason || '-'}</td><td class="p-3 no-print flex gap-2"><button onclick="openEditModal('driver_draws', ${d.id})" class="text-blue-600 hover:underline text-xs"><i class="fa-solid fa-pen"></i></button><button onclick="deleteRecord('driver_draws', ${d.id})" class="text-rose-600 hover:underline text-xs"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            if (!data?.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center py-6 text-slate-400">لا توجد سحبيات مسجلة</td></tr>'; return; }
+            data.forEach(item => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 border-b">
+                        <td class="p-3">${item.draw_date}</td>
+                        <td class="p-3 font-medium">${item.drivers?.name || '-'}</td>
+                        <td class="p-3">${item.companies?.name || '-'}</td>
+                        <td class="p-3 font-bold text-amber-600">${Number(item.amount).toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
+                        <td class="p-3 text-slate-500">${item.reason || '-'}</td>
+                        <td class="p-3 no-print">
+                            <button onclick="deleteRecord('driver_draws', '${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
             });
         }
 
         function renderExpenses(data) {
-            const tbody = document.getElementById('table-body'); tbody.innerHTML = '';
-            data?.forEach(m => {
-                tbody.innerHTML += `<tr><td class="p-3">${m.expense_date}</td><td class="p-3">${m.companies?.name || '-'}</td><td class="p-3 font-bold">${m.expense_type}</td><td class="p-3 text-rose-600 font-bold">${Number(m.amount).toFixed(2)}</td><td class="p-3 no-print flex gap-2"><button onclick="openEditModal('maintenance_and_expenses', ${m.id})" class="text-blue-600 hover:underline text-xs"><i class="fa-solid fa-pen"></i></button><button onclick="deleteRecord('maintenance_and_expenses', ${m.id})" class="text-rose-600 hover:underline text-xs"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            if (!data?.length) { tbody.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-slate-400">لا توجد مصاريف مسجلة</td></tr>'; return; }
+            data.forEach(item => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 border-b">
+                        <td class="p-3">${item.expense_date}</td>
+                        <td class="p-3">${item.companies?.name || '-'}</td>
+                        <td class="p-3 font-medium">${item.expense_type || '-'}</td>
+                        <td class="p-3 font-bold text-rose-600">${Number(item.amount).toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
+                        <td class="p-3 no-print">
+                            <button onclick="deleteRecord('maintenance_and_expenses', '${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
             });
         }
 
         function renderDebts(data) {
-            const tbody = document.getElementById('table-body'); tbody.innerHTML = '';
-            data?.forEach(d => {
-                tbody.innerHTML += `<tr><td class="p-3">${d.debt_date}</td><td class="p-3">${d.companies?.name || '-'}</td><td class="p-3 font-bold">${d.entity_name}</td><td class="p-3 font-bold">${Number(d.amount).toFixed(2)}</td><td class="p-3 no-print flex gap-2"><button onclick="openEditModal('debts', ${d.id})" class="text-blue-600 hover:underline text-xs"><i class="fa-solid fa-pen"></i></button><button onclick="deleteRecord('debts', ${d.id})" class="text-rose-600 hover:underline text-xs"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            if (!data?.length) { tbody.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-slate-400">لا توجد ديون مسجلة</td></tr>'; return; }
+            data.forEach(item => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 border-b">
+                        <td class="p-3">${item.debt_date}</td>
+                        <td class="p-3">${item.companies?.name || '-'}</td>
+                        <td class="p-3 font-medium">${item.entity_name}</td>
+                        <td class="p-3 font-bold text-slate-700">${Number(item.amount).toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
+                        <td class="p-3 no-print">
+                            <button onclick="deleteRecord('debts', '${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
             });
         }
 
-        // تصدير Excel
-        function exportToExcel() {
-            const table = document.getElementById("main-data-table");
-            const wb = XLSX.utils.table_to_book(table, { sheet: "التقرير" });
-            XLSX.writeFile(wb, `تقرير_${currentTab}_${new Date().toISOString().split('T')[0]}.xlsx`);
+        function updatePagination(totalCount) {
+            const totalPages = Math.ceil((totalCount || 0) / pageSize) || 1;
+            document.getElementById('page-indicator').textContent = `الصفحة ${currentPage} من ${totalPages}`;
+            document.getElementById('btn-prev').disabled = currentPage <= 1;
+            document.getElementById('btn-next').disabled = currentPage >= totalPages;
         }
 
-        // التحكم في الواجهات والتبويب
+        function changePage(direction) {
+            currentPage += direction;
+            refreshView();
+        }
+
         function switchTab(tab) {
-            currentTab = tab; currentPage = 1;
+            currentTab = tab;
+            currentPage = 1;
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('border-blue-600', 'text-blue-600', 'font-bold');
                 btn.classList.add('border-transparent', 'text-slate-500');
             });
             const activeBtn = document.getElementById(`tab-${tab}`);
-            activeBtn.classList.remove('border-transparent', 'text-slate-500');
-            activeBtn.classList.add('border-blue-600', 'text-blue-600', 'font-bold');
-
-            if (tab === 'annual') {
-                fetchAnnualReport();
-            } else {
-                fetchTableData();
+            if(activeBtn) {
+                activeBtn.classList.remove('border-transparent', 'text-slate-500');
+                activeBtn.classList.add('border-blue-600', 'text-blue-600', 'font-bold');
             }
+            refreshView();
         }
 
-        function setFormType(type) {
-            ['trip', 'draw', 'expense', 'debt'].forEach(t => {
-                document.getElementById(`form-${t}`).classList.add('hidden');
-                document.getElementById(`form-btn-${t}`).className = 'form-type-btn p-2 text-xs font-bold border rounded-lg bg-slate-50 text-slate-600';
-            });
-            document.getElementById(`form-${type}`).classList.remove('hidden');
-            document.getElementById(`form-btn-${type}`).className = 'form-type-btn p-2 text-xs font-bold border rounded-lg bg-blue-50 border-blue-600 text-blue-600';
+        function resetFilters() {
+            document.getElementById('filter-company').value = '';
+            document.getElementById('filter-driver').value = '';
+            document.getElementById('filter-month').value = '';
+            currentPage = 1;
+            refreshView();
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
         function openSettingsModal() { openModal('modal-settings'); }
-        function updatePagination(totalCount) {
-            const maxPages = Math.ceil((totalCount || 1) / pageSize);
-            document.getElementById('page-indicator').textContent = `الصفحة ${currentPage} من ${maxPages}`;
-            document.getElementById('btn-prev').disabled = currentPage === 1;
-            document.getElementById('btn-next').disabled = (currentPage * pageSize) >= (totalCount || 0);
+
+        function setFormType(type) {
+            ['trip', 'draw', 'expense', 'debt'].forEach(t => {
+                const btn = document.getElementById(`form-btn-${t}`);
+                const form = document.getElementById(`form-${t}`);
+                if (t === type) {
+                    btn.className = 'form-type-btn p-2 text-xs font-bold border rounded-lg bg-blue-50 border-blue-600 text-blue-600';
+                    form.classList.remove('hidden');
+                } else {
+                    btn.className = 'form-type-btn p-2 text-xs font-bold border rounded-lg bg-slate-50 text-slate-600';
+                    form.classList.add('hidden');
+                }
+            });
         }
-        function changePage(dir) { currentPage += dir; fetchTableData(); }
-        function resetFilters() {
-            document.getElementById('filter-company').value = '';
-            document.getElementById('filter-driver').value = '';
-            document.getElementById('filter-month').value = '';
-            currentPage = 1; refreshView();
+
+        async function submitTrip(e) {
+            e.preventDefault();
+            const payload = {
+                company_id: document.getElementById('trip-company').value,
+                driver_id: document.getElementById('trip-driver').value,
+                amount: parseFloat(document.getElementById('trip-amount').value),
+                trip_number: document.getElementById('trip-number').value.trim() || null,
+                waybill_number: document.getElementById('trip-waybill').value.trim() || null,
+                trip_date: document.getElementById('trip-date').value
+            };
+            const { error } = await db.from('trips').insert([payload]);
+            if (!error) { closeModal('modal-add-entry'); e.target.reset(); refreshView(); }
+        }
+
+        async function submitDraw(e) {
+            e.preventDefault();
+            const payload = {
+                driver_id: document.getElementById('draw-driver').value,
+                company_id: document.getElementById('draw-company').value,
+                amount: parseFloat(document.getElementById('draw-amount').value),
+                draw_date: document.getElementById('draw-date').value,
+                reason: document.getElementById('draw-reason').value.trim() || null
+            };
+            const { error } = await db.from('driver_draws').insert([payload]);
+            if (!error) { closeModal('modal-add-entry'); e.target.reset(); refreshView(); }
+        }
+
+        async function submitExpense(e) {
+            e.preventDefault();
+            const payload = {
+                company_id: document.getElementById('expense-company').value,
+                expense_type: document.getElementById('expense-type').value.trim() || null,
+                amount: parseFloat(document.getElementById('expense-amount').value),
+                expense_date: document.getElementById('expense-date').value
+            };
+            const { error } = await db.from('maintenance_and_expenses').insert([payload]);
+            if (!error) { closeModal('modal-add-entry'); e.target.reset(); refreshView(); }
+        }
+
+        async function submitDebt(e) {
+            e.preventDefault();
+            const payload = {
+                company_id: document.getElementById('debt-company').value,
+                entity_name: document.getElementById('debt-entity').value.trim(),
+                amount: parseFloat(document.getElementById('debt-amount').value),
+                debt_date: document.getElementById('debt-date').value
+            };
+            const { error } = await db.from('debts').insert([payload]);
+            if (!error) { closeModal('modal-add-entry'); e.target.reset(); refreshView(); }
+        }
+
+        async function submitCompany(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-company-name').value.trim();
+            if (name) {
+                await db.from('companies').insert([{ name }]);
+                document.getElementById('new-company-name').value = '';
+                await loadDropdowns();
+            }
+        }
+
+        async function submitDriver(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-driver-name').value.trim();
+            if (name) {
+                await db.from('drivers').insert([{ name }]);
+                document.getElementById('new-driver-name').value = '';
+                await loadDropdowns();
+            }
+        }
+
+        async function deleteRecord(table, id) {
+            if (confirm('هل أنت تأكد من إتمام عملية الحذف؟')) {
+                await db.from(table).delete().eq('id', id);
+                refreshView();
+            }
+        }
+
+        function exportToExcel() {
+            const table = document.getElementById('main-data-table');
+            const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+            XLSX.writeFile(wb, `تقرير_${currentTab}_${new Date().toISOString().split('T')[0]}.xlsx`);
         }
     </script>
 </body>
