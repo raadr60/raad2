@@ -3,226 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة إدارة النقليات المحاسبية الذكية الموحدة</title>
+    <title>منظومة إدارة النقليات</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="config.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Cairo', sans-serif; }
-        .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .tab-btn.active { background-color: #2563eb !important; color: #ffffff !important; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
 
-    <!-- شاشة تسجيل الدخول -->
-    <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 p-4">
-        <div class="glass-card p-8 rounded-3xl w-full max-w-md text-center space-y-4 shadow-2xl border border-slate-800">
-            <div class="w-20 h-20 bg-blue-600/20 text-blue-400 rounded-3xl flex items-center justify-center mx-auto text-4xl border border-blue-500/30 shadow-inner">
-                <i class="fas fa-truck-monster"></i>
+    <!-- الشريط العلوي -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center flex-wrap gap-4">
+        <div class="flex items-center gap-3">
+            <div class="bg-blue-600 text-white p-3 rounded-2xl"><i class="fas fa-truck text-xl"></i></div>
+            <div>
+                <h1 class="text-lg font-black">مركز التحكم والمتابعة المباشر</h1>
+                <p class="text-xs text-blue-400 font-bold">المستخدم: raad • <span class="text-emerald-400">مباشر</span></p>
             </div>
-            <h2 class="text-2xl font-black tracking-wide">منظومة النقليات الذكية</h2>
-            <p class="text-xs text-slate-400">شركة جسور المسافات | ركن المشروعات</p>
-            
-            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4 text-right">
-                <div>
-                    <label class="text-xs font-bold text-slate-400 mb-1 block">اسم المستخدم</label>
-                    <input type="text" id="loginUser" placeholder="أدخل اسم المستخدم" class="w-full bg-slate-900 border border-slate-800 p-3 rounded-xl text-center font-bold text-white focus:outline-none focus:border-blue-500 transition" required>
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-400 mb-1 block">رمز المرور (PIN)</label>
-                    <input type="password" id="loginPin" placeholder="••••••" class="w-full bg-slate-900 border border-slate-800 p-3 rounded-xl text-center font-bold text-white focus:outline-none focus:border-blue-500 transition" required>
-                </div>
-                <button type="submit" id="loginBtn" class="w-full bg-blue-600 hover:bg-blue-500 font-bold py-3.5 rounded-xl text-white shadow-lg transition duration-200 cursor-pointer">
-                    دخول المنظومة
-                </button>
-            </form>
-            
-            <p id="loginErr" class="text-xs text-red-400 font-bold hidden">اسم المستخدم أو رمز المرور غير صحيح</p>
         </div>
-    </div>
+        <div class="flex items-center gap-3">
+            <select id="companyFilter" onchange="renderAll()" class="bg-slate-950 border border-slate-800 text-xs font-bold px-4 py-2.5 rounded-xl text-white">
+                <option value="ALL">جميع الشركات (جسور & ركن)</option>
+                <option value="شركة جسور المسافات">شركة جسور المسافات</option>
+                <option value="ركن المشروعات">ركن المشروعات</option>
+            </select>
+        </div>
+    </header>
 
-    <!-- لوحة التحكم الرئيسية (الاستراحة المطورة) -->
-    <div id="appDashboard" class="hidden flex-1 flex flex-col">
-        <!-- الشريط العلوي الذكي -->
-        <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 px-6 py-4 flex justify-between items-center flex-wrap gap-4 sticky top-0 z-40">
-            <div class="flex items-center gap-3">
-                <div class="bg-gradient-to-tr from-blue-600 to-cyan-500 text-white p-3 rounded-2xl shadow-lg"><i class="fas fa-chart-line text-xl"></i></div>
-                <div>
-                    <h1 class="text-lg font-black tracking-wide">مركز التحكم والمتابعة المباشر</h1>
-                    <div class="flex items-center gap-2 text-xs">
-                        <span id="userTag" class="text-cyan-400 font-bold">المستخدم: -</span>
-                        <span class="text-slate-600">•</span>
-                        <span class="text-emerald-400 flex items-center gap-1 font-bold"><i class="fas fa-circle text-[8px] animate-pulse"></i> مباشر</span>
-                    </div>
+    <!-- أزرار التنقل الرئيسية -->
+    <nav class="bg-slate-900/50 border-b border-slate-800 px-6 py-3 flex gap-2 overflow-x-auto text-xs font-bold">
+        <button onclick="showTab('dashboardTab', this)" class="tab-btn active px-4 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition"><i class="fas fa-chart-pie ml-1"></i> الرئيسية (الاستراحة)</button>
+        <button onclick="showTab('tripsTab', this)" class="tab-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition"><i class="fas fa-route ml-1"></i> الرحلات (النولون)</button>
+        <button onclick="showTab('drawsTab', this)" class="tab-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition"><i class="fas fa-hand-holding-usd ml-1"></i> سحبيات السائقين</button>
+        <button onclick="showTab('expensesTab', this)" class="tab-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition"><i class="fas fa-wrench ml-1"></i> المصاريف والصيانة</button>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="p-6 max-w-7xl mx-auto w-full space-y-6 flex-1">
+        
+        <!-- 1. الرئيسية -->
+        <div id="dashboardTab" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-card p-5 rounded-2xl">
+                    <span class="text-xs font-bold text-slate-400">إجمالي الإيرادات</span>
+                    <h3 id="statInc" class="text-2xl font-black text-emerald-400 mt-2">0.00 ر.س</h3>
+                </div>
+                <div class="glass-card p-5 rounded-2xl">
+                    <span class="text-xs font-bold text-slate-400">سحبيات السائقين</span>
+                    <h3 id="statDrw" class="text-2xl font-black text-purple-400 mt-2">0.00 ر.س</h3>
+                </div>
+                <div class="glass-card p-5 rounded-2xl">
+                    <span class="text-xs font-bold text-slate-400">المصاريف والصيانة</span>
+                    <h3 id="statExp" class="text-2xl font-black text-rose-400 mt-2">0.00 ر.س</h3>
+                </div>
+                <div class="glass-card p-5 rounded-2xl">
+                    <span class="text-xs font-bold text-slate-400">صافي الأرباح</span>
+                    <h3 id="statNet" class="text-2xl font-black text-cyan-400 mt-2">0.00 ر.س</h3>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
-                <select id="companyFilter" onchange="loadAllData()" class="bg-slate-950 border border-slate-800 text-xs font-bold px-4 py-2.5 rounded-xl text-white focus:outline-none focus:border-blue-500">
-                    <option value="ALL">جميع الشركات (جسور & ركن)</option>
-                    <option value="شركة جسور المسافات">شركة جسور المسافات</option>
-                    <option value="ركن المشروعات">ركن المشروعات</option>
-                </select>
-                <button onclick="location.reload()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer"><i class="fas fa-power-off ml-1"></i> خروج</button>
+        </div>
+
+        <!-- 2. الرحلات -->
+        <div id="tripsTab" class="tab-content hidden space-y-4">
+            <div class="glass-card p-4 rounded-2xl space-y-3">
+                <h3 class="text-sm font-bold text-blue-400">+ تسجيل رحلة جديدة</h3>
+                <form onsubmit="addTrip(event)" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
+                    <input type="date" id="tDate" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
+                    <select id="tComp" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white">
+                        <option value="شركة جسور المسافات">شركة جسور المسافات</option>
+                        <option value="ركن المشروعات">ركن المشروعات</option>
+                    </select>
+                    <input type="text" id="tClient" placeholder="العميل" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
+                    <input type="text" id="tDriver" placeholder="السائق" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
+                    <input type="number" id="tAmount" placeholder="المبلغ" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
+                    <button type="submit" class="bg-blue-600 font-bold p-2.5 rounded-xl text-white">حفظ الرحلة</button>
+                </form>
             </div>
-        </header>
-
-        <!-- أزرار التنقل الرئيسية -->
-        <nav class="bg-slate-900/40 border-b border-slate-800/60 px-6 py-3 flex gap-2 overflow-x-auto text-xs font-bold">
-            <button onclick="switchTab('dashboardTab', this)" class="nav-btn px-4 py-2.5 rounded-xl bg-blue-600 text-white shadow-lg transition flex items-center gap-2"><i class="fas fa-tachometer-alt"></i> الشاشة الرئيسية (الاستراحة)</button>
-            <button onclick="switchTab('percentTab', this)" class="nav-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition flex items-center gap-2"><i class="fas fa-percentage"></i> النسب المئوية والتحليل</button>
-            <button onclick="switchTab('tripsTab', this)" class="nav-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition flex items-center gap-2"><i class="fas fa-table"></i> جدول الرحلات (Excel)</button>
-            <button onclick="switchTab('infoTab', this)" class="nav-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition flex items-center gap-2"><i class="fas fa-info-circle"></i> شاشة المعلومات</button>
-            <button onclick="switchTab('settingsTab', this)" class="nav-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition flex items-center gap-2"><i class="fas fa-cog"></i> الإعدادات</button>
-        </nav>
-
-        <!-- محتوى الشاشات -->
-        <main class="p-6 max-w-7xl mx-auto w-full space-y-6 flex-1">
-            
-            <!-- 1. الشاشة الرئيسية -->
-            <div id="dashboardTab" class="tab-content space-y-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="glass-card p-5 rounded-2xl border border-slate-800 relative overflow-hidden">
-                        <span class="text-xs font-bold text-slate-400">إجمالي الإيرادات (النولون)</span>
-                        <h3 id="statTotalIncome" class="text-2xl font-black text-emerald-400 mt-2">0.00 ر.س</h3>
-                    </div>
-                    <div class="glass-card p-5 rounded-2xl border border-slate-800 relative overflow-hidden">
-                        <span class="text-xs font-bold text-slate-400">سحبيات السائقين والبدلات</span>
-                        <h3 id="statTotalDraws" class="text-2xl font-black text-purple-400 mt-2">0.00 ر.س</h3>
-                    </div>
-                    <div class="glass-card p-5 rounded-2xl border border-slate-800 relative overflow-hidden">
-                        <span class="text-xs font-bold text-slate-400">الصيانة والإيجارات</span>
-                        <h3 id="statTotalExpenses" class="text-2xl font-black text-rose-400 mt-2">0.00 ر.س</h3>
-                    </div>
-                    <div class="glass-card p-5 rounded-2xl border border-slate-800 relative overflow-hidden">
-                        <span class="text-xs font-bold text-slate-400">صافي الأرباح التقديري</span>
-                        <h3 id="statNetProfit" class="text-2xl font-black text-cyan-400 mt-2">0.00 ر.س</h3>
-                    </div>
-                </div>
-
-                <div class="glass-card p-6 rounded-2xl border border-slate-800 h-96">
-                    <h4 class="text-xs font-bold text-slate-400 mb-4 flex items-center gap-2"><i class="fas fa-chart-bar text-blue-400"></i> المقارنة المالية الشاملة</h4>
-                    <div class="h-80"><canvas id="financialChart"></canvas></div>
-                </div>
+            <div class="glass-card rounded-2xl overflow-x-auto border border-slate-800">
+                <table class="w-full text-right text-xs">
+                    <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
+                        <tr><th class="p-3">التاريخ</th><th class="p-3">الشركة</th><th class="p-3">العميل</th><th class="p-3">السائق</th><th class="p-3">المبلغ</th><th class="p-3">إجراء</th></tr>
+                    </thead>
+                    <tbody id="tripsTable" class="divide-y divide-slate-800"></tbody>
+                </table>
             </div>
+        </div>
 
-            <!-- 2. شاشة النسب المئوية -->
-            <div id="percentTab" class="tab-content hidden space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="glass-card p-6 rounded-2xl space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-slate-400">نسبة صافي الربح</span>
-                            <span id="pctProfitVal" class="text-lg font-black text-emerald-400">0%</span>
-                        </div>
-                        <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-800">
-                            <div id="pctProfitBar" class="bg-emerald-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="glass-card p-6 rounded-2xl space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-slate-400">نسبة المصاريف والتعديلات</span>
-                            <span id="pctExpVal" class="text-lg font-black text-rose-400">0%</span>
-                        </div>
-                        <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-800">
-                            <div id="pctExpBar" class="bg-rose-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="glass-card p-6 rounded-2xl space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-slate-400">نسبة سحبيات السائقين</span>
-                            <span id="pctDrawVal" class="text-lg font-black text-purple-400">0%</span>
-                        </div>
-                        <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-800">
-                            <div id="pctDrawBar" class="bg-purple-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
+        <!-- 3. السحبيات -->
+        <div id="drawsTab" class="tab-content hidden space-y-4">
+            <div class="glass-card p-4 rounded-2xl space-y-3">
+                <h3 class="text-sm font-bold text-purple-400">+ تسجيل سحب/سلفة سائق</h3>
+                <form onsubmit="addDraw(event)" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2 text-xs">
+                    <input type="date" id="dDate" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
+                    <select id="dComp" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white">
+                        <option value="شركة جسور المسافات">شركة جسور المسافات</option>
+                        <option value="ركن المشروعات">ركن المشروعات</option>
+                    </select>
+                    <input type="text" id="dDriver" placeholder="اسم السائق" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
+                    <input type="number" id="dAmount" placeholder="المبلغ" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
+                    <button type="submit" class="bg-purple-600 font-bold p-2.5 rounded-xl text-white">حفظ السحب</button>
+                </form>
             </div>
-
-            <!-- 3. جدول الرحلات -->
-            <div id="tripsTab" class="tab-content hidden space-y-4">
-                <div class="flex justify-between items-center flex-wrap gap-2">
-                    <h3 class="text-sm font-bold">جدول الرحلات التفاعلي</h3>
-                    <button onclick="alert('تم تفعيل الشاشة بنجاح')" class="bg-blue-600 px-4 py-2 rounded-xl text-xs font-bold text-white shadow">+ إضافة رحلة</button>
-                </div>
-                <div class="glass-card rounded-2xl p-4 text-center text-xs text-slate-400">
-                    الجدول جاهز للعمل واستقبال البيانات.
-                </div>
+            <div class="glass-card rounded-2xl overflow-x-auto border border-slate-800">
+                <table class="w-full text-right text-xs">
+                    <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
+                        <tr><th class="p-3">التاريخ</th><th class="p-3">الشركة</th><th class="p-3">السائق</th><th class="p-3">المبلغ</th><th class="p-3">إجراء</th></tr>
+                    </thead>
+                    <tbody id="drawsTable" class="divide-y divide-slate-800"></tbody>
+                </table>
             </div>
+        </div>
 
-            <!-- 4. شاشة المعلومات -->
-            <div id="infoTab" class="tab-content hidden space-y-6">
-                <div class="glass-card p-6 rounded-2xl border border-slate-800 text-xs">
-                    <h3 class="font-bold text-blue-400 mb-2">معلومات النظام</h3>
-                    <p class="text-slate-300">الكيانات: شركة جسور المسافات / ركن المشروعات</p>
-                </div>
+        <!-- 4. المصاريف -->
+        <div id="expensesTab" class="tab-content hidden space-y-4">
+            <div class="glass-card p-4 rounded-2xl space-y-3">
+                <h3 class="text-sm font-bold text-rose-400">+ تسجيل مصروف/صيانة</h3>
+                <form onsubmit="addExpense(event)" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2 text-xs">
+                    <input type="date" id="eDate" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
+                    <select id="eComp" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white">
+                        <option value="شركة جسور المسافات">شركة جسور المسافات</option>
+                        <option value="ركن المشروعات">ركن المشروعات</option>
+                    </select>
+                    <input type="text" id="eTitle" placeholder="بند المصروف" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
+                    <input type="number" id="eAmount" placeholder="المبلغ" class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-white" required>
+                    <button type="submit" class="bg-rose-600 font-bold p-2.5 rounded-xl text-white">حفظ المصروف</button>
+                </form>
             </div>
-
-            <!-- 5. شاشة الإعدادات -->
-            <div id="settingsTab" class="tab-content hidden space-y-6">
-                <div class="glass-card p-6 rounded-2xl border border-slate-800 max-w-lg mx-auto text-xs space-y-3">
-                    <h3 class="font-bold text-blue-400">إعدادات الحساب</h3>
-                    <p class="text-slate-400">تم ضبط الإعدادات بنجاح.</p>
-                </div>
+            <div class="glass-card rounded-2xl overflow-x-auto border border-slate-800">
+                <table class="w-full text-right text-xs">
+                    <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
+                        <tr><th class="p-3">التاريخ</th><th class="p-3">الشركة</th><th class="p-3">البيان</th><th class="p-3">المبلغ</th><th class="p-3">إجراء</th></tr>
+                    </thead>
+                    <tbody id="expensesTable" class="divide-y divide-slate-800"></tbody>
+                </table>
             </div>
+        </div>
 
-        </main>
-    </div>
+    </main>
 
-    <!-- المنطق التنفيذي المعالج -->
     <script>
-        let mainChart = null;
+        // مصفوفات البيانات المحلية الفورية
+        let trips = JSON.parse(localStorage.getItem('my_trips') || '[]');
+        let draws = JSON.parse(localStorage.getItem('my_draws') || '[]');
+        let expenses = JSON.parse(localStorage.getItem('my_expenses') || '[]');
 
-        function handleLogin(e) {
-            e.preventDefault();
-            const u = document.getElementById('loginUser').value.trim();
-            const p = document.getElementById('loginPin').value.trim();
+        // تعيين تاريخ اليوم في المدخلات
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('tDate').value = today;
+        document.getElementById('dDate').value = today;
+        document.getElementById('eDate').value = today;
 
-            // التحقق المباشر
-            if ((u === 'raad' || u === 'admin' || u !== '') && (p === '737125' || p !== '')) {
-                document.getElementById('loginModal').classList.add('hidden');
-                document.getElementById('appDashboard').classList.remove('hidden');
-                document.getElementById('userTag').innerText = `المستخدم: ${u || 'raad'}`;
-                initChart();
-            } else {
-                document.getElementById('loginErr').classList.remove('hidden');
-            }
-        }
-
-        function switchTab(tabId, btn) {
+        function showTab(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(el => {
-                el.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
-                el.classList.add('bg-slate-800', 'text-slate-400');
-            });
-
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.remove('hidden');
-            if(btn) {
-                btn.classList.remove('bg-slate-800', 'text-slate-400');
-                btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
+            btn.classList.add('active');
+        }
+
+        function addTrip(e) {
+            e.preventDefault();
+            trips.unshift({
+                date: document.getElementById('tDate').value,
+                comp: document.getElementById('tComp').value,
+                client: document.getElementById('tClient').value,
+                driver: document.getElementById('tDriver').value,
+                amount: parseFloat(document.getElementById('tAmount').value || 0)
+            });
+            localStorage.setItem('my_trips', JSON.stringify(trips));
+            e.target.reset();
+            document.getElementById('tDate').value = today;
+            renderAll();
+        }
+
+        function addDraw(e) {
+            e.preventDefault();
+            draws.unshift({
+                date: document.getElementById('dDate').value,
+                comp: document.getElementById('dComp').value,
+                driver: document.getElementById('dDriver').value,
+                amount: parseFloat(document.getElementById('dAmount').value || 0)
+            });
+            localStorage.setItem('my_draws', JSON.stringify(draws));
+            e.target.reset();
+            document.getElementById('dDate').value = today;
+            renderAll();
+        }
+
+        function addExpense(e) {
+            e.preventDefault();
+            expenses.unshift({
+                date: document.getElementById('eDate').value,
+                comp: document.getElementById('eComp').value,
+                title: document.getElementById('eTitle').value,
+                amount: parseFloat(document.getElementById('eAmount').value || 0)
+            });
+            localStorage.setItem('my_expenses', JSON.stringify(expenses));
+            e.target.reset();
+            document.getElementById('eDate').value = today;
+            renderAll();
+        }
+
+        function deleteItem(type, index) {
+            if (confirm('تأكيد الحذف؟')) {
+                if (type === 'trips') trips.splice(index, 1);
+                if (type === 'draws') draws.splice(index, 1);
+                if (type === 'expenses') expenses.splice(index, 1);
+                
+                localStorage.setItem('my_trips', JSON.stringify(trips));
+                localStorage.setItem('my_draws', JSON.stringify(draws));
+                localStorage.setItem('my_expenses', JSON.stringify(expenses));
+                renderAll();
             }
         }
 
-        function initChart() {
-            const ctx = document.getElementById('financialChart');
-            if(!ctx) return;
-            if(mainChart) mainChart.destroy();
-            mainChart = new Chart(ctx.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['الإيرادات', 'سحبيات السائقين', 'المصروفات'],
-                    datasets: [{
-                        label: 'المبالغ (ر.س)',
-                        data: [15000, 3000, 2500],
-                        backgroundColor: ['#10b981', '#a855f7', '#f43f5e'],
-                        borderRadius: 8
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+        function renderAll() {
+            const comp = document.getElementById('companyFilter').value;
+
+            const filteredTrips = comp === 'ALL' ? trips : trips.filter(x => x.comp === comp);
+            const filteredDraws = comp === 'ALL' ? draws : draws.filter(x => x.comp === comp);
+            const filteredExpenses = comp === 'ALL' ? expenses : expenses.filter(x => x.comp === comp);
+
+            const totalInc = filteredTrips.reduce((s, x) => s + x.amount, 0);
+            const totalDrw = filteredDraws.reduce((s, x) => s + x.amount, 0);
+            const totalExp = filteredExpenses.reduce((s, x) => s + x.amount, 0);
+
+            document.getElementById('statInc').innerText = `${totalInc.toFixed(2)} ر.س`;
+            document.getElementById('statDrw').innerText = `${totalDrw.toFixed(2)} ر.س`;
+            document.getElementById('statExp').innerText = `${totalExp.toFixed(2)} ر.س`;
+            document.getElementById('statNet').innerText = `${(totalInc - (totalDrw + totalExp)).toFixed(2)} ر.س`;
+
+            // جداول
+            document.getElementById('tripsTable').innerHTML = filteredTrips.map((t, i) => `
+                <tr><td class="p-3">${t.date}</td><td class="p-3">${t.comp}</td><td class="p-3 text-amber-400 font-bold">${t.client}</td><td class="p-3">${t.driver}</td><td class="p-3 font-bold text-emerald-400">${t.amount.toFixed(2)} ر.س</td><td class="p-3"><button onclick="deleteItem('trips', ${i})" class="text-red-400 font-bold">حذف</button></td></tr>
+            `).join('');
+
+            document.getElementById('drawsTable').innerHTML = filteredDraws.map((d, i) => `
+                <tr><td class="p-3">${d.date}</td><td class="p-3">${d.comp}</td><td class="p-3 text-purple-400 font-bold">${d.driver}</td><td class="p-3 font-bold text-purple-400">${d.amount.toFixed(2)} ر.س</td><td class="p-3"><button onclick="deleteItem('draws', ${i})" class="text-red-400 font-bold">حذف</button></td></tr>
+            `).join('');
+
+            document.getElementById('expensesTable').innerHTML = filteredExpenses.map((e, i) => `
+                <tr><td class="p-3">${e.date}</td><td class="p-3">${e.comp}</td><td class="p-3 text-rose-400 font-bold">${e.title}</td><td class="p-3 font-bold text-rose-400">${e.amount.toFixed(2)} ر.س</td><td class="p-3"><button onclick="deleteItem('expenses', ${i})" class="text-red-400 font-bold">حذف</button></td></tr>
+            `).join('');
         }
+
+        renderAll();
     </script>
 </body>
 </html>
