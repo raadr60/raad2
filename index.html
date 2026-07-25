@@ -33,12 +33,12 @@
             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">اسم المستخدم</label>
-                    <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" autocapitalize="none" autocomplete="off" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور</label>
                     <div class="relative">
-                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" autocapitalize="none" autocomplete="current-password" autocorrect="off" spellcheck="false" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 pl-10 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" autocapitalize="none" autocomplete="current-password" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 pl-10 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
                         <button type="button" onclick="togglePasswordVisibility('login-password', 'login-eye-icon')" class="absolute left-3 top-3.5 text-slate-400 hover:text-white">
                             <i id="login-eye-icon" class="fa-solid fa-eye"></i>
                         </button>
@@ -182,12 +182,12 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">اسم المستخدم</label>
-                        <input type="text" id="new-username" required placeholder="اسم المستخدم" autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                        <input type="text" id="new-username" required placeholder="اسم المستخدم" autocapitalize="none" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
                     </div>
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">كلمة المرور</label>
                         <div class="relative">
-                            <input type="password" id="new-password" required placeholder="كلمة المرور" autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 pl-10 text-xs text-white outline-none">
+                            <input type="password" id="new-password" required placeholder="كلمة المرور" autocapitalize="none" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 pl-10 text-xs text-white outline-none">
                             <button type="button" onclick="togglePasswordVisibility('new-password', 'new-eye-icon')" class="absolute left-3 top-2.5 text-slate-400 hover:text-white">
                                 <i id="new-eye-icon" class="fa-solid fa-eye text-xs"></i>
                             </button>
@@ -282,13 +282,9 @@
 
         async function handleLogin(e) {
             e.preventDefault();
-            
-            // تنظيف تام وحذف أي مسافات غير مرئية أو مسافات في البداية والنهاية قد تضاف من لوحة مفاتيح الجوال
-            let rawUser = document.getElementById('login-username').value;
-            let rawPass = document.getElementById('login-password').value;
-
-            const usernameInput = rawUser.replace(/[\u200B-\u200D\uFEFF]/g, '').trim().toLowerCase();
-            const passwordInput = rawPass.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+            // تنظيف الحقول من أي مسافات زائدة قد يضيفها الجوال تلقائياً
+            const usernameInput = document.getElementById('login-username').value.trim().toLowerCase();
+            const passwordInput = document.getElementById('login-password').value.trim();
 
             if (usernameInput === 'raad' && passwordInput === '737125') {
                 localStorage.setItem('sys_current_user', 'raad');
@@ -298,18 +294,14 @@
             }
 
             let extraUsers = JSON.parse(localStorage.getItem('sys_extra_users') || '[]');
-            let foundUser = extraUsers.find(u => {
-                let uName = u.username.replace(/[\u200B-\u200D\uFEFF]/g, '').trim().toLowerCase();
-                let uPass = u.password.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
-                return uName === usernameInput && uPass === passwordInput;
-            });
+            let foundUser = extraUsers.find(u => u.username.toLowerCase() === usernameInput && u.password === passwordInput);
 
             if (foundUser) {
-                localStorage.setItem('sys_current_user', foundUser.username.trim());
+                localStorage.setItem('sys_current_user', foundUser.username);
                 localStorage.setItem('sys_current_role', foundUser.role || 'viewer');
-                showMainApp(foundUser.username.trim());
+                showMainApp(foundUser.username);
             } else {
-                alert('خطأ في اسم المستخدم أو كلمة المرور! (تمت معالجة المسافات، يرجى كتابة البيانات بشكل مباشر بدون مسافات إضافية)');
+                alert('خطأ في اسم المستخدم أو كلمة المرور! (تأكد من عدم وجود مسافات إضافية بالخطأ عند الكتابة)');
             }
         }
 
@@ -411,8 +403,8 @@
 
         function handleCreateUser(e) {
             e.preventDefault();
-            const username = document.getElementById('new-username').value.replace(/[\u200B-\u200D\uFEFF]/g, '').trim().toLowerCase();
-            const password = document.getElementById('new-password').value.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+            const username = document.getElementById('new-username').value.trim().toLowerCase();
+            const password = document.getElementById('new-password').value.trim();
             const role = document.getElementById('new-role').value;
 
             if (username === 'raad') {
@@ -421,7 +413,7 @@
             }
 
             let extraUsers = JSON.parse(localStorage.getItem('sys_extra_users') || '[]');
-            if (extraUsers.some(u => u.username.replace(/[\u200B-\u200D\uFEFF]/g, '').trim().toLowerCase() === username)) {
+            if (extraUsers.some(u => u.username.toLowerCase() === username)) {
                 alert('اسم المستخدم موجود مسبقاً!');
                 return;
             }
@@ -701,7 +693,7 @@
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
         function resetFilters() {
             document.getElementById('search-query').value = '';
-            document.getElementById('filter-month').value, '';
+            document.getElementById('filter-month').value = '';
             renderCurrentTab();
         }
     </script>
