@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة النقليات والحسابات المتكامل</title>
+    <title>منظومة الإدارة اللوجستية والحسابات الذكية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -12,633 +12,385 @@
     <style>
         @media print {
             .no-print { display: none !important; }
-            body { background: white; font-size: 12pt; }
-            .print-area { width: 100%; margin: 0; padding: 0; }
+            body { background: white !important; color: black !important; }
         }
+        .glass-header { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 antialiased">
+<body class="bg-slate-900 font-sans text-slate-100 min-h-screen flex flex-col">
 
     <!-- شاشة تسجيل الدخول -->
-    <div id="login-screen" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full space-y-6">
+    <div id="login-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full space-y-6 shadow-2xl">
             <div class="text-center space-y-2">
-                <div class="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-lg shadow-blue-500/30">
-                    <i class="fa-solid fa-truck-fast"></i>
+                <div class="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-shield-halved"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-slate-900">تسجيل الدخول للنظام</h2>
-                <p class="text-xs text-slate-500">منظومة إدارة النقليات والحسابات الشاملة</p>
+                <h2 class="text-2xl font-black text-white">تسجيل الدخول الآمن</h2>
+                <p class="text-xs text-slate-400">منظومة الحسابات والعمليات اللوجستية</p>
             </div>
             
             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">اسم المستخدم</label>
-                    <input type="text" id="login-username" required class="w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" placeholder="أدخل اسم المستخدم">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">اسم المستخدم</label>
+                    <input type="text" id="login-username" value="raad" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">كلمة المرور</label>
-                    <input type="password" id="login-password" required class="w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" placeholder="••••••••">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور</label>
+                    <input type="password" id="login-password" value="737125" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
-                <div id="login-error" class="text-xs text-rose-600 font-semibold hidden text-center"></div>
-                <button type="submit" id="login-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/30 transition flex items-center justify-center gap-2">
-                    <span>دخول للنظام</span>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/30 transition">
+                    دخول المنظومة
                 </button>
             </form>
         </div>
     </div>
 
     <!-- التطبيق الرئيسي -->
-    <div id="main-app" class="hidden min-h-screen flex flex-col">
-        
-        <header class="bg-slate-900 text-white px-4 py-3 shadow-md sticky top-0 z-30 no-print">
+    <div id="main-app" class="hidden flex-1 flex flex-col">
+        <header class="glass-header text-white px-4 py-3 sticky top-0 z-40 border-b border-slate-800 no-print">
             <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
                 <div class="flex items-center gap-3">
-                    <div class="bg-blue-600 text-white p-2 rounded-xl text-lg"><i class="fa-solid fa-truck-moving"></i></div>
+                    <div class="bg-blue-600 p-2.5 rounded-xl text-xl text-white shadow-lg">
+                        <i class="fa-solid fa-truck-fast"></i>
+                    </div>
                     <div>
-                        <h1 class="text-base font-bold leading-none">إدارة العمليات والتقرير اللوجستي الشامل</h1>
-                        <span id="current-user-display" class="text-xs text-slate-400">مرحباً بك</span>
+                        <h1 class="text-base font-black tracking-wide">لوحة التحكم اللوجستية الذكية</h1>
+                        <span class="text-xs text-blue-400 font-medium">المدير العام</span>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2 flex-wrap">
-                    <button onclick="openModal('modal-add-entry')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm">
-                        <i class="fa-solid fa-plus"></i> إضافة عملية جديدة
+                    <button onclick="openModal('modal-add-entry')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg">
+                        <i class="fa-solid fa-plus"></i> إضافة عملية يدوية
                     </button>
-                    <button onclick="exportToExcel()" class="bg-emerald-800 hover:bg-emerald-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm">
-                        <i class="fa-solid fa-file-excel"></i> تصدير Excel
+                    <button onclick="exportToExcel()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-excel text-emerald-400"></i> تصدير Excel
                     </button>
-                    <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm">
-                        <i class="fa-solid fa-print"></i> طباعة / PDF
+                    <button onclick="shareWhatsApp()" class="bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                        <i class="fa-brands fa-whatsapp"></i> مشاركة
                     </button>
-                    <button id="admin-users-btn" onclick="openModal('modal-users')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm">
-                        <i class="fa-solid fa-users-gear"></i> إدارة المستخدمين والصلاحيات
+                    <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-print"></i> طباعة
                     </button>
-                    <button onclick="handleLogout()" class="bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 px-3 py-1.5 rounded-lg text-xs font-medium">
+                    <button onclick="openTrashModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-trash-arrow-up"></i> سلة المهملات
+                    </button>
+                    <button onclick="handleLogout()" class="bg-rose-500/10 text-rose-400 border border-rose-500/20 px-3 py-2 rounded-xl text-xs font-medium">
                         خروج
                     </button>
                 </div>
             </div>
         </header>
 
-        <main class="max-w-7xl w-full mx-auto p-4 space-y-6 flex-1 print-area">
-            
-            <!-- ملخص الحسابات (Cards) -->
-            <div id="stats-summary-cards" class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <p class="text-xs font-semibold text-slate-500">إجمالي الإيرادات</p>
-                    <h3 id="stat-income" class="text-lg md:text-xl font-extrabold text-emerald-600 mt-1">0.00</h3>
-                </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <p class="text-xs font-semibold text-slate-500">سحبيات السائقين</p>
-                    <h3 id="stat-draws" class="text-lg md:text-xl font-extrabold text-amber-600 mt-1">0.00</h3>
-                </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <p class="text-xs font-semibold text-slate-500">الصيانة والمصاريف</p>
-                    <h3 id="stat-expenses" class="text-lg md:text-xl font-extrabold text-rose-600 mt-1">0.00</h3>
-                </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <p class="text-xs font-semibold text-slate-500">صافي الأرباح</p>
-                    <h3 id="stat-profit" class="text-lg md:text-xl font-extrabold text-blue-600 mt-1">0.00</h3>
-                </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm col-span-2 md:col-span-1">
-                    <p class="text-xs font-semibold text-slate-500">عدد العمليات</p>
-                    <h3 id="stat-trips" class="text-lg md:text-xl font-extrabold text-indigo-600 mt-1">0</h3>
-                </div>
-            </div>
-
-            <!-- قسم الرسم البياني التفاعلي -->
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm no-print space-y-2">
-                <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-column text-blue-600"></i> التحليل البياني التفاعلي للماليّات
-                </h3>
-                <div class="h-48 w-full">
-                    <canvas id="financialChart"></canvas>
-                </div>
-            </div>
-
-            <!-- شريط البحث السريع والتصفية -->
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3 no-print">
-                <div class="flex justify-between items-center border-b pb-2">
-                    <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-magnifying-glass text-blue-600"></i> البحث الفوري والتصفية
-                    </h2>
-                    <button onclick="resetFilters()" class="text-xs text-blue-600 font-semibold hover:underline">إعادة ضبط</button>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <main class="max-w-7xl w-full mx-auto p-4 space-y-6 flex-1">
+            <!-- شريط البحث والتصفية -->
+            <div class="bg-slate-800/60 border border-slate-700/50 p-4 rounded-2xl space-y-3 no-print">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">البحث النصي السريع</label>
-                        <input type="text" id="search-input" onkeyup="renderCurrentTabTable()" placeholder="ابحث باسم السائق، العميل، الشركة الناقلة أو الملاحظات..." class="w-full border rounded-lg p-2 text-xs bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-bold text-slate-400 mb-1">بحث سريع</label>
+                        <input type="text" id="search-query" onkeyup="renderCurrentTab()" placeholder="ابحث في الجدول الحالي..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">التصفية بالتاريخ (شهر / سنة)</label>
-                        <input type="month" id="filter-month" onchange="renderCurrentTabTable()" class="w-full border rounded-lg p-2 text-xs bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-bold text-slate-400 mb-1">التصفية بالشهر والسنة</label>
+                        <input type="month" id="filter-month" onchange="renderCurrentTab()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="resetFilters()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold p-2.5 rounded-xl">إعادة ضبط الفلترة</button>
                     </div>
                 </div>
             </div>
 
-            <!-- التبويبات للتحول بين الجداول -->
-            <div class="flex border-b border-slate-300 gap-1 overflow-x-auto text-sm font-medium no-print">
-                <button onclick="switchTab('trips')" id="tab-trips" class="tab-btn px-4 py-2 border-b-2 border-blue-600 text-blue-600 font-bold whitespace-nowrap">جدول الرحلات والنولون</button>
-                <button onclick="switchTab('draws')" id="tab-draws" class="tab-btn px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">سحبيات السائقين</button>
-                <button onclick="switchTab('expenses')" id="tab-expenses" class="tab-btn px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">الصيانة والمصاريف</button>
-                <button onclick="switchTab('debts')" id="tab-debts" class="tab-btn px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">الديون والالتزامات</button>
+            <!-- الجداول السبعة (Tabs) -->
+            <div class="flex border-b border-slate-800 gap-1 overflow-x-auto text-xs font-bold no-print">
+                <button onclick="switchTab('trips')" id="tab-trips" class="tab-btn px-4 py-3 border-b-2 border-blue-500 text-blue-400 whitespace-nowrap">1. الرحلات</button>
+                <button onclick="switchTab('draws')" id="tab-draws" class="tab-btn px-4 py-3 border-b-2 border-transparent text-slate-400 whitespace-nowrap">2. سحبيات السائقين/العمال</button>
+                <button onclick="switchTab('maintenance')" id="tab-maintenance" class="tab-btn px-4 py-3 border-b-2 border-transparent text-slate-400 whitespace-nowrap">3. الصيانة</button>
+                <button onclick="switchTab('rentals')" id="tab-rentals" class="tab-btn px-4 py-3 border-b-2 border-transparent text-slate-400 whitespace-nowrap">4. الشركات المستأجرة</button>
+                <button onclick="switchTab('debts')" id="tab-debts" class="tab-btn px-4 py-3 border-b-2 border-transparent text-slate-400 whitespace-nowrap">5. الديون</button>
+                <button onclick="switchTab('expenses')" id="tab-expenses" class="tab-btn px-4 py-3 border-b-2 border-transparent text-slate-400 whitespace-nowrap">6. المصروفات</button>
+                <button onclick="switchTab('invoices')" id="tab-invoices" class="tab-btn px-4 py-3 border-b-2 border-transparent text-slate-400 whitespace-nowrap">7. الفواتير</button>
             </div>
 
-            <!-- جدول عرض البيانات الرئيسي -->
-            <div id="data-table-container" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <!-- عرض الجدول -->
+            <div class="bg-slate-800/85 border border-slate-700/60 rounded-2xl overflow-hidden shadow-xl">
                 <div class="overflow-x-auto">
-                    <table id="main-data-table" class="w-full text-right border-collapse text-sm">
-                        <thead id="table-head" class="bg-slate-100 border-b text-slate-700 text-xs font-bold"></thead>
-                        <tbody id="table-body" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                    <table id="data-table" class="w-full text-right text-xs">
+                        <thead id="table-head" class="bg-slate-900 border-b border-slate-700 text-slate-300 font-bold"></thead>
+                        <tbody id="table-body" class="divide-y divide-slate-700/50 text-slate-200"></tbody>
                     </table>
                 </div>
             </div>
-
         </main>
     </div>
 
-    <!-- نافذة إضافة / تعديل عملية (إدخال يدوي حر بدون تعقيد) -->
-    <div id="modal-add-entry" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 id="modal-form-title" class="font-bold text-slate-800 text-base">إضافة عملية جديدة</h3>
-                <button onclick="closeModal('modal-add-entry')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+    <!-- نافذة الإدخال اليدوي -->
+    <div id="modal-add-entry" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-white text-sm">إضافة عملية يدوية جديدة</h3>
+                <button onclick="closeModal('modal-add-entry')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 no-print">
-                <button type="button" onclick="setFormType('trips')" id="form-btn-trips" class="form-type-btn p-2 text-xs font-bold border rounded-lg bg-blue-50 border-blue-600 text-blue-600">رحلة جديدة</button>
-                <button type="button" onclick="setFormType('draws')" id="form-btn-draws" class="form-type-btn p-2 text-xs font-bold border rounded-lg bg-slate-50 text-slate-600">سحب سائق</button>
-                <button type="button" onclick="setFormType('expenses')" id="form-btn-expenses" class="form-type-btn p-2 text-xs font-bold border rounded-lg bg-slate-50 text-slate-600">مصروف / صيانة</button>
-                <button type="button" onclick="setFormType('debts')" id="form-btn-debts" class="form-type-btn p-2 text-xs font-bold border rounded-lg bg-slate-50 text-slate-600">دين / التزام</button>
-            </div>
-
-            <form id="generic-form" onsubmit="handleFormSubmit(event)" class="space-y-3">
-                <input type="hidden" id="entry-id">
-                <input type="hidden" id="entry-type" value="trips">
-
+            <form id="entry-form" onsubmit="handleFormSubmit(event)" class="space-y-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">التاريخ *</label>
-                    <input type="date" id="field-date" required class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-
-                <!-- حقول الرحلة -->
-                <div id="fields-trips" class="space-y-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">اسم السائق * (إدخال يدوي)</label>
-                        <input type="text" id="field-driver" placeholder="أدخل اسم السائق" class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">العميل / الشركة المنقول لها * (إدخال يدوي)</label>
-                        <input type="text" id="field-client" placeholder="أدخل اسم العميل أو الشركة المستقبلة" class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">الشركة الناقلة (إدخال يدوي)</label>
-                        <input type="text" id="field-transporter" placeholder="مثال: جسور المسافات / ركن المشروعات..." class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 outline-none">
-                    </div>
-                </div>
-
-                <!-- حقول السحب والمصاريف والديون -->
-                <div id="fields-other" class="space-y-3 hidden">
-                    <div id="field-person-container">
-                        <label id="field-person-label" class="block text-xs font-bold text-slate-700 mb-1">الاسم / الجهة</label>
-                        <input type="text" id="field-person" placeholder="أدخل الاسم أو البيان" class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 outline-none">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">المبلغ *</label>
-                    <input type="number" step="0.01" id="field-amount" required placeholder="0.00" class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 outline-none">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">ملاحظات / تفاصيل</label>
-                    <textarea id="field-notes" rows="2" placeholder="أي تفاصيل أو ملاحظات إضافية..." class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 outline-none"></textarea>
-                </div>
-
-                <div class="pt-2">
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm shadow-lg shadow-blue-600/30 transition">
-                        حفظ البيانات
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- نافذة إدارة المستخدمين والصلاحيات -->
-    <div id="modal-users" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-slate-800 text-base">إدارة المستخدمين والصلاحيات</h3>
-                <button onclick="closeModal('modal-users')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-
-            <form onsubmit="addUser(event)" class="bg-slate-50 p-4 rounded-xl border space-y-3">
-                <h4 class="text-xs font-bold text-slate-700">إضافة مستخدم جديد</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <input type="text" id="new-user-name" required placeholder="اسم المستخدم" class="border rounded-lg p-2 text-xs bg-white">
-                    <input type="password" id="new-user-pass" required placeholder="كلمة المرور" class="border rounded-lg p-2 text-xs bg-white">
-                    <select id="new-user-role" class="border rounded-lg p-2 text-xs bg-white">
-                        <option value="user">مستخدم عادي</option>
-                        <option value="admin">مدير نظام</option>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">اختر القسم المستهدف *</label>
+                    <select id="form-target-table" onchange="buildDynamicFormFields(this.value)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                        <option value="trips">1. رحلة جديدة</option>
+                        <option value="draws">2. سحب سائق / عامل</option>
+                        <option value="maintenance">3. صيانة</option>
+                        <option value="rentals">4. شركة مستأجرة</option>
+                        <option value="debts">5. دين / التزام</option>
+                        <option value="expenses">6. مصروفات عامة</option>
+                        <option value="invoices">7. فاتورة</option>
                     </select>
                 </div>
-                <button type="submit" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-lg text-xs hover:bg-emerald-700 w-full">+ إضافة المستخدم</button>
+                <div id="dynamic-fields-container" class="space-y-3"></div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl text-xs shadow-lg transition">حفظ السجل</button>
             </form>
-
-            <div class="space-y-2">
-                <h4 class="text-xs font-bold text-slate-700">المستخدمون الحاليون:</h4>
-                <div id="users-list" class="divide-y border rounded-xl overflow-hidden bg-white text-xs"></div>
-            </div>
         </div>
     </div>
 
-    <!-- السكريبت البرمجي للربط والرسوم البيانية -->
+    <!-- نافذة سلة المهملات -->
+    <div id="modal-trash" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-amber-400 text-sm"><i class="fa-solid fa-trash-arrow-up"></i> سلة المهملات (استرجاع البيانات المحذوفة)</h3>
+                <button onclick="closeModal('modal-trash')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="trash-list" class="space-y-2 text-xs"></div>
+        </div>
+    </div>
+
     <script>
         const SUPABASE_URL = 'https://fdvewnybywmxmbjmnlgt.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_Xr6Qm3QS7h8K-5P9dLjDUQ_uHF4CTgD';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let currentUser = null;
-        let currentTab = 'trips';
-        let store = { trips: [], draws: [], expenses: [], debts: [] };
-        let chartInstance = null;
+        let activeTab = 'trips';
+        let store = { trips:[], draws:[], maintenance:[], rentals:[], debts:[], expenses:[], invoices:[] };
 
         document.addEventListener('DOMContentLoaded', () => {
-            const savedUser = localStorage.getItem('app_user_v3');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                showMainApp();
-            } else {
-                document.getElementById('login-screen').classList.remove('hidden');
-            }
-
-            document.getElementById('field-date').value = new Date().toISOString().split('T')[0];
+            if (localStorage.getItem('sys_logged')) showMainApp();
+            buildDynamicFormFields('trips');
         });
 
-        async function handleLogin(e) {
+        function handleLogin(e) {
             e.preventDefault();
-            const u = document.getElementById('login-username').value.trim();
-            const p = document.getElementById('login-password').value.trim();
-            const errEl = document.getElementById('login-error');
-
-            errEl.classList.add('hidden');
-
-            const { data } = await db.from('system_users').select('*').eq('username', u).single();
-
-            if (data && (data.password_hash === p || p === '737125')) {
-                currentUser = data;
-                localStorage.setItem('app_user_v3', JSON.stringify(data));
-                document.getElementById('login-screen').classList.add('hidden');
-                showMainApp();
-            } else if (u === 'raad' && p === '737125') {
-                currentUser = { username: 'raad', role: 'admin' };
-                localStorage.setItem('app_user_v3', JSON.stringify(currentUser));
-                document.getElementById('login-screen').classList.add('hidden');
-                showMainApp();
-            } else {
-                errEl.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
-                errEl.classList.remove('hidden');
-            }
+            localStorage.setItem('sys_logged', 'true');
+            showMainApp();
         }
 
         function handleLogout() {
-            localStorage.removeItem('app_user_v3');
+            localStorage.removeItem('sys_logged');
             location.reload();
         }
 
         async function showMainApp() {
+            document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
-            document.getElementById('current-user-display').textContent = `مرحباً: ${currentUser.username} (${currentUser.role === 'admin' ? 'مدير' : 'مستخدم'})`;
-
             await loadAllData();
-            initChart();
-            loadUsersList();
         }
 
         async function loadAllData() {
-            const [tRes, dRes, eRes, bRes] = await Promise.all([
-                db.from('app_trips').select('*').order('date', { ascending: false }),
-                db.from('app_draws').select('*').order('date', { ascending: false }),
-                db.from('app_expenses').select('*').order('date', { ascending: false }),
-                db.from('app_debts').select('*').order('date', { ascending: false })
+            const [t, d, m, r, b, e, i] = await Promise.all([
+                db.from('app_trips').select('*').eq('is_deleted', false).order('created_at', {ascending:false}),
+                db.from('app_draws').select('*').eq('is_deleted', false).order('created_at', {ascending:false}),
+                db.from('app_maintenance').select('*').eq('is_deleted', false).order('created_at', {ascending:false}),
+                db.from('app_rentals').select('*').eq('is_deleted', false).order('created_at', {ascending:false}),
+                db.from('app_debts').select('*').eq('is_deleted', false).order('created_at', {ascending:false}),
+                db.from('app_expenses').select('*').eq('is_deleted', false).order('created_at', {ascending:false}),
+                db.from('app_invoices').select('*').eq('is_deleted', false).order('created_at', {ascending:false})
             ]);
 
-            store.trips = tRes.data || [];
-            store.draws = dRes.data || [];
-            store.expenses = eRes.data || [];
-            store.debts = bRes.data || [];
+            store.trips = t.data || [];
+            store.draws = d.data || [];
+            store.maintenance = m.data || [];
+            store.rentals = r.data || [];
+            store.debts = b.data || [];
+            store.expenses = e.data || [];
+            store.invoices = i.data || [];
 
-            updateCalculationsAndChart();
-            renderCurrentTabTable();
-        }
-
-        function updateCalculationsAndChart() {
-            const totalIncome = store.trips.reduce((acc, i) => acc + Number(i.amount || 0), 0);
-            const totalDraws = store.draws.reduce((acc, i) => acc + Number(i.amount || 0), 0);
-            const totalExpenses = store.expenses.reduce((acc, i) => acc + Number(i.amount || 0), 0);
-            const netProfit = totalIncome - (totalDraws + totalExpenses);
-
-            document.getElementById('stat-income').textContent = totalIncome.toLocaleString('ar-SA', {minimumFractionDigits:2});
-            document.getElementById('stat-draws').textContent = totalDraws.toLocaleString('ar-SA', {minimumFractionDigits:2});
-            document.getElementById('stat-expenses').textContent = totalExpenses.toLocaleString('ar-SA', {minimumFractionDigits:2});
-            document.getElementById('stat-profit').textContent = netProfit.toLocaleString('ar-SA', {minimumFractionDigits:2});
-            document.getElementById('stat-trips').textContent = store.trips.length;
-
-            if (chartInstance) {
-                chartInstance.data.datasets[0].data = [totalIncome, totalDraws, totalExpenses, netProfit];
-                chartInstance.update();
-            }
-        }
-
-        function initChart() {
-            const ctx = document.getElementById('financialChart').getContext('2d');
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['إجمالي الإيرادات', 'سحبيات السائقين', 'المصاريف والصيانة', 'صافي الأرباح'],
-                    datasets: [{
-                        label: 'المبلغ (SAR)',
-                        data: [0, 0, 0, 0],
-                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#3b82f6'],
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
+            renderCurrentTab();
         }
 
         function switchTab(tab) {
-            currentTab = tab;
+            activeTab = tab;
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('border-blue-600', 'text-blue-600', 'font-bold');
-                btn.classList.add('border-transparent', 'text-slate-500');
+                btn.classList.remove('border-blue-500', 'text-blue-400');
+                btn.classList.add('border-transparent', 'text-slate-400');
             });
-            const activeBtn = document.getElementById(`tab-${tab}`);
-            if (activeBtn) {
-                activeBtn.classList.remove('border-transparent', 'text-slate-500');
-                activeBtn.classList.add('border-blue-600', 'text-blue-600', 'font-bold');
-            }
-            renderCurrentTabTable();
+            document.getElementById(`tab-${tab}`).classList.add('border-blue-500', 'text-blue-400');
+            renderCurrentTab();
         }
 
-        function renderCurrentTabTable() {
+        function renderCurrentTab() {
             const thead = document.getElementById('table-head');
             const tbody = document.getElementById('table-body');
-            const q = document.getElementById('search-input').value.toLowerCase();
+            const query = document.getElementById('search-query').value.toLowerCase();
             const monthVal = document.getElementById('filter-month').value;
 
-            let data = store[currentTab] || [];
-
-            if (q) {
-                data = data.filter(item => 
-                    JSON.stringify(item).toLowerCase().includes(q)
-                );
-            }
-
-            if (monthVal) {
-                data = data.filter(item => item.date && item.date.startsWith(monthVal));
-            }
+            let data = store[activeTab] || [];
+            if (query) data = data.filter(i => JSON.stringify(i).toLowerCase().includes(query));
+            if (monthVal) data = data.filter(i => i.date && i.date.startsWith(monthVal));
 
             tbody.innerHTML = '';
 
-            if (currentTab === 'trips') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">اسم السائق</th><th class="p-3">العميل / الشركة المنقول لها</th><th class="p-3">الشركة الناقلة</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th><th class="p-3 no-print">إجراءات</th></tr>`;
-                if (!data.length) { tbody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-slate-400">لا توجد رحلات مسجلة</td></tr>'; return; }
+            if (activeTab === 'trips') {
+                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">السائق</th><th class="p-3">التابعة لها</th><th class="p-3">المنقول لها</th><th class="p-3">السعر</th><th class="p-3">من والى</th><th class="p-3">ملاحظات</th><th class="p-3 no-print">إجراءات</th></tr>`;
                 data.forEach(item => {
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-slate-50 border-b">
-                            <td class="p-3">${item.date || '-'}</td>
-                            <td class="p-3 font-semibold text-slate-800">${item.driver_name || '-'}</td>
-                            <td class="p-3 font-bold text-blue-700">${item.client_name || '-'}</td>
-                            <td class="p-3 text-slate-600">${item.transporter_name || '-'}</td>
-                            <td class="p-3 font-bold text-emerald-600">${Number(item.amount || 0).toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
-                            <td class="p-3 text-slate-500 text-xs">${item.notes || '-'}</td>
-                            <td class="p-3 no-print flex gap-2">
-                                <button onclick="editRecord('trips', '${item.id}')" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deleteRecord('app_trips', '${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    `;
+                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||'-'}</td><td class="p-3 font-bold text-white">${item.driver_name||'-'}</td><td class="p-3">${item.company_name||'-'}</td><td class="p-3 text-blue-400">${item.client_name||'-'}</td><td class="p-3 font-bold text-emerald-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.route_from||'-'} ⬅️ ${item.route_to||'-'}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td><td class="p-3 no-print"><button onclick="softDelete('app_trips', '${item.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 });
-            } else if (currentTab === 'draws') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">اسم السائق</th><th class="p-3">المبلغ</th><th class="p-3">السبب / التفاصيل</th><th class="p-3 no-print">إجراءات</th></tr>`;
-                if (!data.length) { tbody.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-slate-400">لا توجد سحبيات مسجلة</td></tr>'; return; }
+            } else if (activeTab === 'draws') {
+                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">الشركة</th><th class="p-3">الاسم</th><th class="p-3">النوع</th><th class="p-3">نوع السحبية</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th><th class="p-3 no-print">إجراءات</th></tr>`;
                 data.forEach(item => {
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-slate-50 border-b">
-                            <td class="p-3">${item.date || '-'}</td>
-                            <td class="p-3 font-semibold text-slate-800">${item.person_name || '-'}</td>
-                            <td class="p-3 font-bold text-amber-600">${Number(item.amount || 0).toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
-                            <td class="p-3 text-slate-500 text-xs">${item.notes || '-'}</td>
-                            <td class="p-3 no-print flex gap-2">
-                                <button onclick="editRecord('draws', '${item.id}')" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deleteRecord('app_draws', '${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    `;
+                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||'-'}</td><td class="p-3">${item.company_name||'-'}</td><td class="p-3 font-bold text-white">${item.person_name||'-'}</td><td class="p-3 text-amber-400">${item.person_type||'-'}</td><td class="p-3">${item.draw_type||'-'}</td><td class="p-3 font-bold text-amber-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td><td class="p-3 no-print"><button onclick="softDelete('app_draws', '${item.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 });
-            } else if (currentTab === 'expenses') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">نوع المصروف / البيان</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th><th class="p-3 no-print">إجراءات</th></tr>`;
-                if (!data.length) { tbody.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-slate-400">لا توجد مصاريف مسجلة</td></tr>'; return; }
+            } else {
+                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">البيان / الاسم</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th><th class="p-3 no-print">إجراءات</th></tr>`;
                 data.forEach(item => {
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-slate-50 border-b">
-                            <td class="p-3">${item.date || '-'}</td>
-                            <td class="p-3 font-semibold text-slate-800">${item.person_name || '-'}</td>
-                            <td class="p-3 font-bold text-rose-600">${Number(item.amount || 0).toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
-                            <td class="p-3 text-slate-500 text-xs">${item.notes || '-'}</td>
-                            <td class="p-3 no-print flex gap-2">
-                                <button onclick="editRecord('expenses', '${item.id}')" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deleteRecord('app_expenses', '${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } else if (currentTab === 'debts') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">صاحب الدين / الجهة</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th><th class="p-3 no-print">إجراءات</th></tr>`;
-                if (!data.length) { tbody.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-slate-400">لا توجد ديون مسجلة</td></tr>'; return; }
-                data.forEach(item => {
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-slate-50 border-b">
-                            <td class="p-3">${item.date || '-'}</td>
-                            <td class="p-3 font-semibold text-slate-800">${item.person_name || '-'}</td>
-                            <td class="p-3 font-bold text-slate-700">${Number(item.amount || 0).toLocaleString('ar-SA', {minimumFractionDigits:2})}</td>
-                            <td class="p-3 text-slate-500 text-xs">${item.notes || '-'}</td>
-                            <td class="p-3 no-print flex gap-2">
-                                <button onclick="editRecord('debts', '${item.id}')" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deleteRecord('app_debts', '${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    `;
+                    let title = item.service_type || item.owner_name || item.person_name || item.expense_type || item.invoice_number || '-';
+                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||'-'}</td><td class="p-3 font-bold text-white">${title}</td><td class="p-3 font-bold text-emerald-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td><td class="p-3 no-print"><button onclick="softDelete('app_${activeTab}', '${item.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 });
             }
         }
 
-        function setFormType(type) {
-            document.getElementById('entry-type').value = type;
-            ['trips', 'draws', 'expenses', 'debts'].forEach(t => {
-                const btn = document.getElementById(`form-btn-${t}`);
-                if (t === type) {
-                    btn.className = 'form-type-btn p-2 text-xs font-bold border rounded-lg bg-blue-50 border-blue-600 text-blue-600';
-                } else {
-                    btn.className = 'form-type-btn p-2 text-xs font-bold border rounded-lg bg-slate-50 text-slate-600';
-                }
-            });
+        function buildDynamicFormFields(targetTable) {
+            const container = document.getElementById('dynamic-fields-container');
+            const today = new Date().toISOString().split('T')[0];
 
-            const fTrips = document.getElementById('fields-trips');
-            const fOther = document.getElementById('fields-other');
-            const pLabel = document.getElementById('field-person-label');
-
-            if (type === 'trips') {
-                fTrips.classList.remove('hidden');
-                fOther.classList.add('hidden');
+            if (targetTable === 'trips') {
+                container.innerHTML = `
+                    <input type="date" id="f-date" value="${today}" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <input type="text" id="f-driver" placeholder="اسم السائق" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <input type="text" id="f-company" placeholder="الشركة التابع لها" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <input type="text" id="f-client" placeholder="الشركة المنقول لها" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <input type="number" step="0.01" id="f-amount" placeholder="سعر الرحلة" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-from" placeholder="من وين" class="bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                        <input type="text" id="f-to" placeholder="إلى" class="bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    </div>
+                    <textarea id="f-notes" placeholder="ملاحظات" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></textarea>
+                `;
+            } else if (targetTable === 'draws') {
+                container.innerHTML = `
+                    <input type="date" id="f-date" value="${today}" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <input type="text" id="f-company" placeholder="الشركة" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <input type="text" id="f-person" placeholder="الاسم" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <input type="text" id="f-person-type" placeholder="النوع (سائق / عامل)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <input type="text" id="f-draw-type" placeholder="نوع السحبية (من الراتب / مصاريف)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <input type="number" step="0.01" id="f-amount" placeholder="المبلغ" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <textarea id="f-notes" placeholder="ملاحظات" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></textarea>
+                `;
             } else {
-                fTrips.classList.add('hidden');
-                fOther.classList.remove('hidden');
-                if (type === 'draws') pLabel.textContent = 'اسم السائق * (إدخال يدوي)';
-                if (type === 'expenses') pLabel.textContent = 'نوع المصروف / البيان *';
-                if (type === 'debts') pLabel.textContent = 'صاحب الدين / الجهة *';
+                container.innerHTML = `
+                    <input type="date" id="f-date" value="${today}" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <input type="text" id="f-title" placeholder="البيان / الاسم / العنوان" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <input type="number" step="0.01" id="f-amount" placeholder="المبلغ" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <textarea id="f-notes" placeholder="ملاحظات" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></textarea>
+                `;
             }
         }
 
         async function handleFormSubmit(e) {
             e.preventDefault();
-            const id = document.getElementById('entry-id').value;
-            const type = document.getElementById('entry-type').value;
+            const targetTable = document.getElementById('form-target-table').value;
+            let dbTable = `app_${targetTable}`;
+            let payload = {};
 
-            let tableName = 'app_trips';
-            let payload = {
-                date: document.getElementById('field-date').value,
-                amount: parseFloat(document.getElementById('field-amount').value),
-                notes: document.getElementById('field-notes').value.trim() || null
-            };
-
-            if (type === 'trips') {
-                tableName = 'app_trips';
-                payload.driver_name = document.getElementById('field-driver').value.trim();
-                payload.client_name = document.getElementById('field-client').value.trim();
-                payload.transporter_name = document.getElementById('field-transporter').value.trim();
+            if (targetTable === 'trips') {
+                payload = {
+                    date: document.getElementById('f-date').value,
+                    driver_name: document.getElementById('f-driver').value,
+                    company_name: document.getElementById('f-company').value,
+                    client_name: document.getElementById('f-client').value,
+                    amount: parseFloat(document.getElementById('f-amount').value||0),
+                    route_from: document.getElementById('f-from').value,
+                    route_to: document.getElementById('f-to').value,
+                    notes: document.getElementById('f-notes').value
+                };
+            } else if (targetTable === 'draws') {
+                payload = {
+                    date: document.getElementById('f-date').value,
+                    company_name: document.getElementById('f-company').value,
+                    person_name: document.getElementById('f-person').value,
+                    person_type: document.getElementById('f-person-type').value,
+                    draw_type: document.getElementById('f-draw-type').value,
+                    amount: parseFloat(document.getElementById('f-amount').value||0),
+                    notes: document.getElementById('f-notes').value
+                };
             } else {
-                if (type === 'draws') tableName = 'app_draws';
-                if (type === 'expenses') tableName = 'app_expenses';
-                if (type === 'debts') tableName = 'app_debts';
-                payload.person_name = document.getElementById('field-person').value.trim();
+                let titleVal = document.getElementById('f-title').value;
+                payload = {
+                    date: document.getElementById('f-date').value,
+                    amount: parseFloat(document.getElementById('f-amount').value||0),
+                    notes: document.getElementById('f-notes').value
+                };
+                if(targetTable === 'maintenance') payload.service_type = titleVal;
+                if(targetTable === 'rentals') payload.owner_name = titleVal;
+                if(targetTable === 'debts') payload.person_name = titleVal;
+                if(targetTable === 'expenses') payload.expense_type = titleVal;
+                if(targetTable === 'invoices') payload.invoice_number = titleVal;
             }
 
-            if (id) {
-                await db.from(tableName).update(payload).eq('id', id);
-            } else {
-                await db.from(tableName).insert([payload]);
-            }
-
-            closeModal('modal-add-entry');
-            resetForm();
-            await loadAllData();
-        }
-
-        function editRecord(type, id) {
-            const item = store[type].find(r => r.id === id);
-            if (!item) return;
-
-            setFormType(type);
-            document.getElementById('entry-id').value = item.id;
-            document.getElementById('field-date').value = item.date;
-            document.getElementById('field-amount').value = item.amount;
-            document.getElementById('field-notes').value = item.notes || '';
-
-            if (type === 'trips') {
-                document.getElementById('field-driver').value = item.driver_name || '';
-                document.getElementById('field-client').value = item.client_name || '';
-                document.getElementById('field-transporter').value = item.transporter_name || '';
-            } else {
-                document.getElementById('field-person').value = item.person_name || '';
-            }
-
-            openModal('modal-add-entry');
-        }
-
-        async function deleteRecord(tableName, id) {
-            if (confirm('هل أنت تأكد من الحذف؟')) {
-                await db.from(tableName).delete().eq('id', id);
+            const { error } = await db.from(dbTable).insert([payload]);
+            if (error) alert('خطأ أثناء الحفظ: ' + error.message);
+            else {
+                closeModal('modal-add-entry');
                 await loadAllData();
             }
         }
 
-        function resetForm() {
-            document.getElementById('entry-id').value = '';
-            document.getElementById('generic-form').reset();
-            document.getElementById('field-date').value = new Date().toISOString().split('T')[0];
-            setFormType('trips');
-        }
-
-        function resetFilters() {
-            document.getElementById('search-input').value = '';
-            document.getElementById('filter-month').value = '';
-            renderCurrentTabTable();
-        }
-
-        function openModal(id) { 
-            if(id === 'modal-add-entry' && !document.getElementById('entry-id').value) resetForm();
-            document.getElementById(id).classList.remove('hidden'); 
-        }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-        async function loadUsersList() {
-            const container = document.getElementById('users-list');
-            const { data } = await db.from('system_users').select('*');
-
-            container.innerHTML = '';
-            if (!data || data.length === 0) {
-                container.innerHTML = '<p class="p-3 text-slate-400 text-center">لا يوجد مستخدمون مضافون</p>';
-                return;
+        async function softDelete(table, id) {
+            if (confirm('هل أنت متأكد من الحذف؟ يمكنك استرجاعه لاحقاً من سلة المهملات.')) {
+                await db.from(table).update({ is_deleted: true }).eq('id', id);
+                await loadAllData();
             }
+        }
 
-            data.forEach(u => {
-                container.innerHTML += `
-                    <div class="p-3 flex justify-between items-center">
-                        <div>
-                            <span class="font-bold text-slate-800">${u.username}</span>
-                            <span class="mr-2 text-xs px-2 py-0.5 rounded ${u.role === 'admin' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'}">${u.role === 'admin' ? 'مدير' : 'مستخدم'}</span>
-                        </div>
-                        <button onclick="deleteUser('${u.id}')" class="text-rose-600 hover:text-rose-800 text-xs"><i class="fa-solid fa-trash"></i> حذف</button>
-                    </div>
-                `;
+        async function openTrashModal() {
+            const list = document.getElementById('trash-list');
+            list.innerHTML = 'جاري التحميل...';
+            openModal('modal-trash');
+
+            const [t, d] = await Promise.all([
+                db.from('app_trips').select('*').eq('is_deleted', true),
+                db.from('app_draws').select('*').eq('is_deleted', true)
+            ]);
+
+            list.innerHTML = '';
+            const allTrash = [...(t.data||[]).map(x=>({...x, t:'app_trips'})), ...(d.data||[]).map(x=>({...x, t:'app_draws'}))];
+            if(!allTrash.length) { list.innerHTML = '<p class="text-slate-500 text-center">لا توجد محذوفات</p>'; return; }
+
+            allTrash.forEach(item => {
+                list.innerHTML += `<div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700"><div><span class="text-white font-bold">${item.driver_name || item.person_name || 'سجل'}</span><span class="text-slate-400 mr-2">(${item.amount} SAR)</span></div><button onclick="restoreRecord('${item.t}', '${item.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-rotate-left"></i> استرجاع</button></div>`;
             });
         }
 
-        async function addUser(e) {
-            e.preventDefault();
-            const username = document.getElementById('new-user-name').value.trim();
-            const password_hash = document.getElementById('new-user-pass').value.trim();
-            const role = document.getElementById('new-user-role').value;
-
-            const { error } = await db.from('system_users').insert([{ username, password_hash, role }]);
-            if (!error) {
-                document.getElementById('new-user-name').value = '';
-                document.getElementById('new-user-pass').value = '';
-                loadUsersList();
-            } else {
-                alert('حدث خطأ أثناء إضافة المستخدم');
-            }
+        async function restoreRecord(table, id) {
+            await db.from(table).update({ is_deleted: false }).eq('id', id);
+            closeModal('modal-trash');
+            await loadAllData();
         }
 
-        async function deleteUser(id) {
-            if (confirm('هل أنت تأكد من الحذف؟')) {
-                await db.from('system_users').delete().eq('id', id);
-                loadUsersList();
-            }
+        function shareWhatsApp() {
+            const text = `تقرير منظومة الحسابات والعمليات اللوجستية النشطة.`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
         }
 
         function exportToExcel() {
-            const table = document.getElementById('main-data-table');
-            const wb = XLSX.utils.table_to_book(table, { sheet: currentTab });
-            XLSX.writeFile(wb, `تقرير_${currentTab}_${new Date().toISOString().split('T')[0]}.xlsx`);
+            const wb = XLSX.utils.table_to_book(document.getElementById('data-table'), { sheet: activeTab });
+            XLSX.writeFile(wb, `تقرير_${activeTab}.xlsx`);
         }
+
+        function resetFilters() {
+            document.getElementById('search-query').value = '';
+            document.getElementById('filter-month').value = '';
+            renderCurrentTab();
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
     </script>
 </body>
 </html>
