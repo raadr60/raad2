@@ -69,11 +69,11 @@
                 </div>
 
                 <div class="flex items-center gap-2 flex-wrap">
-                    <button onclick="openModal('modal-add-entry')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg">
+                    <button id="add-entry-btn" onclick="openModal('modal-add-entry')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg">
                         <i class="fa-solid fa-plus"></i> إضافة عملية يدوية
                     </button>
                     <button id="admin-users-btn" onclick="openUsersModal()" class="hidden bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-xl text-xs font-bold items-center gap-1.5">
-                        <i class="fa-solid fa-users-gear"></i> إدارة المستخدمين
+                        <i class="fa-solid fa-users-gear"></i> إدارة المستخدمين والصلاحيات
                     </button>
                     <button onclick="exportToExcel()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
                         <i class="fa-solid fa-file-excel text-emerald-400"></i> تصدير Excel
@@ -84,7 +84,7 @@
                     <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
                         <i class="fa-solid fa-print"></i> طباعة
                     </button>
-                    <button onclick="openTrashModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                    <button id="trash-btn" onclick="openTrashModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
                         <i class="fa-solid fa-trash-arrow-up"></i> سلة المهملات
                     </button>
                     <button onclick="handleLogout()" class="bg-rose-500/10 text-rose-400 border border-rose-500/20 px-3 py-2 rounded-xl text-xs font-medium">
@@ -172,16 +172,16 @@
         </main>
     </div>
 
-    <!-- نافذة إدارة المستخدمين -->
+    <!-- نافذة إدارة المستخدمين والصلاحيات -->
     <div id="modal-users" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 max-h-[85vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="font-bold text-purple-400 text-sm"><i class="fa-solid fa-users-gear"></i> إدارة المستخدمين والصلاحيات</h3>
+                <h3 class="font-bold text-purple-400 text-sm"><i class="fa-solid fa-users-gear"></i> إدارة المستخدمين وتحديد الصلاحيات</h3>
                 <button onclick="closeModal('modal-users')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
             <form id="new-user-form" onsubmit="handleCreateUser(event)" class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700 space-y-3">
-                <h4 class="text-xs font-bold text-white">إضافة مستخدم جديد للنظام</h4>
+                <h4 class="text-xs font-bold text-white">إضافة مستخدم جديد وتحديد صلاحيته</h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">اسم المستخدم</label>
@@ -198,17 +198,17 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">المستوى والصلاحية</label>
+                    <label class="block text-xs text-slate-400 mb-1">صلاحية المستخدم في النظام</label>
                     <select id="new-role" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
-                        <option value="user">مستخدم عادي</option>
-                        <option value="admin">مدير مشارك</option>
+                        <option value="editor">صلاحية إدخال وتعديل (يستطيع إضافة بيانات)</option>
+                        <option value="viewer">صلاحية مشاهدة فقط (ممنوع من الإدخال والحذف)</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2.5 rounded-xl text-xs transition">إضافة وحفظ المستخدم</button>
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2.5 rounded-xl text-xs transition">حفظ المستخدم الجديد</button>
             </form>
 
             <div class="space-y-2">
-                <h4 class="text-xs font-bold text-slate-300">المستخدمون المسجلون حالياً:</h4>
+                <h4 class="text-xs font-bold text-slate-300">المستخدمون المسجلون والصلاحيات الحالية:</h4>
                 <div id="users-list-container" class="space-y-2"></div>
             </div>
         </div>
@@ -259,6 +259,7 @@
 
         let activeTab = 'trips';
         let store = { trips:[], draws:[], maintenance:[], rentals:[], debts:[], expenses:[], invoices:[] };
+        let currentUserRole = 'editor'; // افتراضي
 
         document.addEventListener('DOMContentLoaded', () => {
             const loggedUser = localStorage.getItem('sys_current_user');
@@ -289,16 +290,17 @@
 
             if (usernameInput === 'raad' && passwordInput === '737125') {
                 localStorage.setItem('sys_current_user', 'raad');
+                localStorage.setItem('sys_current_role', 'owner');
                 showMainApp('raad');
                 return;
             }
 
-            // التحقق من المستخدمين المحليين الإضافيين
             let extraUsers = JSON.parse(localStorage.getItem('sys_extra_users') || '[]');
             let foundUser = extraUsers.find(u => u.username === usernameInput && u.password === passwordInput);
 
             if (foundUser) {
                 localStorage.setItem('sys_current_user', usernameInput);
+                localStorage.setItem('sys_current_role', foundUser.role || 'viewer');
                 showMainApp(usernameInput);
             } else {
                 alert('خطأ في اسم المستخدم أو كلمة المرور!');
@@ -307,6 +309,7 @@
 
         function handleLogout() {
             localStorage.removeItem('sys_current_user');
+            localStorage.removeItem('sys_current_role');
             location.reload();
         }
 
@@ -316,15 +319,27 @@
 
             const badge = document.getElementById('current-user-badge');
             const adminBtn = document.getElementById('admin-users-btn');
+            const addBtn = document.getElementById('add-entry-btn');
+            const trashBtn = document.getElementById('trash-btn');
+
+            currentUserRole = localStorage.getItem('sys_current_role') || 'viewer';
 
             if (username === 'raad') {
-                badge.innerText = 'المدير العام (صلاحيات كاملة)';
+                badge.innerText = 'المدير العام (صلاحيات مطلقة وتحديد الصلاحيات)';
                 adminBtn.classList.remove('hidden');
                 adminBtn.classList.add('flex');
+                addBtn.classList.remove('hidden');
+                trashBtn.classList.remove('hidden');
             } else {
-                badge.innerText = `مستخدم النظام: ${username}`;
+                if (currentUserRole === 'editor') {
+                    badge.innerText = `مستخدم النظام: ${username} (إدخال وتعديل)`;
+                    addBtn.classList.remove('hidden');
+                } else {
+                    badge.innerText = `مستخدم النظام: ${username} (مشاهدة فقط)`;
+                    addBtn.classList.add('hidden');
+                }
                 adminBtn.classList.add('hidden');
-                adminBtn.classList.remove('flex');
+                trashBtn.classList.add('hidden');
             }
 
             await loadAllData();
@@ -366,7 +381,7 @@
                 <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
                     <div>
                         <span class="text-white font-bold">raad</span>
-                        <span class="bg-blue-500/20 text-blue-400 text-[10px] px-2 py-0.5 rounded-md mr-2">المالك (صلاحيات مطلقة)</span>
+                        <span class="bg-blue-500/20 text-blue-400 text-[10px] px-2 py-0.5 rounded-md mr-2">المالك (تحكم كامل)</span>
                     </div>
                     <span class="text-slate-500 text-xs">حساب رئيسي</span>
                 </div>
@@ -374,11 +389,13 @@
 
             let extraUsers = JSON.parse(localStorage.getItem('sys_extra_users') || '[]');
             extraUsers.forEach((user, index) => {
+                let roleText = user.role === 'editor' ? 'إدخال وتعديل' : 'مشاهدة فقط';
+                let roleColor = user.role === 'editor' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400';
                 container.innerHTML += `
                     <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
                         <div>
                             <span class="text-white font-bold">${user.username}</span>
-                            <span class="bg-purple-500/20 text-purple-400 text-[10px] px-2 py-0.5 rounded-md mr-2">${user.role === 'admin' ? 'مدير مشارك' : 'مستخدم عادي'}</span>
+                            <span class="${roleColor} text-[10px] px-2 py-0.5 rounded-md mr-2">${roleText}</span>
                         </div>
                         <button onclick="deleteLocalUser(${index})" class="text-rose-400 hover:text-rose-300 text-xs font-bold bg-rose-500/10 px-2.5 py-1 rounded-lg">إزالة</button>
                     </div>
@@ -409,7 +426,7 @@
             document.getElementById('new-username').value = '';
             document.getElementById('new-password').value = '';
             renderUsersList();
-            alert('تم إضافة المستخدم بنجاح!');
+            alert('تم حفظ المستخدم وتحديد صلاحيته بنجاح!');
         }
 
         function deleteLocalUser(index) {
@@ -455,6 +472,7 @@
             const tfoot = document.getElementById('table-foot');
             const query = document.getElementById('search-query').value.toLowerCase();
             const monthVal = document.getElementById('filter-month').value;
+            const isOwner = localStorage.getItem('sys_current_user') === 'raad';
 
             let data = store[activeTab] || [];
             if (query) data = data.filter(i => JSON.stringify(i).toLowerCase().includes(query));
@@ -464,31 +482,53 @@
             tfoot.innerHTML = '';
 
             let totalAmount = 0;
+            let showDeleteCol = isOwner;
 
             if (activeTab === 'trips') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">السائق</th><th class="p-3">التابعة لها</th><th class="p-3">المنقول لها</th><th class="p-3">السعر</th><th class="p-3">من والى</th><th class="p-3">ملاحظات</th><th class="p-3 no-print">إجراءات</th></tr>`;
+                let headerHtml = `<tr><th class="p-3">التاريخ</th><th class="p-3">السائق</th><th class="p-3">التابعة لها</th><th class="p-3">المنقول لها</th><th class="p-3">السعر</th><th class="p-3">من والى</th><th class="p-3">ملاحظات</th>`;
+                if (showDeleteCol) headerHtml += `<th class="p-3 no-print">إجراءات</th>`;
+                headerHtml += `</tr>`;
+                thead.innerHTML = headerHtml;
+
                 data.forEach(item => {
                     totalAmount += Number(item.amount || 0);
-                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||item.created_at?.split('T')[0]||'-'}</td><td class="p-3 font-bold text-white">${item.driver_name||'-'}</td><td class="p-3">${item.company_name||'-'}</td><td class="p-3 text-blue-400">${item.client_name||'-'}</td><td class="p-3 font-bold text-emerald-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.route_from||'-'} ⬅️ ${item.route_to||'-'}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td><td class="p-3 no-print"><button onclick="softDelete('app_trips', '${item.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                    let rowHtml = `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||item.created_at?.split('T')[0]||'-'}</td><td class="p-3 font-bold text-white">${item.driver_name||'-'}</td><td class="p-3">${item.company_name||'-'}</td><td class="p-3 text-blue-400">${item.client_name||'-'}</td><td class="p-3 font-bold text-emerald-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.route_from||'-'} ⬅️ ${item.route_to||'-'}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td>`;
+                    if (showDeleteCol) rowHtml += `<td class="p-3 no-print"><button onclick="softDelete('app_trips', '${item.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>`;
+                    rowHtml += `</tr>`;
+                    tbody.innerHTML += rowHtml;
                 });
-                tfoot.innerHTML = `<tr><td colspan="4" class="p-3 text-left font-bold">إجمالي الرحلات:</td><td colspan="4" class="p-3 font-bold text-emerald-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
+                tfoot.innerHTML = `<tr><td colspan="4" class="p-3 text-left font-bold">إجمالي الرحلات:</td><td colspan="${showDeleteCol ? 4 : 3}" class="p-3 font-bold text-emerald-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
 
             } else if (activeTab === 'draws') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">الشركة</th><th class="p-3">الاسم</th><th class="p-3">النوع</th><th class="p-3">نوع السحبية</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th><th class="p-3 no-print">إجراءات</th></tr>`;
+                let headerHtml = `<tr><th class="p-3">التاريخ</th><th class="p-3">الشركة</th><th class="p-3">الاسم</th><th class="p-3">النوع</th><th class="p-3">نوع السحبية</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th>`;
+                if (showDeleteCol) headerHtml += `<th class="p-3 no-print">إجراءات</th>`;
+                headerHtml += `</tr>`;
+                thead.innerHTML = headerHtml;
+
                 data.forEach(item => {
                     totalAmount += Number(item.amount || 0);
-                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||item.created_at?.split('T')[0]||'-'}</td><td class="p-3">${item.company_name||'-'}</td><td class="p-3 font-bold text-white">${item.person_name||'-'}</td><td class="p-3 text-amber-400">${item.person_type||'-'}</td><td class="p-3">${item.draw_type||'-'}</td><td class="p-3 font-bold text-amber-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td><td class="p-3 no-print"><button onclick="softDelete('app_draws', '${item.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                    let rowHtml = `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||item.created_at?.split('T')[0]||'-'}</td><td class="p-3">${item.company_name||'-'}</td><td class="p-3 font-bold text-white">${item.person_name||'-'}</td><td class="p-3 text-amber-400">${item.person_type||'-'}</td><td class="p-3">${item.draw_type||'-'}</td><td class="p-3 font-bold text-amber-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td>`;
+                    if (showDeleteCol) rowHtml += `<td class="p-3 no-print"><button onclick="softDelete('app_draws', '${item.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td>`;
+                    rowHtml += `</tr>`;
+                    tbody.innerHTML += rowHtml;
                 });
-                tfoot.innerHTML = `<tr><td colspan="5" class="p-3 text-left font-bold">إجمالي السحبيات:</td><td colspan="3" class="p-3 font-bold text-amber-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
+                tfoot.innerHTML = `<tr><td colspan="5" class="p-3 text-left font-bold">إجمالي السحبيات:</td><td colspan="${showDeleteCol ? 3 : 2}" class="p-3 font-bold text-amber-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
 
             } else {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">البيان / الاسم</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th><th class="p-3 no-print">إجراءات</th></tr>`;
+                let headerHtml = `<tr><th class="p-3">التاريخ</th><th class="p-3">البيان / الاسم</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th>`;
+                if (showDeleteCol) headerHtml += `<th class="p-3 no-print">إجراءات</th>`;
+                headerHtml += `</tr>`;
+                thead.innerHTML = headerHtml;
+
                 data.forEach(item => {
                     totalAmount += Number(item.amount || 0);
                     let title = item.service_type || item.owner_name || item.person_name || item.expense_type || item.invoice_number || '-';
-                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||item.created_at?.split('T')[0]||'-'}</td><td class="p-3 font-bold text-white">${title}</td><td class="p-3 font-bold text-emerald-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td><td class="p-3 no-print"><button onclick="softDelete('app_${activeTab}', '${item.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                    let rowHtml = `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||item.created_at?.split('T')[0]||'-'}</td><td class="p-3 font-bold text-white">${title}</td><td class="p-3 font-bold text-emerald-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td>`;
+                    if (showDeleteCol) rowHtml += `<td class="p-3 no-print"><button onclick="softDelete('app_${activeTab}', '${item.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td>`;
+                    rowHtml += `</tr>`;
+                    tbody.innerHTML += rowHtml;
                 });
-                tfoot.innerHTML = `<tr><td colspan="2" class="p-3 text-left font-bold">الإجمالي العام للقسم:</td><td colspan="3" class="p-3 font-bold text-emerald-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
+                tfoot.innerHTML = `<tr><td colspan="2" class="p-3 text-left font-bold">الإجمالي العام للقسم:</td><td colspan="${showDeleteCol ? 3 : 2}" class="p-3 font-bold text-emerald-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
             }
         }
 
@@ -532,6 +572,13 @@
 
         async function handleFormSubmit(e) {
             e.preventDefault();
+            const username = localStorage.getItem('sys_current_user');
+            const role = localStorage.getItem('sys_current_role');
+            if (username !== 'raad' && role !== 'editor') {
+                alert('عذراً، ليس لديك صلاحية الإدخال (حسابك مخصص للمشاهدة فقط).');
+                return;
+            }
+
             const target = document.getElementById('form-target-table').value;
             const date = document.getElementById('f-date')?.value || new Date().toISOString().split('T')[0];
             const amount = Number(document.getElementById('f-amount')?.value || 0);
@@ -570,6 +617,10 @@
         }
 
         async function softDelete(table, id) {
+            if (localStorage.getItem('sys_current_user') !== 'raad') {
+                alert('عذراً، الحذف متاح للمالك فقط.');
+                return;
+            }
             if (confirm('هل تريد نقل هذا العنصر إلى سلة المهملات؟')) {
                 await db.from(table).update({ is_deleted: true }).eq('id', id);
                 await loadAllData();
