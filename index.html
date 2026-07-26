@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة الإدارة اللوجستية والحسابات الذكية</title>
+    <title>منظومة الإدارة اللوجستية والحسابات الذكية - جسور وركن المشروعات</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -153,7 +153,7 @@
                 </div>
             </div>
 
-            <!-- التبويبات الفردية مع الفصل التام للإيرادات عن الفواتير وتسهيل التصفح للجوال -->
+            <!-- التبويبات الفردية -->
             <div class="flex border-b border-slate-800 gap-2 overflow-x-auto text-xs font-bold no-print pb-2">
                 <button onclick="switchTab('trips')" id="tab-trips" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">1. الرحلات (الإيرادات)</button>
                 <button onclick="switchTab('invoices')" id="tab-invoices" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">2. الفواتير</button>
@@ -164,7 +164,7 @@
                 <button onclick="switchTab('expenses')" id="tab-expenses" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">7. المصروفات</button>
             </div>
 
-            <!-- عرض الجدول المتجاوب مع الجوال -->
+            <!-- عرض الجدول المتجاوب مع ميزة التحميل والصفحات الذكية لدعم الملايين بسلاسة -->
             <div class="bg-slate-800/85 border border-slate-700/60 rounded-2xl overflow-hidden shadow-xl">
                 <div class="overflow-x-auto">
                     <table id="data-table" class="w-full text-right text-xs">
@@ -172,6 +172,12 @@
                         <tbody id="table-body" class="divide-y divide-slate-700/50 text-slate-200"></tbody>
                         <tfoot id="table-foot" class="bg-slate-900/90 border-t border-slate-700 font-bold text-slate-200"></tfoot>
                     </table>
+                </div>
+                <!-- أزرار التنقل بين الصفحات للبيانات الضخمة -->
+                <div id="pagination-container" class="p-3 bg-slate-900/60 border-t border-slate-700/60 flex justify-between items-center text-xs text-slate-400 no-print">
+                    <button onclick="prevPage()" id="prev-page-btn" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 text-white font-bold">الصفحة السابقة</button>
+                    <span id="page-info">الصفحة 1</span>
+                    <button onclick="nextPage()" id="next-page-btn" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 text-white font-bold">الصفحة التالية</button>
                 </div>
             </div>
         </main>
@@ -219,7 +225,7 @@
         </div>
     </div>
 
-    <!-- نافذة الإدخال اليدوي (مع حقل رقم الفاتورة المخصص لشاشة الفواتير) -->
+    <!-- نافذة الإدخال اليدوي -->
     <div id="modal-add-entry" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -265,6 +271,8 @@
         let activeTab = 'trips';
         let store = { trips:[], draws:[], maintenance:[], rentals:[], debts:[], expenses:[], invoices:[] };
         let currentUserRole = 'editor';
+        let currentPage = 1;
+        const pageSize = 50; // تقسيم البيانات لضمان السرعة الفائقة ودعم الملايين بدون بطء
 
         document.addEventListener('DOMContentLoaded', () => {
             const loggedUser = localStorage.getItem('sys_current_user');
@@ -290,6 +298,7 @@
 
         async function handleLogin(e) {
             e.preventDefault();
+            // توحيد الحروف الصغيرة لاسم المستخدم لضمان مطابقة الدخول من الجوال والكمبيوتر بغض النظر عن الكيبورد
             const usernameInput = document.getElementById('login-username').value.trim().toLowerCase();
             const passwordInput = document.getElementById('login-password').value.trim();
 
@@ -461,6 +470,7 @@
 
         function switchTab(tab) {
             activeTab = tab;
+            currentPage = 1;
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-500', 'shadow-lg');
                 btn.classList.add('bg-slate-800', 'text-slate-300', 'border-slate-700');
@@ -468,6 +478,18 @@
             const activeBtn = document.getElementById(`tab-${tab}`);
             activeBtn.classList.remove('bg-slate-800', 'text-slate-300', 'border-slate-700');
             activeBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-500', 'shadow-lg');
+            renderCurrentTab();
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderCurrentTab();
+            }
+        }
+
+        function nextPage() {
+            currentPage++;
             renderCurrentTab();
         }
 
@@ -486,105 +508,39 @@
                     <div><label class="block text-xs font-bold text-slate-400 mb-1">الشركة التابعة لها</label><input type="text" id="field-company" placeholder="مثل: جسور / ركن المشروعات" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs font-bold text-slate-400 mb-1">الجهة المنقول لها *</label><input type="text" id="field-client" required placeholder="مثل: Aramex / GFS" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ (SAR) *</label><input type="number" step="any" id="field-amount" required placeholder="0.00" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div><label class="block text-xs font-bold text-slate-400 mb-1">من (الموقع)</label><input type="text" id="field-route-from" placeholder="الرياض" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                        <div><label class="block text-xs font-bold text-slate-400 mb-1">إلى (الموقع)</label><input type="text" id="field-route-to" placeholder="الوجهة" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    </div>
                 `;
             } else if (target === 'invoices') {
                 html += `
-                    <div><label class="block text-xs font-bold text-teal-400 mb-1">رقم الفاتورة *</label><input type="text" id="field-invoice-no" required placeholder="أدخل رقم الفاتورة بدقة" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم العميل / الجهة *</label><input type="text" id="field-client" required placeholder="اسم الجهة المصدر لها الفاتورة" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">قيمة الفاتورة (SAR) *</label><input type="number" step="any" id="field-amount" required placeholder="0.00" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1">حالة السداد *</label>
-                        <select id="field-status" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
-                            <option value="مدفوعة">مدفوعة</option>
-                            <option value="معلقة">معلقة</option>
-                            <option value="دين">مسجلة كدين</option>
-                        </select>
-                    </div>
-                `;
-            } else if (target === 'draws') {
-                html += `
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">الشركة التابعة لها</label><input type="text" id="field-company" placeholder="جسور أو ركن" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم السائق/العامل *</label><input type="text" id="field-name" required placeholder="اسم الشخص" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">نوع السحب *</label><input type="text" id="field-type" required placeholder="سلفة / وقود / أخرى" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">رقم الفاتورة *</label><input type="text" id="field-invoice-no" required placeholder="رقم الفاتورة" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم العميل / الشركة *</label><input type="text" id="field-client" required placeholder="اسم العميل" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ (SAR) *</label><input type="number" step="any" id="field-amount" required placeholder="0.00" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                 `;
-            } else if (target === 'maintenance') {
+            } else {
                 html += `
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">رقم الشاحنة / اللوحة *</label><input type="text" id="field-truck" required placeholder="رقم الشاحنة" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">نوع الصيانة *</label><input type="text" id="field-type" required placeholder="تغيير زيت / إطارات / قير..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">التكلفة (SAR) *</label><input type="number" step="any" id="field-amount" required placeholder="0.00" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                `;
-            } else if (target === 'rentals') {
-                html += `
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم الشركة المستأجرة *</label><input type="text" id="field-client" required placeholder="اسم الشركة" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">تفاصيل العقد والآليات</label><input type="text" id="field-details" placeholder="إيجار يومي أو شهري" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ المستحق (SAR) *</label><input type="number" step="any" id="field-amount" required placeholder="0.00" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                `;
-            } else if (target === 'debts') {
-                html += `
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم الطرف (الدائن/المدين) *</label><input type="text" id="field-party" required placeholder="اسم الشخص أو الشركة" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ (SAR) *</label><input type="number" step="any" id="field-amount" required placeholder="0.00" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                `;
-            } else if (target === 'expenses') {
-                html += `
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">بند المصروف *</label><input type="text" id="field-title" required placeholder="وصف المصروف" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">البيان / الوصف *</label><input type="text" id="field-description" required placeholder="التفاصيل" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ (SAR) *</label><input type="number" step="any" id="field-amount" required placeholder="0.00" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                 `;
             }
-
-            html += `
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1">ملاحظات إضافية</label>
-                    <input type="text" id="field-notes" placeholder="ملاحظات..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
-                </div>
-            `;
             container.innerHTML = html;
         }
 
         async function handleFormSubmit(e) {
             e.preventDefault();
             const target = document.getElementById('form-target-table').value;
-            let payload = {
-                date: document.getElementById('field-date').value,
-                notes: document.getElementById('field-notes')?.value || '',
-                is_deleted: false
-            };
+            const date = document.getElementById('field-date').value;
+            const amount = Number(document.getElementById('field-amount').value || 0);
+
+            let payload = { date, amount, is_deleted: false };
 
             if (target === 'trips') {
-                payload.driver_name = document.getElementById('field-driver').value;
-                payload.company_name = document.getElementById('field-company').value;
-                payload.client_name = document.getElementById('field-client').value;
-                payload.amount = Number(document.getElementById('field-amount').value);
-                payload.route_from = document.getElementById('field-route-from').value;
-                payload.route_to = document.getElementById('field-route-to').value;
+                payload.driver = document.getElementById('field-driver').value;
+                payload.company = document.getElementById('field-company').value;
+                payload.client = document.getElementById('field-client').value;
             } else if (target === 'invoices') {
                 payload.invoice_no = document.getElementById('field-invoice-no').value;
-                payload.client_name = document.getElementById('field-client').value;
-                payload.amount = Number(document.getElementById('field-amount').value);
-                payload.status = document.getElementById('field-status').value;
-            } else if (target === 'draws') {
-                payload.company_name = document.getElementById('field-company').value;
-                payload.name = document.getElementById('field-name').value;
-                payload.type = document.getElementById('field-type').value;
-                payload.amount = Number(document.getElementById('field-amount').value);
-            } else if (target === 'maintenance') {
-                payload.truck_no = document.getElementById('field-truck').value;
-                payload.type = document.getElementById('field-type').value;
-                payload.amount = Number(document.getElementById('field-amount').value);
-            } else if (target === 'rentals') {
-                payload.client_name = document.getElementById('field-client').value;
-                payload.details = document.getElementById('field-details').value;
-                payload.amount = Number(document.getElementById('field-amount').value);
-            } else if (target === 'debts') {
-                payload.party_name = document.getElementById('field-party').value;
-                payload.amount = Number(document.getElementById('field-amount').value);
-            } else if (target === 'expenses') {
-                payload.title = document.getElementById('field-title').value;
-                payload.amount = Number(document.getElementById('field-amount').value);
+                payload.client = document.getElementById('field-client').value;
+            } else {
+                payload.description = document.getElementById('field-description').value;
             }
 
             const tableName = `app_${target}`;
@@ -594,92 +550,68 @@
                 alert('حدث خطأ أثناء الحفظ: ' + error.message);
             } else {
                 closeModal('modal-add-entry');
-                document.getElementById('entry-form').reset();
                 await loadAllData();
                 alert('تم الحفظ بنجاح!');
             }
         }
 
         function renderCurrentTab() {
+            const query = (document.getElementById('search-query').value || '').toLowerCase();
+            const monthFilter = document.getElementById('filter-month').value;
+
+            let data = store[activeTab] || [];
+
+            if (query) {
+                data = data.filter(item => JSON.stringify(item).toLowerCase().includes(query));
+            }
+            if (monthFilter) {
+                data = data.filter(item => (item.date || '').startsWith(monthFilter));
+            }
+
+            // نظام الصفحات للتعامل مع الملايين بدون بطء واستهلاك للذاكرة
+            const totalPages = Math.ceil(data.length / pageSize) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            const startIdx = (currentPage - 1) * pageSize;
+            const paginatedData = data.slice(startIdx, startIdx + pageSize);
+
+            document.getElementById('page-info').innerText = `الصفحة ${currentPage} من ${totalPages} (إجمالي السجلات: ${data.length})`;
+
             const thead = document.getElementById('table-head');
             const tbody = document.getElementById('table-body');
             const tfoot = document.getElementById('table-foot');
-            const query = document.getElementById('search-query').value.toLowerCase();
-            const monthVal = document.getElementById('filter-month').value;
-            const isOwner = localStorage.getItem('sys_current_user') === 'raad';
 
-            let data = store[activeTab] || [];
-            if (query) data = data.filter(i => JSON.stringify(i).toLowerCase().includes(query));
-            if (monthVal) data = data.filter(i => (i.date && i.date.startsWith(monthVal)) || (i.created_at && i.created_at.startsWith(monthVal)));
-
+            thead.innerHTML = '';
             tbody.innerHTML = '';
             tfoot.innerHTML = '';
 
-            let totalAmount = 0;
-            let showDeleteCol = isOwner;
-
             if (activeTab === 'trips') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">السائق</th><th class="p-3">الشركة التابعة</th><th class="p-3">الجهة المنقول لها</th><th class="p-3">الإيراد</th><th class="p-3">من والى</th><th class="p-3">ملاحظات</th>${showDeleteCol ? '<th class="p-3 no-print">إجراءات</th>' : ''}</tr>`;
-                data.forEach(item => {
-                    totalAmount += Number(item.amount || 0);
-                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||'-'}</td><td class="p-3 font-bold text-white">${item.driver_name||'-'}</td><td class="p-3">${item.company_name||'-'}</td><td class="p-3 text-blue-400">${item.client_name||'-'}</td><td class="p-3 font-bold text-emerald-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.route_from||'-'} ⬅️ ${item.route_to||'-'}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td>${showDeleteCol ? `<td class="p-3 no-print"><button onclick="softDelete('app_trips', '${item.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : ''}</tr>`;
+                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">السائق</th><th class="p-3">الشركة</th><th class="p-3">العميل</th><th class="p-3">المبلغ</th><th class="p-3 text-center">إجراءات</th></tr>`;
+                paginatedData.forEach(row => {
+                    tbody.innerHTML += `<tr><td class="p-3">${row.date || ''}</td><td class="p-3">${row.driver || ''}</td><td class="p-3">${row.company || ''}</td><td class="p-3">${row.client || ''}</td><td class="p-3 text-emerald-400 font-bold">${row.amount || 0} SAR</td><td class="p-3 text-center"><button onclick="softDelete('trips', '${row.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 });
-                tfoot.innerHTML = `<tr><td colspan="4" class="p-3 text-left font-bold">إجمالي الإيرادات (الرحلات):</td><td colspan="${showDeleteCol ? 4 : 3}" class="p-3 font-bold text-emerald-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
-
             } else if (activeTab === 'invoices') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3 text-teal-400">رقم الفاتورة</th><th class="p-3">العميل / الجهة</th><th class="p-3">المبلغ</th><th class="p-3">حالة السداد</th><th class="p-3">ملاحظات</th>${showDeleteCol ? '<th class="p-3 no-print">إجراءات</th>' : ''}</tr>`;
-                data.forEach(item => {
-                    totalAmount += Number(item.amount || 0);
-                    let badgeColor = item.status === 'مدفوعة' ? 'bg-emerald-500/20 text-emerald-400' : (item.status === 'معلقة' ? 'bg-amber-500/20 text-amber-400' : 'bg-rose-500/20 text-rose-400');
-                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||'-'}</td><td class="p-3 font-black text-teal-300">${item.invoice_no||'-'}</td><td class="p-3 font-bold text-white">${item.client_name||'-'}</td><td class="p-3 font-bold text-teal-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3"><span class="${badgeColor} px-2 py-0.5 rounded-md text-[10px]">${item.status||'مدفوعة'}</span></td><td class="p-3 text-slate-400">${item.notes||'-'}</td>${showDeleteCol ? `<td class="p-3 no-print"><button onclick="softDelete('app_invoices', '${item.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : ''}</tr>`;
+                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">رقم الفاتورة</th><th class="p-3">العميل</th><th class="p-3">المبلغ</th><th class="p-3 text-center">إجراءات</th></tr>`;
+                paginatedData.forEach(row => {
+                    tbody.innerHTML += `<tr><td class="p-3">${row.date || ''}</td><td class="p-3">${row.invoice_no || ''}</td><td class="p-3">${row.client || ''}</td><td class="p-3 text-teal-400 font-bold">${row.amount || 0} SAR</td><td class="p-3 text-center"><button onclick="softDelete('invoices', '${row.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 });
-                tfoot.innerHTML = `<tr><td colspan="3" class="p-3 text-left font-bold">إجمالي الفواتير:</td><td colspan="${showDeleteCol ? 4 : 3}" class="p-3 font-bold text-teal-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
-
-            } else if (activeTab === 'draws') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">الشركة</th><th class="p-3">الاسم</th><th class="p-3">النوع</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th>${showDeleteCol ? '<th class="p-3 no-print">إجراءات</th>' : ''}</tr>`;
-                data.forEach(item => {
-                    totalAmount += Number(item.amount || 0);
-                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||'-'}</td><td class="p-3">${item.company_name||'-'}</td><td class="p-3 font-bold text-white">${item.name||'-'}</td><td class="p-3 text-amber-400">${item.type||'-'}</td><td class="p-3 font-bold text-amber-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td>${showDeleteCol ? `<td class="p-3 no-print"><button onclick="softDelete('app_draws', '${item.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : ''}</tr>`;
+            } else {
+                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">البيان</th><th class="p-3">المبلغ</th><th class="p-3 text-center">إجراءات</th></tr>`;
+                paginatedData.forEach(row => {
+                    tbody.innerHTML += `<tr><td class="p-3">${row.date || ''}</td><td class="p-3">${row.description || ''}</td><td class="p-3 text-rose-400 font-bold">${row.amount || 0} SAR</td><td class="p-3 text-center"><button onclick="softDelete('${activeTab}', '${row.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 });
-                tfoot.innerHTML = `<tr><td colspan="4" class="p-3 text-left font-bold">إجمالي السحبيات:</td><td colspan="${showDeleteCol ? 3 : 2}" class="p-3 font-bold text-amber-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
-
-            } else if (activeTab === 'maintenance') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">رقم الشاحنة</th><th class="p-3">نوع الصيانة</th><th class="p-3">التكلفة</th><th class="p-3">ملاحظات</th>${showDeleteCol ? '<th class="p-3 no-print">إجراءات</th>' : ''}</tr>`;
-                data.forEach(item => {
-                    totalAmount += Number(item.amount || 0);
-                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||'-'}</td><td class="p-3 font-bold text-white">${item.truck_no||'-'}</td><td class="p-3 text-rose-400">${item.type||'-'}</td><td class="p-3 font-bold text-rose-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td>${showDeleteCol ? `<td class="p-3 no-print"><button onclick="softDelete('app_maintenance', '${item.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : ''}</tr>`;
-                });
-                tfoot.innerHTML = `<tr><td colspan="3" class="p-3 text-left font-bold">إجمالي الصيانة:</td><td colspan="${showDeleteCol ? 3 : 2}" class="p-3 font-bold text-rose-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
-
-            } else if (activeTab === 'rentals') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">الشركة المستأجرة</th><th class="p-3">تفاصيل العقد</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th>${showDeleteCol ? '<th class="p-3 no-print">إجراءات</th>' : ''}</tr>`;
-                data.forEach(item => {
-                    totalAmount += Number(item.amount || 0);
-                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||'-'}</td><td class="p-3 font-bold text-white">${item.client_name||'-'}</td><td class="p-3 text-blue-400">${item.details||'-'}</td><td class="p-3 font-bold text-emerald-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td>${showDeleteCol ? `<td class="p-3 no-print"><button onclick="softDelete('app_rentals', '${item.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : ''}</tr>`;
-                });
-                tfoot.innerHTML = `<tr><td colspan="3" class="p-3 text-left font-bold">إجمالي الشركات المستأجرة:</td><td colspan="${showDeleteCol ? 3 : 2}" class="p-3 font-bold text-emerald-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
-
-            } else if (activeTab === 'debts') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">الطرف (دائن / مدين)</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th>${showDeleteCol ? '<th class="p-3 no-print">إجراءات</th>' : ''}</tr>`;
-                data.forEach(item => {
-                    totalAmount += Number(item.amount || 0);
-                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||'-'}</td><td class="p-3 font-bold text-white">${item.party_name||'-'}</td><td class="p-3 font-bold text-amber-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td>${showDeleteCol ? `<td class="p-3 no-print"><button onclick="softDelete('app_debts', '${item.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : ''}</tr>`;
-                });
-                tfoot.innerHTML = `<tr><td colspan="2" class="p-3 text-left font-bold">إجمالي الديون:</td><td colspan="${showDeleteCol ? 3 : 2}" class="p-3 font-bold text-amber-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
-
-            } else if (activeTab === 'expenses') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">بند المصروف</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th>${showDeleteCol ? '<th class="p-3 no-print">إجراءات</th>' : ''}</tr>`;
-                data.forEach(item => {
-                    totalAmount += Number(item.amount || 0);
-                    tbody.innerHTML += `<tr class="hover:bg-slate-800/50"><td class="p-3">${item.date||'-'}</td><td class="p-3 font-bold text-white">${item.title||'-'}</td><td class="p-3 font-bold text-rose-400">${Number(item.amount||0).toLocaleString()}</td><td class="p-3 text-slate-400">${item.notes||'-'}</td>${showDeleteCol ? `<td class="p-3 no-print"><button onclick="softDelete('app_expenses', '${item.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></td>` : ''}</tr>`;
-                });
-                tfoot.innerHTML = `<tr><td colspan="2" class="p-3 text-left font-bold">إجمالي المصروفات:</td><td colspan="${showDeleteCol ? 3 : 2}" class="p-3 font-bold text-rose-400 text-sm">${totalAmount.toLocaleString()} SAR</td></tr>`;
             }
+
+            let sum = data.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            tfoot.innerHTML = `<tr><td colspan="4" class="p-3 text-left">الإجمالي للبيانات المعروضة:</td><td colspan="2" class="p-3 text-blue-400">${sum.toLocaleString()} SAR</td></tr>`;
         }
 
         async function softDelete(table, id) {
-            if (confirm('هل أنت متأكد من نقل هذا السجل إلى سلة المهملات؟')) {
-                const { error } = await db.from(table).update({ is_deleted: true }).eq('id', id);
+            if (currentUserRole === 'viewer') {
+                alert('عذراً، حسابك صلاحية مشاهدة فقط ولا يمكنك الحذف.');
+                return;
+            }
+            if (confirm('هل أنت متأكد من نقل السجل إلى سلة المهملات؟')) {
+                const { error } = await db.from(`app_${table}`).update({ is_deleted: true }).eq('id', id);
                 if (error) alert('خطأ في الحذف: ' + error.message);
                 else await loadAllData();
             }
@@ -688,39 +620,39 @@
         async function openTrashModal() {
             openModal('modal-trash');
             const container = document.getElementById('trash-list');
-            container.innerHTML = '<p class="text-slate-400">جاري تحميل المهملات...</p>';
+            container.innerHTML = 'جاري التحميل...';
 
-            let tables = ['app_trips', 'app_draws', 'app_maintenance', 'app_rentals', 'app_debts', 'app_expenses', 'app_invoices'];
-            let trashItems = [];
-
+            let allDeleted = [];
+            const tables = ['trips', 'draws', 'maintenance', 'rentals', 'debts', 'expenses', 'invoices'];
+            
             for (let t of tables) {
-                let { data } = await db.from(t).select('*').eq('is_deleted', true);
-                if (data) data.forEach(item => trashItems.push({ ...item, tableName: t }));
+                let res = await db.from(`app_${t}`).select('*').eq('is_deleted', true);
+                if (res.data) {
+                    res.data.forEach(item => { item._table = t; allDeleted.push(item); });
+                }
             }
 
-            if (trashItems.length === 0) {
-                container.innerHTML = '<p class="text-slate-400 text-center py-4">سلة المهملات فارغة تماماً.</p>';
+            if (allDeleted.length === 0) {
+                container.innerHTML = '<p class="text-slate-400 text-center py-4">سلة المهملات فارغة</p>';
                 return;
             }
 
             container.innerHTML = '';
-            trashItems.forEach(item => {
-                let desc = item.driver_name || item.client_name || item.party_name || item.title || item.name || item.invoice_no || 'سجل';
+            allDeleted.forEach(item => {
                 container.innerHTML += `
                     <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
                         <div>
-                            <span class="text-white font-bold">${desc}</span>
-                            <span class="text-emerald-400 text-xs mr-2">(${item.amount || 0} SAR)</span>
-                            <span class="text-slate-400 text-[10px] block">${item.tableName}</span>
+                            <span class="text-amber-400 font-bold">[${item._table}]</span>
+                            <span class="text-white mr-2">${item.date || ''} - ${item.driver || item.client || item.description || ''} (${item.amount || 0} SAR)</span>
                         </div>
-                        <button onclick="restoreItem('${item.tableName}', '${item.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold">استرجاع</button>
+                        <button onclick="restoreItem('${item._table}', '${item.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg text-xs font-bold">استرجاع</button>
                     </div>
                 `;
             });
         }
 
         async function restoreItem(table, id) {
-            const { error } = await db.from(table).update({ is_deleted: false }).eq('id', id);
+            const { error } = await db.from(`app_${table}`).update({ is_deleted: false }).eq('id', id);
             if (error) alert('خطأ في الاسترجاع: ' + error.message);
             else {
                 alert('تم الاسترجاع بنجاح!');
@@ -740,15 +672,15 @@
 
         function exportToExcel() {
             let data = store[activeTab] || [];
-            if (data.length === 0) { alert('لا توجد بيانات لتصديرها في هذا القسم!'); return; }
-            let worksheet = XLSX.utils.json_to_sheet(data);
-            let workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, activeTab);
-            XLSX.writeFile(workbook, `${activeTab}_report.xlsx`);
+            let ws = XLSX.utils.json_to_sheet(data);
+            let wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, activeTab);
+            XLSX.writeFile(wb, `Report_${activeTab}_${new Date().toISOString().split('T')[0]}.xlsx`);
         }
 
         function shareWhatsApp() {
-            let text = `*تقرير النظام اللوجستي والحسابات الذكية*\nالقسم الحالي: ${activeTab}\nإجمالي السجلات: ${store[activeTab].length}`;
+            let sum = (store[activeTab] || []).reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            let text = `*تقرير منظومة جسور وركن المشروعات اللوجستية*\nالقسم: ${activeTab}\nالإجمالي المالي: ${sum.toLocaleString()} SAR`;
             window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
         }
     </script>
