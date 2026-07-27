@@ -389,7 +389,12 @@
         async function renderUsersList() {
             const container = document.getElementById('users-list-container');
             container.innerHTML = 'جاري التحميل...';
-            const { data: users } = await db.from('app_users').select('*');
+            const { data: users, error } = await db.from('app_users').select('*');
+
+            if (error) {
+                container.innerHTML = `<p class="text-rose-400 text-xs">خطأ في الاتصال بالجدول: ${error.message}</p>`;
+                return;
+            }
 
             container.innerHTML = `
                 <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
