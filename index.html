@@ -93,46 +93,78 @@
 
         <main class="max-w-7xl w-full mx-auto p-3 sm:p-4 space-y-6 flex-1">
             
-            <!-- لوحة الملخصات الذكية -->
-            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3 no-print">
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-2xl shadow-lg flex items-center justify-between">
+            <!-- شاشات المعلومات الـ 8 المستقلة المقابلة للجداول -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3 no-print">
+                <!-- 1. شاشة الرحلات -->
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] sm:text-[11px] text-slate-400 font-bold">إجمالي الإيرادات</p>
-                        <h3 id="stat-total-revenue" class="text-sm sm:text-base font-black text-emerald-400 mt-1">0 SAR</h3>
+                        <p class="text-[10px] text-slate-400 font-bold">1. إجمالي الرحلات</p>
+                        <h3 id="stat-trips" class="text-sm sm:text-base font-black text-blue-400 mt-1">0 SAR</h3>
                     </div>
-                    <div class="w-8 h-8 sm:w-9 sm:h-9 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-sm"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="w-8 h-8 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-route"></i></div>
                 </div>
 
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-2xl shadow-lg flex items-center justify-between">
+                <!-- 2. شاشة الإيرادات -->
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] sm:text-[11px] text-slate-400 font-bold">الفواتير المُصدرة</p>
-                        <h3 id="stat-total-invoices" class="text-sm sm:text-base font-black text-teal-400 mt-1">0 SAR</h3>
+                        <p class="text-[10px] text-slate-400 font-bold">2. إجمالي الإيرادات</p>
+                        <h3 id="stat-revenues" class="text-sm sm:text-base font-black text-emerald-400 mt-1">0 SAR</h3>
                     </div>
-                    <div class="w-8 h-8 sm:w-9 sm:h-9 bg-teal-500/10 text-teal-400 rounded-xl flex items-center justify-center text-sm"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                    <div class="w-8 h-8 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-chart-line"></i></div>
                 </div>
 
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-2xl shadow-lg flex items-center justify-between">
+                <!-- 3. شاشة سحبيات السائقين -->
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] sm:text-[11px] text-slate-400 font-bold">الصيانة والمصروفات</p>
-                        <h3 id="stat-total-expenses" class="text-sm sm:text-base font-black text-rose-400 mt-1">0 SAR</h3>
+                        <p class="text-[10px] text-slate-400 font-bold">3. سحبيات السائقين</p>
+                        <h3 id="stat-draws" class="text-sm sm:text-base font-black text-amber-400 mt-1">0 SAR</h3>
                     </div>
-                    <div class="w-8 h-8 sm:w-9 sm:h-9 bg-rose-500/10 text-rose-400 rounded-xl flex items-center justify-center text-sm"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="w-8 h-8 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-users"></i></div>
                 </div>
 
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-2xl shadow-lg flex items-center justify-between">
+                <!-- 4. شاشة الصيانة -->
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] sm:text-[11px] text-slate-400 font-bold">سحبيات السائقين</p>
-                        <h3 id="stat-total-draws" class="text-sm sm:text-base font-black text-amber-400 mt-1">0 SAR</h3>
+                        <p class="text-[10px] text-slate-400 font-bold">4. تكاليف الصيانة</p>
+                        <h3 id="stat-maintenance" class="text-sm sm:text-base font-black text-rose-400 mt-1">0 SAR</h3>
                     </div>
-                    <div class="w-8 h-8 sm:w-9 sm:h-9 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center text-sm"><i class="fa-solid fa-users"></i></div>
+                    <div class="w-8 h-8 bg-rose-500/10 text-rose-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-screwdriver-wrench"></i></div>
                 </div>
 
-                <div class="col-span-2 sm:col-span-2 lg:col-span-1 bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-2xl shadow-lg flex items-center justify-between">
+                <!-- 5. شاشة الشركات المستأجرة -->
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] sm:text-[11px] text-slate-400 font-bold">صافي رصيد العمليات</p>
-                        <h3 id="stat-net-balance" class="text-sm sm:text-base font-black text-blue-400 mt-1">0 SAR</h3>
+                        <p class="text-[10px] text-slate-400 font-bold">5. الشركات المستأجرة</p>
+                        <h3 id="stat-rentals" class="text-sm sm:text-base font-black text-indigo-400 mt-1">0 SAR</h3>
                     </div>
-                    <div class="w-8 h-8 sm:w-9 sm:h-9 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-sm"><i class="fa-solid fa-scale-balanced"></i></div>
+                    <div class="w-8 h-8 bg-indigo-500/10 text-indigo-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-handshake"></i></div>
+                </div>
+
+                <!-- 6. شاشة الديون والالتزامات -->
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] text-slate-400 font-bold">6. الديون والالتزامات</p>
+                        <h3 id="stat-debts" class="text-sm sm:text-base font-black text-orange-400 mt-1">0 SAR</h3>
+                    </div>
+                    <div class="w-8 h-8 bg-orange-500/10 text-orange-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-file-invoice"></i></div>
+                </div>
+
+                <!-- 7. شاشة المصروفات العامة -->
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] text-slate-400 font-bold">7. المصروفات العامة</p>
+                        <h3 id="stat-expenses" class="text-sm sm:text-base font-black text-pink-400 mt-1">0 SAR</h3>
+                    </div>
+                    <div class="w-8 h-8 bg-pink-500/10 text-pink-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-wallet"></i></div>
+                </div>
+
+                <!-- 8. شاشة الفواتير -->
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] text-slate-400 font-bold">8. إجمالي الفواتير</p>
+                        <h3 id="stat-invoices" class="text-sm sm:text-base font-black text-teal-400 mt-1">0 SAR</h3>
+                    </div>
+                    <div class="w-8 h-8 bg-teal-500/10 text-teal-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                 </div>
             </div>
 
@@ -450,55 +482,37 @@
             }
         }
 
-        // دالة الفلترة المجمّعة حسب الشهر وتطابق البحث السريع
         function getFilteredData(tab) {
             const query = document.getElementById('search-query').value.toLowerCase().trim();
-            const monthFilter = document.getElementById('filter-month').value; // صيغة YYYY-MM
+            const monthFilter = document.getElementById('filter-month').value;
 
             return store[tab].filter(item => {
                 if (item.is_deleted) return false;
-
-                // تفلترة الشهر المجمّعة
                 if (monthFilter && item.date) {
                     if (!item.date.startsWith(monthFilter)) return false;
                 }
-
-                // بحث سريع
                 if (query) {
                     const match = Object.values(item).some(val => 
                         val && String(val).toLowerCase().includes(query)
                     );
                     if (!match) return false;
                 }
-
                 return true;
             });
         }
 
+        // تحديث شاشات المعلومات الـ 8 المستقلة لتطابق الأقسام تماماً
         function updateAnalyticsDashboard() {
-            // نأخذ البيانات غير المحذوفة فقط لكامل الأشهر بالملخص أو حسب الفلتر إن أردت
-            let activeTrips = store.trips.filter(x => !x.is_deleted);
-            let activeRevs = store.revenues.filter(x => !x.is_deleted);
-            let activeInvoices = store.invoices.filter(x => !x.is_deleted);
-            let activeMaint = store.maintenance.filter(x => !x.is_deleted);
-            let activeExp = store.expenses.filter(x => !x.is_deleted);
-            let activeDraws = store.draws.filter(x => !x.is_deleted);
+            let calcSum = (arr) => arr.filter(x => !x.is_deleted).reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
 
-            let totalTrips = activeTrips.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
-            let totalRevs = activeRevs.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
-            let totalInvoices = activeInvoices.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
-            let totalMaint = activeMaint.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
-            let totalExp = activeExp.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
-            let totalDraws = activeDraws.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
-
-            let totalOut = totalMaint + totalExp;
-            let netBalance = (totalTrips + totalRevs + totalInvoices) - (totalOut + totalDraws);
-
-            document.getElementById('stat-total-revenue').innerText = (totalTrips + totalRevs).toLocaleString() + ' SAR';
-            document.getElementById('stat-total-invoices').innerText = totalInvoices.toLocaleString() + ' SAR';
-            document.getElementById('stat-total-expenses').innerText = totalOut.toLocaleString() + ' SAR';
-            document.getElementById('stat-total-draws').innerText = totalDraws.toLocaleString() + ' SAR';
-            document.getElementById('stat-net-balance').innerText = netBalance.toLocaleString() + ' SAR';
+            document.getElementById('stat-trips').innerText = calcSum(store.trips).toLocaleString() + ' SAR';
+            document.getElementById('stat-revenues').innerText = calcSum(store.revenues).toLocaleString() + ' SAR';
+            document.getElementById('stat-draws').innerText = calcSum(store.draws).toLocaleString() + ' SAR';
+            document.getElementById('stat-maintenance').innerText = calcSum(store.maintenance).toLocaleString() + ' SAR';
+            document.getElementById('stat-rentals').innerText = calcSum(store.rentals).toLocaleString() + ' SAR';
+            document.getElementById('stat-debts').innerText = calcSum(store.debts).toLocaleString() + ' SAR';
+            document.getElementById('stat-expenses').innerText = calcSum(store.expenses).toLocaleString() + ' SAR';
+            document.getElementById('stat-invoices').innerText = calcSum(store.invoices).toLocaleString() + ' SAR';
         }
 
         function switchTab(tab) {
@@ -609,13 +623,11 @@
                 ];
             }
 
-            // بناء رأس الجدول
             let headerHtml = '<tr><th class="p-3 text-center w-12">#</th>';
             columns.forEach(col => headerHtml += `<th class="p-3">${col.label}</th>`);
             headerHtml += '<th class="p-3 text-center no-print">إجراءات</th></tr>';
             thead.innerHTML = headerHtml;
 
-            // تقسيم الصفحات (Pagination)
             const start = (currentPage - 1) * pageSize;
             const paginatedData = data.slice(start, start + pageSize);
 
@@ -641,7 +653,6 @@
                 });
             }
 
-            // حساب الإجمالي للعمود المالي في الصفحة أو المفلتر
             let totalSum = data.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
             tfoot.innerHTML = `
                 <tr>
@@ -708,7 +719,6 @@
             }
         }
 
-        // دالة الحذف النهائي المطلوبة من سلة المهملات
         async function permanentDelete(tab, id) {
             if (confirm('تحذير: هل أنت متأكد من الحذف النهائي لهذا السجل؟ لا يمكن التراجع عن هذا الإجراء!')) {
                 const tableName = tableConfig[tab].name;
