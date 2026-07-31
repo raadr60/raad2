@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منظومة الإدارة اللوجستية والحسابات - جسور وركن المشروعات</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منظومة الإدارة اللوجستية والحسابات الذكية - جسور وركن المشروعات</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -14,12 +14,11 @@
             body { background: white !important; color: black !important; }
         }
         .glass-header { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); }
-        input, select, button { touch-action: manipulation; }
     </style>
 </head>
 <body class="bg-slate-900 font-sans text-slate-100 min-h-screen flex flex-col">
 
-    <!-- شاشة تسجيل الدخول المتوافقة مع الجوال والكمبيوتر -->
+    <!-- شاشة تسجيل الدخول -->
     <div id="login-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-6 shadow-2xl">
             <div class="text-center space-y-2">
@@ -34,14 +33,14 @@
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">اسم المستخدم</label>
-                    <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" autocapitalize="none" autocomplete="off" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" autocapitalize="none" autocomplete="off" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور</label>
                     <div class="relative">
-                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" autocapitalize="none" autocomplete="current-password" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3.5 pl-12 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
-                        <button type="button" onclick="togglePasswordVisibility('login-password', 'login-eye-icon')" class="absolute left-3.5 top-3.5 text-slate-400 hover:text-white p-1">
-                            <i id="login-eye-icon" class="fa-solid fa-eye text-base"></i>
+                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" autocapitalize="none" autocomplete="current-password" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 pl-10 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        <button type="button" onclick="togglePasswordVisibility('login-password', 'login-eye-icon')" class="absolute left-3 top-3.5 text-slate-400 hover:text-white">
+                            <i id="login-eye-icon" class="fa-solid fa-eye"></i>
                         </button>
                     </div>
                 </div>
@@ -145,16 +144,16 @@
                         <input type="text" id="search-query" onkeyup="renderCurrentTab()" placeholder="ابحث في الجدول الحالي..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1">التصفية بالشهر (اختياري)</label>
+                        <label class="block text-xs font-bold text-slate-400 mb-1">التصفية بالشهر</label>
                         <input type="month" id="filter-month" onchange="renderCurrentTab()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
                     </div>
                     <div class="flex items-end">
-                        <button onclick="resetFilters()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold p-2.5 rounded-xl transition">إعادة ضبط الفلترة (عرض الكل)</button>
+                        <button onclick="resetFilters()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold p-2.5 rounded-xl transition">إعادة ضبط الفلترة</button>
                     </div>
                 </div>
             </div>
 
-            <!-- التبويبات المتوافقة للشاشات الثماني المنفصلة -->
+            <!-- التبويبات المتوافقة -->
             <div class="flex border-b border-slate-800 gap-2 overflow-x-auto text-xs font-bold no-print pb-2">
                 <button onclick="switchTab('trips')" id="tab-trips" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">1. الرحلات</button>
                 <button onclick="switchTab('revenues')" id="tab-revenues" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">2. الإيرادات</button>
@@ -166,7 +165,7 @@
                 <button onclick="switchTab('invoices')" id="tab-invoices" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">8. الفواتير</button>
             </div>
 
-            <!-- الجدول الديناميكي المنفصل -->
+            <!-- الجدول الديناميكي -->
             <div class="bg-slate-800/85 border border-slate-700/60 rounded-2xl overflow-hidden shadow-xl">
                 <div class="overflow-x-auto">
                     <table id="data-table" class="w-full text-right text-xs">
@@ -175,7 +174,7 @@
                         <tfoot id="table-foot" class="bg-slate-900/90 border-t border-slate-700 font-bold text-slate-200"></tfoot>
                     </table>
                 </div>
-                <!-- الصفحات للأداء العالي وضمان تحمل ملايين العمليات -->
+                <!-- الصفحات -->
                 <div id="pagination-container" class="p-3 bg-slate-900/60 border-t border-slate-700/60 flex justify-between items-center text-xs text-slate-400 no-print">
                     <button onclick="prevPage()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 text-white font-bold">السابقة</button>
                     <span id="page-info">الصفحة 1</span>
@@ -250,24 +249,12 @@
         </div>
     </div>
 
-    <!-- سلة المهملات المطورة (حذف نهائي أو استرجاع) -->
+    <!-- سلة المهملات -->
     <div id="modal-trash" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="font-bold text-amber-400 text-sm"><i class="fa-solid fa-trash-arrow-up"></i> سلة المهملات (استرجاع أو حذف نهائي)</h3>
+                <h3 class="font-bold text-amber-400 text-sm"><i class="fa-solid fa-trash-arrow-up"></i> سلة المهملات (استرجاع المحذوفات)</h3>
                 <button onclick="closeModal('modal-trash')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <div class="flex gap-2 pb-2 border-b border-slate-800">
-                <select id="trash-table-select" onchange="loadTrashData()" class="bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2 outline-none">
-                    <option value="trips">الرحلات</option>
-                    <option value="revenues">الإيرادات</option>
-                    <option value="draws">سحبيات السائقين</option>
-                    <option value="maintenance">الصيانة</option>
-                    <option value="rentals">الشركات المستأجرة</option>
-                    <option value="debts">الديون والالتزامات</option>
-                    <option value="expenses">المصروفات العامة</option>
-                    <option value="invoices">الفواتير</option>
-                </select>
             </div>
             <div id="trash-list" class="space-y-2 text-xs"></div>
         </div>
@@ -283,17 +270,6 @@
         let currentUserRole = 'editor';
         let currentPage = 1;
         const pageSize = 50;
-
-        const tableMap = {
-            trips: { name: 'app_trips', label: 'الرحلات' },
-            revenues: { name: 'app_revenues', label: 'الإيرادات' },
-            draws: { name: 'app_draws', label: 'سحبيات السائقين' },
-            maintenance: { name: 'app_maintenance', label: 'الصيانة' },
-            rentals: { name: 'app_rentals', label: 'الشركات المستأجرة' },
-            debts: { name: 'app_debts', label: 'الديون والالتزامات' },
-            expenses: { name: 'app_expenses', label: 'المصروفات العامة' },
-            invoices: { name: 'app_invoices', label: 'الفواتير' }
-        };
 
         document.addEventListener('DOMContentLoaded', () => {
             const loggedUser = localStorage.getItem('sys_current_user');
@@ -329,7 +305,7 @@
                 return;
             }
 
-            const { data: users } = await db.from('app_users').select('*').eq('username', usernameInput);
+            const { data: users, error } = await db.from('app_users').select('*').eq('username', usernameInput);
             if (users && users.length > 0) {
                 let user = users[0];
                 if (user.password === passwordInput) {
@@ -494,12 +470,6 @@
             renderCurrentTab();
         }
 
-        function resetFilters() {
-            document.getElementById('search-query').value = '';
-            document.getElementById('filter-month').value = '';
-            renderCurrentTab();
-        }
-
         function prevPage() { if (currentPage > 1) { currentPage--; renderCurrentTab(); } }
         function nextPage() { currentPage++; renderCurrentTab(); }
 
@@ -517,33 +487,71 @@
                     <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم السائق</label><input type="text" id="field-driver_name" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم الشركة</label><input type="text" id="field-company_name" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم العميل</label><input type="text" id="field-client_name" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ (SAR) *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">من (Route From)</label><input type="text" id="field-route_from" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">إلى (Route To)</label><input type="text" id="field-route_to" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs font-bold text-slate-400 mb-1">ملاحظات</label><input type="text" id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                 `;
-            } else if (target === 'revenues' || target === 'expenses' || target === 'invoices') {
+            } else if (target === 'revenues') {
                 html += `
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">البيان / الوصف *</label><input type="text" id="field-description" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ (SAR) *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم الشركة</label><input type="text" id="field-company_name" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم العميل</label><input type="text" id="field-client_name" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">طريقة الدفع</label><input type="text" id="field-payment_method" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs font-bold text-slate-400 mb-1">ملاحظات</label><input type="text" id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                 `;
             } else if (target === 'draws') {
                 html += `
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم السائق *</label><input type="text" id="field-driver_name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ المسحوب (SAR) *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">السبب / ملاحظات</label><input type="text" id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم الشركة</label><input type="text" id="field-company_name" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم الشخص / السائق *</label><input type="text" id="field-person_name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">صفة الشخص</label><input type="text" id="field-person_type" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="سائق / عامل"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">نوع السحب</label><input type="text" id="field-draw_type" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">ملاحظات</label><input type="text" id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                 `;
             } else if (target === 'maintenance') {
                 html += `
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">رقم الشاحنة / اللوحة *</label><input type="text" id="field-truck_no" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">نوع الصيانة / القطعة *</label><input type="text" id="field-maintenance_type" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">تكلفة الصيانة (SAR) *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم الشركة</label><input type="text" id="field-company_name" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم السائق</label><input type="text" id="field-driver_name" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">نوع الخدمة / الصيانة</label><input type="text" id="field-service_type" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs font-bold text-slate-400 mb-1">ملاحظات</label><input type="text" id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                 `;
-            } else if (target === 'rentals' || target === 'debts') {
+            } else if (target === 'rentals') {
                 html += `
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم الجهة / الشركة *</label><input type="text" id="field-entity_name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ الإجمالي (SAR) *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs font-bold text-slate-400 mb-1">الحالة / التفاصيل</label><input type="text" id="field-status" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" value="مستحق"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم المالك / الجهة *</label><input type="text" id="field-owner_name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">نوع الاستحقاق / الدفع</label><input type="text" id="field-draw_type" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">ملاحظات</label><input type="text" id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                `;
+            } else if (target === 'debts') {
+                html += `
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم الشخص / الجهة *</label><input type="text" id="field-person_name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1">نوع الدين</label>
+                        <select id="field-debt_type" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                            <option value="له">له (مستحق لنا)</option>
+                            <option value="عليه">عليه (مطلوب منا)</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">ملاحظات</label><input type="text" id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                `;
+            } else if (target === 'expenses') {
+                html += `
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">نوع المصروف *</label><input type="text" id="field-expense_type" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">ملاحظات</label><input type="text" id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                `;
+            } else if (target === 'invoices') {
+                html += `
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">رقم الفاتورة *</label><input type="text" id="field-invoice_number" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">اسم العميل</label><input type="text" id="field-client_name" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">حالة الفاتورة</label><input type="text" id="field-status" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" value="مُصدرة"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">إجمالي المبلغ *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">المبلغ المدفوع</label><input type="number" step="any" id="field-paid_amount" value="0" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">الشهر / السنة</label><input type="text" id="field-month_year" placeholder="مثال: 2026-07" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">ملاحظات</label><input type="text" id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                 `;
             }
             container.innerHTML = html;
@@ -552,229 +560,317 @@
         async function handleFormSubmit(e) {
             e.preventDefault();
             const target = document.getElementById('form-target-table').value;
-            const tableName = tableMap[target].name;
+            const dbTable = `app_${target}`;
 
             let payload = {
                 date: document.getElementById('field-date').value,
-                created_at: new Date().toISOString(),
-                is_deleted: false
+                created_at: new Date().toISOString()
             };
 
             if (target === 'trips') {
                 payload.driver_name = document.getElementById('field-driver_name').value;
                 payload.company_name = document.getElementById('field-company_name').value;
                 payload.client_name = document.getElementById('field-client_name').value;
-                payload.amount = parseFloat(document.getElementById('field-amount').value || 0);
+                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
+                payload.route_from = document.getElementById('field-route_from').value;
+                payload.route_to = document.getElementById('field-route_to').value;
                 payload.notes = document.getElementById('field-notes').value;
-            } else if (target === 'revenues' || target === 'expenses' || target === 'invoices') {
-                payload.description = document.getElementById('field-description').value;
-                payload.amount = parseFloat(document.getElementById('field-amount').value || 0);
+            } else if (target === 'revenues') {
+                payload.company_name = document.getElementById('field-company_name').value;
+                payload.client_name = document.getElementById('field-client_name').value;
+                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
+                payload.payment_method = document.getElementById('field-payment_method').value;
                 payload.notes = document.getElementById('field-notes').value;
             } else if (target === 'draws') {
-                payload.driver_name = document.getElementById('field-driver_name').value;
-                payload.amount = parseFloat(document.getElementById('field-amount').value || 0);
+                payload.company_name = document.getElementById('field-company_name').value;
+                payload.person_name = document.getElementById('field-person_name').value;
+                payload.person_type = document.getElementById('field-person_type').value;
+                payload.draw_type = document.getElementById('field-draw_type').value;
+                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
                 payload.notes = document.getElementById('field-notes').value;
             } else if (target === 'maintenance') {
-                payload.truck_no = document.getElementById('field-truck_no').value;
-                payload.maintenance_type = document.getElementById('field-maintenance_type').value;
-                payload.amount = parseFloat(document.getElementById('field-amount').value || 0);
+                payload.company_name = document.getElementById('field-company_name').value;
+                payload.driver_name = document.getElementById('field-driver_name').value;
+                payload.service_type = document.getElementById('field-service_type').value;
+                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
                 payload.notes = document.getElementById('field-notes').value;
-            } else if (target === 'rentals' || target === 'debts') {
-                payload.entity_name = document.getElementById('field-entity_name').value;
-                payload.amount = parseFloat(document.getElementById('field-amount').value || 0);
+            } else if (target === 'rentals') {
+                payload.owner_name = document.getElementById('field-owner_name').value;
+                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
+                payload.draw_type = document.getElementById('field-draw_type').value;
+                payload.notes = document.getElementById('field-notes').value;
+            } else if (target === 'debts') {
+                payload.person_name = document.getElementById('field-person_name').value;
+                payload.debt_type = document.getElementById('field-debt_type').value;
+                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
+                payload.notes = document.getElementById('field-notes').value;
+            } else if (target === 'expenses') {
+                payload.expense_type = document.getElementById('field-expense_type').value;
+                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
+                payload.notes = document.getElementById('field-notes').value;
+            } else if (target === 'invoices') {
+                payload.invoice_number = document.getElementById('field-invoice_number').value;
+                payload.client_name = document.getElementById('field-client_name').value;
                 payload.status = document.getElementById('field-status').value;
+                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
+                payload.paid_amount = parseFloat(document.getElementById('field-paid_amount').value) || 0;
+                payload.month_year = document.getElementById('field-month_year').value;
+                payload.notes = document.getElementById('field-notes').value;
             }
 
-            const { error } = await db.from(tableName).insert([payload]);
+            const { error } = await db.from(dbTable).insert([payload]);
             if (error) {
-                alert('خطأ أثناء الحفظ: ' + error.message);
+                alert('خطأ أثناء حفظ البيانات: ' + error.message);
             } else {
                 closeModal('modal-add-entry');
                 await loadAllData();
-                alert('تم حفظ العملية بنجاح!');
+                alert('تمت الإضافة بنجاح!');
             }
         }
 
         function renderCurrentTab() {
+            const head = document.getElementById('table-head');
+            const body = document.getElementById('table-body');
+            const foot = document.getElementById('table-foot');
             const searchQuery = document.getElementById('search-query').value.trim().toLowerCase();
-            const filterMonth = document.getElementById('filter-month').value; // اختياري (شهر أو فارغ لعرض الكل)
+            const filterMonth = document.getElementById('filter-month').value;
 
             let data = store[activeTab] || [];
 
-            // فلترة الشهر (اختياري: إذا تم اختيار شهر يتم التصفية، وإلا يتم عرض كافة الشهور)
-            if (filterMonth) {
-                data = data.filter(item => item.date && item.date.startsWith(filterMonth));
-            }
-
-            // البحث السريع
             if (searchQuery) {
                 data = data.filter(item => {
                     return Object.values(item).some(val => String(val).toLowerCase().includes(searchQuery));
                 });
             }
 
-            // تقسيم الصفحات لضمان السرعة الفائقة وتحمل ملايين العمليات
-            const totalPages = Math.ceil(data.length / pageSize) || 1;
-            if (currentPage > totalPages) currentPage = totalPages;
-            const startIdx = (currentPage - 1) * pageSize;
-            const pageData = data.slice(startIdx, startIdx + pageSize);
-
-            document.getElementById('page-info').innerText = `الصفحة ${currentPage} من ${totalPages} (إجمالي السجلات: ${data.length})`;
-
-            let thead = document.getElementById('table-head');
-            let tbody = document.getElementById('table-body');
-            let tfoot = document.getElementById('table-foot');
-
-            tbody.innerHTML = '';
-            tfoot.innerHTML = '';
-
-            if (activeTab === 'trips') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">السائق</th><th class="p-3">الشركة</th><th class="p-3">العميل</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th><th class="p-3 text-center no-print">إجراء</th></tr>`;
-                pageData.forEach(item => {
-                    tbody.innerHTML += `<tr class="hover:bg-slate-700/30">
-                        <td class="p-3">${item.date || '-'}</td>
-                        <td class="p-3 font-bold">${item.driver_name || '-'}</td>
-                        <td class="p-3">${item.company_name || '-'}</td>
-                        <td class="p-3">${item.client_name || '-'}</td>
-                        <td class="p-3 text-emerald-400 font-bold">${Number(item.amount || 0).toLocaleString()} SAR</td>
-                        <td class="p-3 text-slate-400">${item.notes || '-'}</td>
-                        <td class="p-3 text-center no-print"><button onclick="moveToTrash('trips', '${item.id}')" class="text-rose-400 hover:text-rose-300 bg-rose-500/10 px-2 py-1 rounded-lg">حذف</button></td>
-                    </tr>`;
-                });
-            } else if (activeTab === 'revenues' || activeTab === 'expenses' || activeTab === 'invoices') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">البيان</th><th class="p-3">المبلغ</th><th class="p-3">ملاحظات</th><th class="p-3 text-center no-print">إجراء</th></tr>`;
-                pageData.forEach(item => {
-                    tbody.innerHTML += `<tr class="hover:bg-slate-700/30">
-                        <td class="p-3">${item.date || '-'}</td>
-                        <td class="p-3 font-bold">${item.description || '-'}</td>
-                        <td class="p-3 font-bold text-blue-400">${Number(item.amount || 0).toLocaleString()} SAR</td>
-                        <td class="p-3 text-slate-400">${item.notes || '-'}</td>
-                        <td class="p-3 text-center no-print"><button onclick="moveToTrash('${activeTab}', '${item.id}')" class="text-rose-400 hover:text-rose-300 bg-rose-500/10 px-2 py-1 rounded-lg">حذف</button></td>
-                    </tr>`;
-                });
-            } else if (activeTab === 'draws') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">اسم السائق</th><th class="p-3">المبلغ المسحوب</th><th class="p-3">السبب / ملاحظات</th><th class="p-3 text-center no-print">إجراء</th></tr>`;
-                pageData.forEach(item => {
-                    tbody.innerHTML += `<tr class="hover:bg-slate-700/30">
-                        <td class="p-3">${item.date || '-'}</td>
-                        <td class="p-3 font-bold text-amber-400">${item.driver_name || '-'}</td>
-                        <td class="p-3 font-bold text-amber-300">${Number(item.amount || 0).toLocaleString()} SAR</td>
-                        <td class="p-3 text-slate-400">${item.notes || '-'}</td>
-                        <td class="p-3 text-center no-print"><button onclick="moveToTrash('draws', '${item.id}')" class="text-rose-400 hover:text-rose-300 bg-rose-500/10 px-2 py-1 rounded-lg">حذف</button></td>
-                    </tr>`;
-                });
-            } else if (activeTab === 'maintenance') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">رقم الشاحنة</th><th class="p-3">نوع الصيانة</th><th class="p-3">التكلفة</th><th class="p-3">ملاحظات</th><th class="p-3 text-center no-print">إجراء</th></tr>`;
-                pageData.forEach(item => {
-                    tbody.innerHTML += `<tr class="hover:bg-slate-700/30">
-                        <td class="p-3">${item.date || '-'}</td>
-                        <td class="p-3 font-bold">${item.truck_no || '-'}</td>
-                        <td class="p-3">${item.maintenance_type || '-'}</td>
-                        <td class="p-3 font-bold text-rose-400">${Number(item.amount || 0).toLocaleString()} SAR</td>
-                        <td class="p-3 text-slate-400">${item.notes || '-'}</td>
-                        <td class="p-3 text-center no-print"><button onclick="moveToTrash('maintenance', '${item.id}')" class="text-rose-400 hover:text-rose-300 bg-rose-500/10 px-2 py-1 rounded-lg">حذف</button></td>
-                    </tr>`;
-                });
-            } else if (activeTab === 'rentals' || activeTab === 'debts') {
-                thead.innerHTML = `<tr><th class="p-3">التاريخ</th><th class="p-3">اسم الجهة</th><th class="p-3">المبلغ الإجمالي</th><th class="p-3">الحالة</th><th class="p-3 text-center no-print">إجراء</th></tr>`;
-                pageData.forEach(item => {
-                    tbody.innerHTML += `<tr class="hover:bg-slate-700/30">
-                        <td class="p-3">${item.date || '-'}</td>
-                        <td class="p-3 font-bold">${item.entity_name || '-'}</td>
-                        <td class="p-3 font-bold text-purple-400">${Number(item.amount || 0).toLocaleString()} SAR</td>
-                        <td class="p-3"><span class="bg-blue-500/20 text-blue-300 px-2.5 py-1 rounded-md text-[10px]">${item.status || 'مستحق'}</span></td>
-                        <td class="p-3 text-center no-print"><button onclick="moveToTrash('${activeTab}', '${item.id}')" class="text-rose-400 hover:text-rose-300 bg-rose-500/10 px-2 py-1 rounded-lg">حذف</button></td>
-                    </tr>`;
+            if (filterMonth) {
+                data = data.filter(item => {
+                    if (!item.date) return false;
+                    return item.date.startsWith(filterMonth);
                 });
             }
 
-            // المجموع التثبيتي للجدول الحالي
-            let totalAmount = data.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
-            tfoot.innerHTML = `<tr><td colspan="4" class="p-3 text-left">الإجمالي للبيانات المعروضة:</td><td colspan="3" class="p-3 text-emerald-400 font-black">${totalAmount.toLocaleString()} SAR</td></tr>`;
+            const totalPages = Math.ceil(data.length / pageSize) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            const startIdx = (currentPage - 1) * pageSize;
+            const paginatedData = data.slice(startIdx, startIdx + pageSize);
+
+            document.getElementById('page-info').innerText = `الصفحة ${currentPage} من ${totalPages} (إجمالي السجلات: ${data.length})`;
+
+            let columns = [];
+            if (activeTab === 'trips') {
+                columns = [
+                    {key: 'date', label: 'التاريخ'},
+                    {key: 'driver_name', label: 'السائق'},
+                    {key: 'company_name', label: 'الشركة'},
+                    {key: 'client_name', label: 'العميل'},
+                    {key: 'amount', label: 'المبلغ (SAR)'},
+                    {key: 'route_from', label: 'من'},
+                    {key: 'route_to', label: 'إلى'},
+                    {key: 'notes', label: 'ملاحظات'}
+                ];
+            } else if (activeTab === 'revenues') {
+                columns = [
+                    {key: 'date', label: 'التاريخ'},
+                    {key: 'company_name', label: 'الشركة'},
+                    {key: 'client_name', label: 'العميل'},
+                    {key: 'amount', label: 'المبلغ (SAR)'},
+                    {key: 'payment_method', label: 'طريقة الدفع'},
+                    {key: 'notes', label: 'ملاحظات'}
+                ];
+            } else if (activeTab === 'draws') {
+                columns = [
+                    {key: 'date', label: 'التاريخ'},
+                    {key: 'company_name', label: 'الشركة'},
+                    {key: 'person_name', label: 'الشخص / السائق'},
+                    {key: 'person_type', label: 'الصفة'},
+                    {key: 'draw_type', label: 'نوع السحب'},
+                    {key: 'amount', label: 'المبلغ (SAR)'},
+                    {key: 'notes', label: 'ملاحظات'}
+                ];
+            } else if (activeTab === 'maintenance') {
+                columns = [
+                    {key: 'date', label: 'التاريخ'},
+                    {key: 'company_name', label: 'الشركة'},
+                    {key: 'driver_name', label: 'السائق'},
+                    {key: 'service_type', label: 'نوع الخدمة'},
+                    {key: 'amount', label: 'المبلغ (SAR)'},
+                    {key: 'notes', label: 'ملاحظات'}
+                ];
+            } else if (activeTab === 'rentals') {
+                columns = [
+                    {key: 'date', label: 'التاريخ'},
+                    {key: 'owner_name', label: 'المالك / الجهة'},
+                    {key: 'amount', label: 'المبلغ (SAR)'},
+                    {key: 'draw_type', label: 'نوع الاستحقاق'},
+                    {key: 'notes', label: 'ملاحظات'}
+                ];
+            } else if (activeTab === 'debts') {
+                columns = [
+                    {key: 'date', label: 'التاريخ'},
+                    {key: 'person_name', label: 'الشخص / الجهة'},
+                    {key: 'debt_type', label: 'نوع الدين'},
+                    {key: 'amount', label: 'المبلغ (SAR)'},
+                    {key: 'notes', label: 'ملاحظات'}
+                ];
+            } else if (activeTab === 'expenses') {
+                columns = [
+                    {key: 'date', label: 'التاريخ'},
+                    {key: 'expense_type', label: 'نوع المصروف'},
+                    {key: 'amount', label: 'المبلغ (SAR)'},
+                    {key: 'notes', label: 'ملاحظات'}
+                ];
+            } else if (activeTab === 'invoices') {
+                columns = [
+                    {key: 'invoice_number', label: 'رقم الفاتورة'},
+                    {key: 'client_name', label: 'العميل'},
+                    {key: 'date', label: 'التاريخ'},
+                    {key: 'status', label: 'الحالة'},
+                    {key: 'amount', label: 'المبلغ (SAR)'},
+                    {key: 'paid_amount', label: 'المدفوع (SAR)'},
+                    {key: 'month_year', label: 'الشهر/السنة'},
+                    {key: 'notes', label: 'ملاحظات'}
+                ];
+            }
+
+            let headHtml = '<tr><th class="p-3">#</th>';
+            columns.forEach(col => headHtml += `<th class="p-3">${col.label}</th>`);
+            if (currentUserRole === 'editor' || localStorage.getItem('sys_current_user') === 'raad') {
+                headHtml += '<th class="p-3 text-center no-print">إجراءات</th>';
+            }
+            headHtml += '</tr>';
+            head.innerHTML = headHtml;
+
+            let bodyHtml = '';
+            if (paginatedData.length === 0) {
+                bodyHtml = `<tr><td colspan="${columns.length + 2}" class="p-6 text-center text-slate-400">لا توجد بيانات مطابقة</td></tr>`;
+            } else {
+                paginatedData.forEach((item, index) => {
+                    bodyHtml += `<tr class="hover:bg-slate-700/30 transition"><td class="p-3 text-slate-400">${startIdx + index + 1}</td>`;
+                    columns.forEach(col => {
+                        let val = item[col.key] !== undefined && item[col.key] !== null ? item[col.key] : '';
+                        if ((col.key === 'amount' || col.key === 'paid_amount') && val !== '') val = Number(val).toLocaleString() + ' SAR';
+                        bodyHtml += `<td class="p-3">${val}</td>`;
+                    });
+                    if (currentUserRole === 'editor' || localStorage.getItem('sys_current_user') === 'raad') {
+                        bodyHtml += `<td class="p-3 text-center no-print"><button onclick="moveToTrash('${activeTab}', '${item.id}')" class="text-rose-400 hover:text-rose-300 bg-rose-500/10 px-2 py-1 rounded-lg text-[11px]"><i class="fa-solid fa-trash"></i> حذف</button></td>`;
+                    }
+                    bodyHtml += '</tr>';
+                });
+            }
+            body.innerHTML = bodyHtml;
+
+            let sumAmount = data.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            foot.innerHTML = `
+                <tr>
+                    <td colspan="4" class="p-3 text-left">الإجمالي للجدول الحالي:</td>
+                    <td colspan="${columns.length - 3}" class="p-3 text-emerald-400 font-black">${sumAmount.toLocaleString()} SAR</td>
+                    <td class="no-print"></td>
+                </tr>
+            `;
         }
 
         async function moveToTrash(tableKey, id) {
-            if (confirm('هل أنت متأكد من نقل هذا السجل إلى سلة المهملات؟')) {
-                const tableName = tableMap[tableKey].name;
-                const { error } = await db.from(tableName).update({ is_deleted: true }).eq('id', id);
+            if (confirm('هل أنت متأكد من رغبتك في حذف هذا السجل وإرساله إلى سلة المهملات؟')) {
+                const dbTable = `app_${tableKey}`;
+                const { error } = await db.from(dbTable).update({ is_deleted: true }).eq('id', id);
                 if (error) {
-                    alert('خطأ أثناء النذف: ' + error.message);
+                    alert('خطأ أثناء الحذف: ' + error.message);
                 } else {
                     await loadAllData();
                 }
             }
         }
 
-        function openTrashModal() {
+        async function openTrashModal() {
             openModal('modal-trash');
-            loadTrashData();
-        }
+            const container = document.getElementById('trash-list');
+            container.innerHTML = 'جاري التحميل...';
 
-        async function loadTrashData() {
-            const trashList = document.getElementById('trash-list');
-            const selectedTableKey = document.getElementById('trash-table-select').value;
-            const tableName = tableMap[selectedTableKey].name;
+            let allDeleted = [];
+            const tables = ['trips', 'revenues', 'draws', 'maintenance', 'rentals', 'debts', 'expenses', 'invoices'];
+            
+            for (let t of tables) {
+                const { data } = await db.from(`app_${t}`).select('*').eq('is_deleted', true);
+                if (data) {
+                    data.forEach(item => item._table = t);
+                    allDeleted = allDeleted.concat(data);
+                }
+            }
 
-            trashList.innerHTML = 'جاري التحميل...';
-            const { data, error } = await db.from(tableName).select('*').eq('is_deleted', true);
-
-            if (error) {
-                trashList.innerHTML = `<p class="text-rose-400">خطأ في جلب المحذوفات: ${error.message}</p>`;
+            if (allDeleted.length === 0) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-4">سلة المهملات فارغة</p>';
                 return;
             }
 
-            if (!data || data.length === 0) {
-                trashList.innerHTML = '<p class="text-slate-400 text-center py-4">سلة المهملات فارغة لهذا الجدول.</p>';
-                return;
-            }
-
-            trashList.innerHTML = '';
-            data.forEach(item => {
-                let identifier = item.driver_name || item.description || item.truck_no || item.entity_name || 'سجل رقم ' + item.id;
-                trashList.innerHTML += `
+            let html = '';
+            allDeleted.forEach(item => {
+                html += `
                     <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
                         <div>
-                            <span class="text-white font-bold">${identifier}</span> - <span class="text-emerald-400">${item.amount || 0} SAR</span>
-                            <span class="text-[10px] text-slate-400 block">${item.date || ''}</span>
+                            <span class="text-white font-bold">[جدول: ${item._table}]</span> 
+                            <span class="text-slate-300 mr-2">التاريخ: ${item.date || 'غير محدد'}</span>
+                            <span class="text-emerald-400 mr-2">المبلغ: ${item.amount || 0} SAR</span>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="restoreFromTrash('${selectedTableKey}', '${item.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg font-bold">استرجاع</button>
-                            <button onclick="permanentDelete('${selectedTableKey}', '${item.id}')" class="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1 rounded-lg font-bold">حذف نهائي</button>
-                        </div>
+                        <button onclick="restoreItem('${item._table}', '${item.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold">استرجاع</button>
                     </div>
                 `;
             });
+            container.innerHTML = html;
         }
 
-        async function restoreFromTrash(tableKey, id) {
-            const tableName = tableMap[tableKey].name;
-            await db.from(tableName).update({ is_deleted: false }).eq('id', id);
-            loadTrashData();
-            loadAllData();
-        }
-
-        async function permanentDelete(tableKey, id) {
-            if (confirm('هل أنت متأكد من الحذف النهائي؟ لا يمكن استرجاع السجل بعد الآن.')) {
-                const tableName = tableMap[tableKey].name;
-                await db.from(tableName).delete().eq('id', id);
-                loadTrashData();
+        async function restoreItem(tableKey, id) {
+            const { error } = await db.from(`app_${tableKey}`).update({ is_deleted: false }).eq('id', id);
+            if (error) {
+                alert('خطأ أثناء الاسترجاع: ' + error.message);
+            } else {
+                openTrashModal();
+                await loadAllData();
             }
         }
 
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function resetFilters() {
+            document.getElementById('search-query').value = '';
+            document.getElementById('filter-month').value = '';
+            renderCurrentTab();
+        }
 
         function exportToExcel() {
-            let data = store[activeTab];
-            let ws = XLSX.utils.json_to_sheet(data);
-            let wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, tableMap[activeTab].label);
-            XLSX.writeFile(wb, `${activeTab}_report.xlsx`);
+            let data = store[activeTab] || [];
+            if (data.length === 0) {
+                alert('لا توجد بيانات لتصديرها في هذا الجدول.');
+                return;
+            }
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, activeTab);
+            XLSX.writeFile(workbook, `${activeTab}_report.xlsx`);
         }
 
         function shareWhatsApp() {
-            let text = `تقرير منظومة ${tableMap[activeTab].label} - جسور وركن المشروعات\nإجمالي السجلات الحالية المعروضة في النظام.`;
+            let totalTrips = store.trips.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            let totalRevs = store.revenues.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            let totalMaint = store.maintenance.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            let totalExp = store.expenses.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            let totalDraws = store.draws.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+
+            let text = `*ملخص منظومة الإدارة اللوجستية والحسابات* \n\n` +
+                       `• إجمالي الإيرادات والرحلات: ${(totalTrips + totalRevs).toLocaleString()} SAR\n` +
+                       `• إجمالي المصروفات والصيانة: ${(totalMaint + totalExp).toLocaleString()} SAR\n` +
+                       `• إجمالي سحبيات السائقين: ${totalDraws.toLocaleString()} SAR\n\n` +
+                       `تم التقرير عبر منظومة جسور وركن المشروعات.`;
+
             window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.getElementById(modalId).classList.add('flex');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.getElementById(modalId).classList.remove('flex');
         }
     </script>
 </body>
