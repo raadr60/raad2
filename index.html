@@ -98,7 +98,6 @@
             
             <!-- لوحة مؤشرات الربح والخسارة الكبرى في الأعلى -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 no-print">
-                <!-- شاشة صافي الربح والخسارة الرئيسية -->
                 <div class="bg-gradient-to-br from-teal-950 via-slate-900 to-slate-900 border-2 border-teal-500/50 p-5 rounded-3xl shadow-2xl flex flex-col justify-between">
                     <div class="flex justify-between items-center">
                         <span class="text-xs font-bold text-teal-300">صافي الربح / الخسارة الصافي</span>
@@ -110,7 +109,6 @@
                     <p class="text-[10px] text-slate-400">الإيرادات مطروحاً منها (السحبيات، الصيانة، المصروفات)</p>
                 </div>
 
-                <!-- إجمالي الإيرادات -->
                 <div class="bg-slate-800/90 border border-emerald-500/30 p-5 rounded-3xl shadow-xl flex flex-col justify-between">
                     <div class="flex justify-between items-center">
                         <span class="text-xs font-bold text-slate-400">إجمالي الإيرادات العامة</span>
@@ -122,7 +120,6 @@
                     <p class="text-[10px] text-slate-400">مجموع الرحلات والإيرادات المضافة</p>
                 </div>
 
-                <!-- إجمالي المصروفات -->
                 <div class="bg-slate-800/90 border border-rose-500/30 p-5 rounded-3xl shadow-xl flex flex-col justify-between">
                     <div class="flex justify-between items-center">
                         <span class="text-xs font-bold text-slate-400">إجمالي المصروفات والخصومات</span>
@@ -274,7 +271,7 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-400">إصدار الواجهة:</span>
-                        <span class="text-blue-400 font-bold">v2.7 (شاشات الأرباح والتحكم المتقدم)</span>
+                        <span class="text-blue-400 font-bold">v2.8 (الرحلات التفصيلية والشاشات الكاملة)</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-400">المطور:</span>
@@ -607,20 +604,15 @@
             const totalExpenses = sumField(store.expenses, 'amount');
             const totalInvoices = sumField(store.invoices, 'amount');
 
-            // إجمالي الإيرادات = الرحلات + الإيرادات
             const grandTotalRevenues = totalTrips + totalRevenuesOnly;
-            // إجمالي المصروفات = سحبيات السائقين + الصيانة + المصروفات العامة
             const grandTotalExpenses = totalDraws + totalMaintenance + totalExpenses;
-            // صافي الربح / الخسارة
             const netProfit = grandTotalRevenues - grandTotalExpenses;
 
-            // تحديث بطاقات الأرباح واللوحة الكبرى
             document.getElementById('dashboard-net-profit').innerText = netProfit.toLocaleString() + ' SAR';
             document.getElementById('dashboard-net-profit').className = netProfit >= 0 ? "text-2xl sm:text-3xl font-black text-white" : "text-2xl sm:text-3xl font-black text-rose-500";
             document.getElementById('dashboard-total-revenue').innerText = grandTotalRevenues.toLocaleString() + ' SAR';
             document.getElementById('dashboard-total-expenses').innerText = grandTotalExpenses.toLocaleString() + ' SAR';
 
-            // تحديث الـ 8 شاشات التفصيلية
             document.getElementById('stat-trips').innerText = totalTrips.toLocaleString() + ' SAR';
             document.getElementById('stat-revenues').innerText = totalRevenuesOnly.toLocaleString() + ' SAR';
             document.getElementById('stat-draws').innerText = totalDraws.toLocaleString() + ' SAR';
@@ -665,14 +657,32 @@
             const paginatedData = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
             let columns = [];
-            if (activeTab === 'trips') columns = [{key:'date', label:'التاريخ'}, {key:'driver', label:'السائق'}, {key:'route', label:'خط السير'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
-            else if (activeTab === 'revenues') columns = [{key:'date', label:'التاريخ'}, {key:'source', label:'مصدر الإيراد'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
-            else if (activeTab === 'draws') columns = [{key:'date', label:'التاريخ'}, {key:'driver', label:'اسم السائق'}, {key:'amount', label:'المبلغ المسحوب (SAR)'}, {key:'notes', label:'ملاحظات'}];
-            else if (activeTab === 'maintenance') columns = [{key:'date', label:'التاريخ'}, {key:'service_type', label:'نوع الصيانة'}, {key:'cost', label:'التكلفة (SAR)'}, {key:'notes', label:'ملاحظات'}];
-            else if (activeTab === 'rentals') columns = [{key:'date', label:'التاريخ'}, {key:'company_name', label:'اسم الشركة المستأجرة'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
-            else if (activeTab === 'debts') columns = [{key:'date', label:'التاريخ'}, {key:'creditor', label:'الجهة / الدائن'}, {key:'amount', label:'مبلغ الدين (SAR)'}, {key:'status', label:'الحالة'}, {key:'notes', label:'ملاحظات'}];
-            else if (activeTab === 'expenses') columns = [{key:'date', label:'التاريخ'}, {key:'category', label:'بند المصروف'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
-            else if (activeTab === 'invoices') columns = [{key:'date', label:'التاريخ'}, {key:'invoice_no', label:'رقم الفاتورة'}, {key:'client', label:'العميل'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
+            // إرجاع تفاصيل الرحلات كاملة (الشركة الناقلة، الشركة المنقول لها، ومن وإلى)
+            if (activeTab === 'trips') {
+                columns = [
+                    {key:'date', label:'التاريخ'},
+                    {key:'driver', label:'السائق'},
+                    {key:'carrier_company', label:'الشركة الناقلة'},
+                    {key:'client_company', label:'الشركة المنقول لها'},
+                    {key:'route', label:'من وإلى / خط السير'},
+                    {key:'amount', label:'المبلغ (SAR)'},
+                    {key:'notes', label:'ملاحظات'}
+                ];
+            } else if (activeTab === 'revenues') {
+                columns = [{key:'date', label:'التاريخ'}, {key:'source', label:'مصدر الإيراد'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
+            } else if (activeTab === 'draws') {
+                columns = [{key:'date', label:'التاريخ'}, {key:'driver', label:'اسم السائق'}, {key:'amount', label:'المبلغ المسحوب (SAR)'}, {key:'notes', label:'ملاحظات'}];
+            } else if (activeTab === 'maintenance') {
+                columns = [{key:'date', label:'التاريخ'}, {key:'service_type', label:'نوع الصيانة'}, {key:'cost', label:'التكلفة (SAR)'}, {key:'notes', label:'ملاحظات'}];
+            } else if (activeTab === 'rentals') {
+                columns = [{key:'date', label:'التاريخ'}, {key:'company_name', label:'اسم الشركة المستأجرة'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
+            } else if (activeTab === 'debts') {
+                columns = [{key:'date', label:'التاريخ'}, {key:'creditor', label:'الجهة / الدائن'}, {key:'amount', label:'مبلغ الدين (SAR)'}, {key:'status', label:'الحالة'}, {key:'notes', label:'ملاحظات'}];
+            } else if (activeTab === 'expenses') {
+                columns = [{key:'date', label:'التاريخ'}, {key:'category', label:'بند المصروف'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
+            } else if (activeTab === 'invoices') {
+                columns = [{key:'date', label:'التاريخ'}, {key:'invoice_no', label:'رقم الفاتورة'}, {key:'client', label:'العميل'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
+            }
 
             let headerHTML = '<tr><th class="p-3">#</th>';
             columns.forEach(col => headerHTML += `<th class="p-3">${col.label}</th>`);
@@ -754,7 +764,9 @@
             if (tab === 'trips') {
                 fieldsHTML += `
                     <div><label class="block text-xs text-slate-400 mb-1">السائق</label><input type="text" id="field-driver" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">خط السير</label><input type="text" id="field-route" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">الشركة الناقلة</label><input type="text" id="field-carrier_company" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">الشركة المنقول لها</label><input type="text" id="field-client_company" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">من وإلى / خط السير</label><input type="text" id="field-route" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs text-slate-400 mb-1">المبلغ (SAR)</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                 `;
             } else if (tab === 'revenues') {
@@ -814,6 +826,8 @@
 
             if (targetTab === 'trips') {
                 payload.driver = document.getElementById('field-driver').value;
+                payload.carrier_company = document.getElementById('field-carrier_company').value;
+                payload.client_company = document.getElementById('field-client_company').value;
                 payload.route = document.getElementById('field-route').value;
                 payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
             } else if (targetTab === 'revenues') {
