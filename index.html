@@ -72,7 +72,6 @@
                     <button id="admin-users-btn" onclick="openUsersModal()" class="hidden bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-xl text-xs font-bold items-center gap-1.5">
                         <i class="fa-solid fa-users-gear"></i> المستخدمين
                     </button>
-                    <!-- زر شاشة المعلومات الجديد -->
                     <button onclick="openModal('modal-info')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3 py-2 rounded-xl border border-slate-700 text-xs font-bold transition flex items-center gap-1.5">
                         <i class="fa-solid fa-circle-info text-blue-400"></i> معلومات النظام
                     </button>
@@ -213,7 +212,7 @@
         </main>
     </div>
 
-    <!-- نافذة شاشة المعلومات الجديدة (Info Modal) -->
+    <!-- نافذة شاشة المعلومات -->
     <div id="modal-info" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl">
             <div class="bg-slate-800/50 p-4 border-b border-slate-800 flex justify-between items-center">
@@ -236,7 +235,7 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-400">إصدار الواجهة:</span>
-                        <span class="text-blue-400 font-bold">v2.5 (دعم كامل للعربية RTL)</span>
+                        <span class="text-blue-400 font-bold">v2.6 (مصحح الأعمدة والبيانات)</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-400">المطور:</span>
@@ -617,10 +616,11 @@
             const paginatedData = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
             let columns = [];
-            if (activeTab === 'trips') columns = [{key:'date', label:'التاريخ'}, {key:'truck_no', label:'رقم الشاحنة'}, {key:'driver', label:'السائق'}, {key:'route', label:'خط السير'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
+            // تم تعديل الأعمدة وحذف أي حقل يخص رقم اللوحة أو الشاحنة بناءً على طلبك
+            if (activeTab === 'trips') columns = [{key:'date', label:'التاريخ'}, {key:'driver', label:'السائق'}, {key:'route', label:'خط السير'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
             else if (activeTab === 'revenues') columns = [{key:'date', label:'التاريخ'}, {key:'source', label:'مصدر الإيراد'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
             else if (activeTab === 'draws') columns = [{key:'date', label:'التاريخ'}, {key:'driver', label:'اسم السائق'}, {key:'amount', label:'المبلغ المسحوب (SAR)'}, {key:'notes', label:'ملاحظات'}];
-            else if (activeTab === 'maintenance') columns = [{key:'date', label:'التاريخ'}, {key:'truck_no', label:'رقم الشاحنة'}, {key:'service_type', label:'نوع الصيانة'}, {key:'cost', label:'التكلفة (SAR)'}, {key:'notes', label:'ملاحظات'}];
+            else if (activeTab === 'maintenance') columns = [{key:'date', label:'التاريخ'}, {key:'service_type', label:'نوع الصيانة'}, {key:'cost', label:'التكلفة (SAR)'}, {key:'notes', label:'ملاحظات'}];
             else if (activeTab === 'rentals') columns = [{key:'date', label:'التاريخ'}, {key:'company_name', label:'اسم الشركة المستأجرة'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
             else if (activeTab === 'debts') columns = [{key:'date', label:'التاريخ'}, {key:'creditor', label:'الجهة / الدائن'}, {key:'amount', label:'مبلغ الدين (SAR)'}, {key:'status', label:'الحالة'}, {key:'notes', label:'ملاحظات'}];
             else if (activeTab === 'expenses') columns = [{key:'date', label:'التاريخ'}, {key:'category', label:'بند المصروف'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
@@ -703,7 +703,6 @@
 
             if (tab === 'trips') {
                 fieldsHTML += `
-                    <div><label class="block text-xs text-slate-400 mb-1">رقم الشاحنة</label><input type="text" id="field-truck_no" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs text-slate-400 mb-1">السائق</label><input type="text" id="field-driver" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs text-slate-400 mb-1">خط السير</label><input type="text" id="field-route" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs text-slate-400 mb-1">المبلغ (SAR)</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
@@ -720,7 +719,6 @@
                 `;
             } else if (tab === 'maintenance') {
                 fieldsHTML += `
-                    <div><label class="block text-xs text-slate-400 mb-1">رقم الشاحنة</label><input type="text" id="field-truck_no" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs text-slate-400 mb-1">نوع الصيانة</label><input type="text" id="field-service_type" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                     <div><label class="block text-xs text-slate-400 mb-1">التكلفة (SAR)</label><input type="number" step="any" id="field-cost" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
                 `;
@@ -765,7 +763,6 @@
             };
 
             if (targetTab === 'trips') {
-                payload.truck_no = document.getElementById('field-truck_no').value;
                 payload.driver = document.getElementById('field-driver').value;
                 payload.route = document.getElementById('field-route').value;
                 payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
@@ -776,7 +773,6 @@
                 payload.driver = document.getElementById('field-driver').value;
                 payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
             } else if (targetTab === 'maintenance') {
-                payload.truck_no = document.getElementById('field-truck_no').value;
                 payload.service_type = document.getElementById('field-service_type').value;
                 payload.cost = parseFloat(document.getElementById('field-cost').value) || 0;
             } else if (targetTab === 'rentals') {
@@ -842,7 +838,7 @@
 
             container.innerHTML = '';
             allDeleted.forEach(item => {
-                let label = item.truck_no || item.driver || item.source || item.company_name || item.creditor || item.category || item.invoice_no || 'سجل';
+                let label = item.driver || item.source || item.company_name || item.creditor || item.category || item.invoice_no || 'سجل';
                 container.innerHTML += `
                     <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
                         <div>
