@@ -271,7 +271,7 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-400">إصدار الواجهة:</span>
-                        <span class="text-blue-400 font-bold">v2.8 (الرحلات التفصيلية والشاشات الكاملة)</span>
+                        <span class="text-blue-400 font-bold">v3.0 (تنسيق الأعمدة الموحد الجديد)</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-400">المطور:</span>
@@ -598,7 +598,7 @@
             const totalTrips = sumField(store.trips, 'amount');
             const totalRevenuesOnly = sumField(store.revenues, 'amount');
             const totalDraws = sumField(store.draws, 'amount');
-            const totalMaintenance = sumField(store.maintenance, 'cost');
+            const totalMaintenance = sumField(store.maintenance, 'amount');
             const totalRentals = sumField(store.rentals, 'amount');
             const totalDebts = sumField(store.debts, 'amount');
             const totalExpenses = sumField(store.expenses, 'amount');
@@ -657,31 +657,95 @@
             const paginatedData = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
             let columns = [];
-            // إرجاع تفاصيل الرحلات كاملة (الشركة الناقلة، الشركة المنقول لها، ومن وإلى)
+            // الترتيب المطلوب بدقة: تاريخ، اسم، شركة، عميل، تحميل، تنزيل، سعر، ملاحظات
             if (activeTab === 'trips') {
                 columns = [
                     {key:'date', label:'التاريخ'},
-                    {key:'driver', label:'السائق'},
-                    {key:'carrier_company', label:'الشركة الناقلة'},
-                    {key:'client_company', label:'الشركة المنقول لها'},
-                    {key:'route', label:'من وإلى / خط السير'},
-                    {key:'amount', label:'المبلغ (SAR)'},
+                    {key:'name', label:'الاسم'},
+                    {key:'company', label:'الشركة'},
+                    {key:'client', label:'العميل'},
+                    {key:'loading', label:'التحميل'},
+                    {key:'unloading', label:'التنزيل'},
+                    {key:'amount', label:'السعر (SAR)'},
                     {key:'notes', label:'ملاحظات'}
                 ];
             } else if (activeTab === 'revenues') {
-                columns = [{key:'date', label:'التاريخ'}, {key:'source', label:'مصدر الإيراد'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
+                columns = [
+                    {key:'date', label:'التاريخ'},
+                    {key:'name', label:'الاسم'},
+                    {key:'company', label:'الشركة'},
+                    {key:'client', label:'العميل'},
+                    {key:'loading', label:'التحميل'},
+                    {key:'unloading', label:'التنزيل'},
+                    {key:'amount', label:'السعر (SAR)'},
+                    {key:'notes', label:'ملاحظات'}
+                ];
             } else if (activeTab === 'draws') {
-                columns = [{key:'date', label:'التاريخ'}, {key:'driver', label:'اسم السائق'}, {key:'amount', label:'المبلغ المسحوب (SAR)'}, {key:'notes', label:'ملاحظات'}];
+                columns = [
+                    {key:'date', label:'التاريخ'},
+                    {key:'name', label:'الاسم'},
+                    {key:'company', label:'الشركة'},
+                    {key:'client', label:'العميل'},
+                    {key:'loading', label:'التحميل'},
+                    {key:'unloading', label:'التنزيل'},
+                    {key:'amount', label:'السعر (SAR)'},
+                    {key:'notes', label:'ملاحظات'}
+                ];
             } else if (activeTab === 'maintenance') {
-                columns = [{key:'date', label:'التاريخ'}, {key:'service_type', label:'نوع الصيانة'}, {key:'cost', label:'التكلفة (SAR)'}, {key:'notes', label:'ملاحظات'}];
+                columns = [
+                    {key:'date', label:'التاريخ'},
+                    {key:'name', label:'الاسم'},
+                    {key:'company', label:'الشركة'},
+                    {key:'client', label:'العميل'},
+                    {key:'loading', label:'التحميل'},
+                    {key:'unloading', label:'التنزيل'},
+                    {key:'amount', label:'السعر (SAR)'},
+                    {key:'notes', label:'ملاحظات'}
+                ];
             } else if (activeTab === 'rentals') {
-                columns = [{key:'date', label:'التاريخ'}, {key:'company_name', label:'اسم الشركة المستأجرة'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
+                columns = [
+                    {key:'date', label:'التاريخ'},
+                    {key:'name', label:'الاسم'},
+                    {key:'company', label:'الشركة'},
+                    {key:'client', label:'العميل'},
+                    {key:'loading', label:'التحميل'},
+                    {key:'unloading', label:'التنزيل'},
+                    {key:'amount', label:'السعر (SAR)'},
+                    {key:'notes', label:'ملاحظات'}
+                ];
             } else if (activeTab === 'debts') {
-                columns = [{key:'date', label:'التاريخ'}, {key:'creditor', label:'الجهة / الدائن'}, {key:'amount', label:'مبلغ الدين (SAR)'}, {key:'status', label:'الحالة'}, {key:'notes', label:'ملاحظات'}];
+                columns = [
+                    {key:'date', label:'التاريخ'},
+                    {key:'name', label:'الاسم'},
+                    {key:'company', label:'الشركة'},
+                    {key:'client', label:'العميل'},
+                    {key:'loading', label:'التحميل'},
+                    {key:'unloading', label:'التنزيل'},
+                    {key:'amount', label:'السعر (SAR)'},
+                    {key:'notes', label:'ملاحظات'}
+                ];
             } else if (activeTab === 'expenses') {
-                columns = [{key:'date', label:'التاريخ'}, {key:'category', label:'بند المصروف'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
+                columns = [
+                    {key:'date', label:'التاريخ'},
+                    {key:'name', label:'الاسم'},
+                    {key:'company', label:'الشركة'},
+                    {key:'client', label:'العميل'},
+                    {key:'loading', label:'التحميل'},
+                    {key:'unloading', label:'التنزيل'},
+                    {key:'amount', label:'السعر (SAR)'},
+                    {key:'notes', label:'ملاحظات'}
+                ];
             } else if (activeTab === 'invoices') {
-                columns = [{key:'date', label:'التاريخ'}, {key:'invoice_no', label:'رقم الفاتورة'}, {key:'client', label:'العميل'}, {key:'amount', label:'المبلغ (SAR)'}, {key:'notes', label:'ملاحظات'}];
+                columns = [
+                    {key:'date', label:'التاريخ'},
+                    {key:'name', label:'الاسم'},
+                    {key:'company', label:'الشركة'},
+                    {key:'client', label:'العميل'},
+                    {key:'loading', label:'التحميل'},
+                    {key:'unloading', label:'التنزيل'},
+                    {key:'amount', label:'السعر (SAR)'},
+                    {key:'notes', label:'ملاحظات'}
+                ];
             }
 
             let headerHTML = '<tr><th class="p-3">#</th>';
@@ -699,7 +763,7 @@
                 let rowHTML = `<tr class="hover:bg-slate-800/40 transition"><td class="p-3 text-slate-500">${(currentPage - 1) * pageSize + index + 1}</td>`;
                 columns.forEach(col => {
                     let val = item[col.key] || '-';
-                    if (col.key.includes('amount') || col.key.includes('cost')) {
+                    if (col.key === 'amount') {
                         val = Number(val).toLocaleString() + ' SAR';
                     }
                     rowHTML += `<td class="p-3">${val}</td>`;
@@ -731,7 +795,7 @@
             const tAmount = sum(store.trips, 'amount');
             const rAmount = sum(store.revenues, 'amount');
             const dAmount = sum(store.draws, 'amount');
-            const mCost = sum(store.maintenance, 'cost');
+            const mCost = sum(store.maintenance, 'amount');
             const rentAmount = sum(store.rentals, 'amount');
             const debtAmount = sum(store.debts, 'amount');
             const expAmount = sum(store.expenses, 'amount');
@@ -759,57 +823,13 @@
                     <label class="block text-xs text-slate-400 mb-1">التاريخ *</label>
                     <input type="date" id="field-date" required value="${new Date().toISOString().split('T')[0]}" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
                 </div>
-            `;
-
-            if (tab === 'trips') {
-                fieldsHTML += `
-                    <div><label class="block text-xs text-slate-400 mb-1">السائق</label><input type="text" id="field-driver" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">الشركة الناقلة</label><input type="text" id="field-carrier_company" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">الشركة المنقول لها</label><input type="text" id="field-client_company" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">من وإلى / خط السير</label><input type="text" id="field-route" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">المبلغ (SAR)</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                `;
-            } else if (tab === 'revenues') {
-                fieldsHTML += `
-                    <div><label class="block text-xs text-slate-400 mb-1">مصدر الإيراد</label><input type="text" id="field-source" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">المبلغ (SAR)</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                `;
-            } else if (tab === 'draws') {
-                fieldsHTML += `
-                    <div><label class="block text-xs text-slate-400 mb-1">اسم السائق</label><input type="text" id="field-driver" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">المبلغ المسحوب (SAR)</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                `;
-            } else if (tab === 'maintenance') {
-                fieldsHTML += `
-                    <div><label class="block text-xs text-slate-400 mb-1">نوع الصيانة</label><input type="text" id="field-service_type" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">التكلفة (SAR)</label><input type="number" step="any" id="field-cost" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                `;
-            } else if (tab === 'rentals') {
-                fieldsHTML += `
-                    <div><label class="block text-xs text-slate-400 mb-1">اسم الشركة المستأجرة</label><input type="text" id="field-company_name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">المبلغ (SAR)</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                `;
-            } else if (tab === 'debts') {
-                fieldsHTML += `
-                    <div><label class="block text-xs text-slate-400 mb-1">الجهة / الدائن</label><input type="text" id="field-creditor" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">مبلغ الدين (SAR)</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">الحالة</label><input type="text" id="field-status" value="قائم" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                `;
-            } else if (tab === 'expenses') {
-                fieldsHTML += `
-                    <div><label class="block text-xs text-slate-400 mb-1">بند المصروف</label><input type="text" id="field-category" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">المبلغ (SAR)</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                `;
-            } else if (tab === 'invoices') {
-                fieldsHTML += `
-                    <div><label class="block text-xs text-slate-400 mb-1">رقم الفاتورة</label><input type="text" id="field-invoice_no" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">العميل</label><input type="text" id="field-client" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                    <div><label class="block text-xs text-slate-400 mb-1">المبلغ (SAR)</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></div>
-                `;
-            }
-
-            fieldsHTML += `
-                <div><label class="block text-xs text-slate-400 mb-1">ملاحظات</label><textarea id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none"></textarea></div>
+                <div><label class="block text-xs text-slate-400 mb-1">الاسم</label><input type="text" id="field-name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="مثال: اسم السائق / الجهة"></div>
+                <div><label class="block text-xs text-slate-400 mb-1">الشركة</label><input type="text" id="field-company" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="مثال: الشركة الناقلة / التابعة"></div>
+                <div><label class="block text-xs text-slate-400 mb-1">العميل</label><input type="text" id="field-client" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="مثال: الشركة المنقول لها"></div>
+                <div><label class="block text-xs text-slate-400 mb-1">التحميل</label><input type="text" id="field-loading" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="مكان التحميل / البداية"></div>
+                <div><label class="block text-xs text-slate-400 mb-1">التنزيل</label><input type="text" id="field-unloading" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="مكان التنزيل / الوصول"></div>
+                <div><label class="block text-xs text-slate-400 mb-1">السعر (SAR)</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="المبلغ أو السعر"></div>
+                <div><label class="block text-xs text-slate-400 mb-1">ملاحظات</label><textarea id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="أي ملاحظات إضافية"></textarea></div>
             `;
             container.innerHTML = fieldsHTML;
         }
@@ -821,39 +841,14 @@
 
             let payload = {
                 date: document.getElementById('field-date').value,
-                notes: document.getElementById('field-notes') ? document.getElementById('field-notes').value : ''
+                name: document.getElementById('field-name').value,
+                company: document.getElementById('field-company').value,
+                client: document.getElementById('field-client').value,
+                loading: document.getElementById('field-loading').value,
+                unloading: document.getElementById('field-unloading').value,
+                amount: parseFloat(document.getElementById('field-amount').value) || 0,
+                notes: document.getElementById('field-notes').value
             };
-
-            if (targetTab === 'trips') {
-                payload.driver = document.getElementById('field-driver').value;
-                payload.carrier_company = document.getElementById('field-carrier_company').value;
-                payload.client_company = document.getElementById('field-client_company').value;
-                payload.route = document.getElementById('field-route').value;
-                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
-            } else if (targetTab === 'revenues') {
-                payload.source = document.getElementById('field-source').value;
-                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
-            } else if (targetTab === 'draws') {
-                payload.driver = document.getElementById('field-driver').value;
-                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
-            } else if (targetTab === 'maintenance') {
-                payload.service_type = document.getElementById('field-service_type').value;
-                payload.cost = parseFloat(document.getElementById('field-cost').value) || 0;
-            } else if (targetTab === 'rentals') {
-                payload.company_name = document.getElementById('field-company_name').value;
-                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
-            } else if (targetTab === 'debts') {
-                payload.creditor = document.getElementById('field-creditor').value;
-                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
-                payload.status = document.getElementById('field-status').value;
-            } else if (targetTab === 'expenses') {
-                payload.category = document.getElementById('field-category').value;
-                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
-            } else if (targetTab === 'invoices') {
-                payload.invoice_no = document.getElementById('field-invoice_no').value;
-                payload.client = document.getElementById('field-client').value;
-                payload.amount = parseFloat(document.getElementById('field-amount').value) || 0;
-            }
 
             const { error } = await db.from(tableName).insert([payload]);
             if (error) {
@@ -896,13 +891,13 @@
             }
 
             if (allDeleted.length === 0) {
-                container.innerHTML = '<p class="text-slate-400 text-center py-6">سلة المهملات فارغة</p>';
+                container.innerHTML = '<p class="text-slate-400 text-center py6">سلة المهملات فارغة</p>';
                 return;
             }
 
             container.innerHTML = '';
             allDeleted.forEach(item => {
-                let label = item.driver || item.source || item.company_name || item.creditor || item.category || item.invoice_no || 'سجل';
+                let label = item.name || item.company || 'سجل';
                 container.innerHTML += `
                     <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
                         <div>
@@ -956,7 +951,7 @@
             const data = getFilteredData(activeTab);
             let text = `*تقرير ${tableConfig[activeTab].title} - منظومة الإدارة اللوجستية*%0A%0A`;
             data.slice(0, 10).forEach((item, idx) => {
-                text += `${idx + 1}. التاريخ: ${item.date || '-'} | المبلغ: ${item.amount || item.cost || 0} SAR%0A`;
+                text += `${idx + 1}. التاريخ: ${item.date || '-'} | الاسم: ${item.name || '-'} | السعر: ${item.amount || 0} SAR%0A`;
             });
             text += `%0Aتم الاستخراج من منظومة ركن المشروعات وجسور اللوجستية`;
             window.open(`https://wa.me/?text=${text}`, '_blank');
