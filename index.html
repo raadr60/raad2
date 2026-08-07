@@ -271,7 +271,7 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-400">إصدار الواجهة:</span>
-                        <span class="text-blue-400 font-bold">v3.0 (تنسيق الأعمدة الموحد الجديد)</span>
+                        <span class="text-blue-400 font-bold">v3.1 (هيكلة الأعمدة المخصصة حسب طبيعة البيانات)</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-400">المطور:</span>
@@ -657,19 +657,9 @@
             const paginatedData = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
             let columns = [];
-            // الترتيب المطلوب بدقة: تاريخ، اسم، شركة، عميل، تحميل، تنزيل، سعر، ملاحظات
-            if (activeTab === 'trips') {
-                columns = [
-                    {key:'date', label:'التاريخ'},
-                    {key:'name', label:'الاسم'},
-                    {key:'company', label:'الشركة'},
-                    {key:'client', label:'العميل'},
-                    {key:'loading', label:'التحميل'},
-                    {key:'unloading', label:'التنزيل'},
-                    {key:'amount', label:'السعر (SAR)'},
-                    {key:'notes', label:'ملاحظات'}
-                ];
-            } else if (activeTab === 'revenues') {
+            
+            // تحديد الأعمدة بدقة بناءً على طبيعة كل جدول حسب طلبك
+            if (activeTab === 'trips' || activeTab === 'revenues' || activeTab === 'rentals') {
                 columns = [
                     {key:'date', label:'التاريخ'},
                     {key:'name', label:'الاسم'},
@@ -683,67 +673,25 @@
             } else if (activeTab === 'draws') {
                 columns = [
                     {key:'date', label:'التاريخ'},
-                    {key:'name', label:'الاسم'},
-                    {key:'company', label:'الشركة'},
-                    {key:'client', label:'العميل'},
-                    {key:'loading', label:'التحميل'},
-                    {key:'unloading', label:'التنزيل'},
-                    {key:'amount', label:'السعر (SAR)'},
+                    {key:'name', label:'اسم السائق'},
+                    {key:'company', label:'الشركة / الشاحنة'},
+                    {key:'amount', label:'المبلغ المسحوب (SAR)'},
                     {key:'notes', label:'ملاحظات'}
                 ];
             } else if (activeTab === 'maintenance') {
                 columns = [
                     {key:'date', label:'التاريخ'},
-                    {key:'name', label:'الاسم'},
-                    {key:'company', label:'الشركة'},
-                    {key:'client', label:'العميل'},
-                    {key:'loading', label:'التحميل'},
-                    {key:'unloading', label:'التنزيل'},
-                    {key:'amount', label:'السعر (SAR)'},
-                    {key:'notes', label:'ملاحظات'}
+                    {key:'name', label:'اسم السائق / المركبة'},
+                    {key:'company', label:'الورشة / الجهة المقدمة'},
+                    {key:'amount', label:'التكلفة (SAR)'},
+                    {key:'notes', label:'بيان الصيانة'}
                 ];
-            } else if (activeTab === 'rentals') {
+            } else if (activeTab === 'debts' || activeTab === 'expenses' || activeTab === 'invoices') {
                 columns = [
                     {key:'date', label:'التاريخ'},
-                    {key:'name', label:'الاسم'},
-                    {key:'company', label:'الشركة'},
-                    {key:'client', label:'العميل'},
-                    {key:'loading', label:'التحميل'},
-                    {key:'unloading', label:'التنزيل'},
-                    {key:'amount', label:'السعر (SAR)'},
-                    {key:'notes', label:'ملاحظات'}
-                ];
-            } else if (activeTab === 'debts') {
-                columns = [
-                    {key:'date', label:'التاريخ'},
-                    {key:'name', label:'الاسم'},
-                    {key:'company', label:'الشركة'},
-                    {key:'client', label:'العميل'},
-                    {key:'loading', label:'التحميل'},
-                    {key:'unloading', label:'التنزيل'},
-                    {key:'amount', label:'السعر (SAR)'},
-                    {key:'notes', label:'ملاحظات'}
-                ];
-            } else if (activeTab === 'expenses') {
-                columns = [
-                    {key:'date', label:'التاريخ'},
-                    {key:'name', label:'الاسم'},
-                    {key:'company', label:'الشركة'},
-                    {key:'client', label:'العميل'},
-                    {key:'loading', label:'التحميل'},
-                    {key:'unloading', label:'التنزيل'},
-                    {key:'amount', label:'السعر (SAR)'},
-                    {key:'notes', label:'ملاحظات'}
-                ];
-            } else if (activeTab === 'invoices') {
-                columns = [
-                    {key:'date', label:'التاريخ'},
-                    {key:'name', label:'الاسم'},
-                    {key:'company', label:'الشركة'},
-                    {key:'client', label:'العميل'},
-                    {key:'loading', label:'التحميل'},
-                    {key:'unloading', label:'التنزيل'},
-                    {key:'amount', label:'السعر (SAR)'},
+                    {key:'name', label:'الاسم / الجهة'},
+                    {key:'company', label:'الشركة المرتبطة'},
+                    {key:'amount', label:'المبلغ (SAR)'},
                     {key:'notes', label:'ملاحظات'}
                 ];
             }
@@ -823,14 +771,41 @@
                     <label class="block text-xs text-slate-400 mb-1">التاريخ *</label>
                     <input type="date" id="field-date" required value="${new Date().toISOString().split('T')[0]}" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
                 </div>
-                <div><label class="block text-xs text-slate-400 mb-1">الاسم</label><input type="text" id="field-name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="مثال: اسم السائق / الجهة"></div>
-                <div><label class="block text-xs text-slate-400 mb-1">الشركة</label><input type="text" id="field-company" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="مثال: الشركة الناقلة / التابعة"></div>
-                <div><label class="block text-xs text-slate-400 mb-1">العميل</label><input type="text" id="field-client" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="مثال: الشركة المنقول لها"></div>
-                <div><label class="block text-xs text-slate-400 mb-1">التحميل</label><input type="text" id="field-loading" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="مكان التحميل / البداية"></div>
-                <div><label class="block text-xs text-slate-400 mb-1">التنزيل</label><input type="text" id="field-unloading" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="مكان التنزيل / الوصول"></div>
-                <div><label class="block text-xs text-slate-400 mb-1">السعر (SAR)</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="المبلغ أو السعر"></div>
-                <div><label class="block text-xs text-slate-400 mb-1">ملاحظات</label><textarea id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="أي ملاحظات إضافية"></textarea></div>
             `;
+
+            if (tab === 'trips' || tab === 'revenues' || tab === 'rentals') {
+                fieldsHTML += `
+                    <div><label class="block text-xs text-slate-400 mb-1">الاسم</label><input type="text" id="field-name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="اسم السائق أو الجهة"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">الشركة</label><input type="text" id="field-company" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="الشركة الناقلة أو التابعة"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">العميل</label><input type="text" id="field-client" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="الشركة المنقول لها (العميل)"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">التحميل</label><input type="text" id="field-loading" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="مكان التحميل / البداية"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">التنزيل</label><input type="text" id="field-unloading" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="مكان التنزيل / الوصول"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">السعر (SAR)</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="المبلغ أو السعر"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">ملاحظات</label><textarea id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="أي ملاحظات إضافية"></textarea></div>
+                `;
+            } else if (tab === 'draws') {
+                fieldsHTML += `
+                    <div><label class="block text-xs text-slate-400 mb-1">اسم السائق *</label><input type="text" id="field-name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="اسم السائق المستلم للسلفة"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">الشركة / الشاحنة</label><input type="text" id="field-company" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="رقم الشاحنة أو الشركة التابع لها"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">المبلغ المسحوب (SAR) *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="قيمة السحب النقدي"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">ملاحظات</label><textarea id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="سبب السحب أو تفاصيل إضافية"></textarea></div>
+                `;
+            } else if (tab === 'maintenance') {
+                fieldsHTML += `
+                    <div><label class="block text-xs text-slate-400 mb-1">اسم السائق / المركبة *</label><input type="text" id="field-name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="اسم السائق أو رقم اللوحة"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">الورشة / الجهة المقدمة</label><input type="text" id="field-company" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="اسم الورشة أو مركز الصيانة"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">تكلفة الصيانة (SAR) *</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="إجمالي الفاتورة"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">بيان الصيانة وملاحظات</label><textarea id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="قطع الغيار المستبدلة أو تفاصيل الإصلاح"></textarea></div>
+                `;
+            } else {
+                fieldsHTML += `
+                    <div><label class="block text-xs text-slate-400 mb-1">الاسم / الجهة</label><input type="text" id="field-name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="الاسم أو الجهة"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">الشركة المرتبطة</label><input type="text" id="field-company" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="اسم الشركة"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">المبلغ (SAR)</label><input type="number" step="any" id="field-amount" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="المبلغ"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">ملاحظات</label><textarea id="field-notes" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="التفاصيل والملاحظات"></textarea></div>
+                `;
+            }
+
             container.innerHTML = fieldsHTML;
         }
 
@@ -841,14 +816,15 @@
 
             let payload = {
                 date: document.getElementById('field-date').value,
-                name: document.getElementById('field-name').value,
-                company: document.getElementById('field-company').value,
-                client: document.getElementById('field-client').value,
-                loading: document.getElementById('field-loading').value,
-                unloading: document.getElementById('field-unloading').value,
+                name: document.getElementById('field-name') ? document.getElementById('field-name').value : '',
+                company: document.getElementById('field-company') ? document.getElementById('field-company').value : '',
                 amount: parseFloat(document.getElementById('field-amount').value) || 0,
-                notes: document.getElementById('field-notes').value
+                notes: document.getElementById('field-notes') ? document.getElementById('field-notes').value : ''
             };
+
+            if (document.getElementById('field-client')) payload.client = document.getElementById('field-client').value;
+            if (document.getElementById('field-loading')) payload.loading = document.getElementById('field-loading').value;
+            if (document.getElementById('field-unloading')) payload.unloading = document.getElementById('field-unloading').value;
 
             const { error } = await db.from(tableName).insert([payload]);
             if (error) {
@@ -951,7 +927,7 @@
             const data = getFilteredData(activeTab);
             let text = `*تقرير ${tableConfig[activeTab].title} - منظومة الإدارة اللوجستية*%0A%0A`;
             data.slice(0, 10).forEach((item, idx) => {
-                text += `${idx + 1}. التاريخ: ${item.date || '-'} | الاسم: ${item.name || '-'} | السعر: ${item.amount || 0} SAR%0A`;
+                text += `${idx + 1}. التاريخ: ${item.date || '-'} | الاسم: ${item.name || '-'} | المبلغ: ${item.amount || 0} SAR%0A`;
             });
             text += `%0Aتم الاستخراج من منظومة ركن المشروعات وجسور اللوجستية`;
             window.open(`https://wa.me/?text=${text}`, '_blank');
