@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة الإدارة اللوجستية والحسابات الذكية - جسور وركن المشروعات</title>
+    <title>منظومة الإدارة اللوجستية والحسابات الذكية - jasur</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -31,8 +31,7 @@
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <h2 class="text-2xl font-black text-white">تسجيل الدخول الآمن</h2>
-                <p class="text-xs text-slate-400">منظومة الحسابات والعمليات اللوجستية</p>
-                <p class="text-[11px] font-bold text-blue-400 pt-1">المطور رعد الشغدري</p>
+                <p class="text-xs text-slate-400">شركة جسور المسافات - jasur</p>
             </div>
             
             <form onsubmit="handleLogin(event)" class="space-y-4">
@@ -65,13 +64,12 @@
                         <i class="fa-solid fa-truck-fast"></i>
                     </div>
                     <div>
-                        <h1 class="text-sm sm:text-base font-black tracking-wide">لوحة التحكم اللوجستية الذكية</h1>
+                        <h1 class="text-sm sm:text-base font-black tracking-wide">شركة جسور المسافات - jasur</h1>
                         <span id="current-user-badge" class="text-xs text-blue-400 font-medium">المدير العام</span>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2 flex-wrap">
-                    <!-- زر تبديل المظهر (فاتح / غامق) -->
                     <button onclick="toggleDarkMode()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5" title="تغيير المظهر">
                         <i id="theme-icon" class="fa-solid fa-sun"></i>
                     </button>
@@ -102,7 +100,7 @@
 
         <main class="max-w-7xl w-full mx-auto p-3 sm:p-4 space-y-6 flex-1">
             
-            <!-- شاشات المعلومات الـ 9 المحدثة لترتبط بالفلتر الشهري -->
+            <!-- شاشات المعلومات الـ 9 المرتبطة بالفلتر الشهري -->
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 no-print">
                 <div class="bg-slate-800/80 dark:bg-slate-800/80 bg-white border border-slate-700/60 dark:border-slate-700/60 border-slate-200 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
@@ -194,7 +192,7 @@
                 </div>
             </div>
 
-            <!-- التبويبات المتوافقة -->
+            <!-- التبويبات -->
             <div class="flex border-b border-slate-800 dark:border-slate-800 border-slate-200 gap-2 overflow-x-auto text-xs font-bold no-print pb-2">
                 <button onclick="switchTab('trips')" id="tab-trips" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">1. الرحلات</button>
                 <button onclick="switchTab('revenues')" id="tab-revenues" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">2. الإيرادات</button>
@@ -290,7 +288,7 @@
         </div>
     </div>
 
-    <!-- نافذة التعديل الجديدة -->
+    <!-- نافذة التعديل -->
     <div id="modal-edit-entry" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto text-slate-100">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -348,7 +346,6 @@
             buildDynamicFormFields('trips');
         });
 
-        // ميزة تبديل المظهر (فاتح / غامق)
         function toggleDarkMode() {
             const html = document.documentElement;
             const icon = document.getElementById('theme-icon');
@@ -365,7 +362,6 @@
             }
         }
 
-        // استرجاع المظهر المحفوظ
         if (localStorage.getItem('theme') === 'light') {
             document.documentElement.classList.remove('dark');
         }
@@ -531,10 +527,9 @@
             }
         }
 
-        // فلترة البيانات بناءً على الشهر المدخل للبطاقات والجداول
         function getFilteredData(tab) {
             const query = document.getElementById('search-query').value.toLowerCase().trim();
-            const monthFilter = document.getElementById('filter-month').value; // مثلاً: "2026-07"
+            const monthFilter = document.getElementById('filter-month').value;
 
             return store[tab].filter(item => {
                 if (item.is_deleted) return false;
@@ -563,7 +558,6 @@
             renderCurrentTab();
         }
 
-        // تحديث بطاقات المعلومات التسع لتتفاعل مع الفلتر الشهري
         function updateAnalyticsDashboard() {
             const getSum = (tab) => getFilteredData(tab).reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
 
@@ -576,7 +570,6 @@
             const expensesTotal = getSum('expenses');
             const invoicesTotal = getSum('invoices');
 
-            // صافي الربح = الإيرادات - (السحبيات + الصيانة + المصروفات + الشركات المستأجرة)
             const netProfit = revenuesTotal - (drawsTotal + maintenanceTotal + expensesTotal + rentalsTotal);
 
             document.getElementById('stat-trips').innerText = tripsTotal.toLocaleString() + ' SAR';
@@ -628,16 +621,16 @@
             let fields = [];
 
             if (activeTab === 'trips') {
-                headers = ['التاريخ', 'السائق', 'الشركات المستأجرة', 'العميل', 'المبلغ (SAR)', 'من', 'إلى', 'الملاحظات', 'الإجراءات'];
+                headers = ['التاريخ', 'السائق', 'الشركة', 'العميل', 'المبلغ (SAR)', 'من', 'إلى', 'الملاحظات', 'الإجراءات'];
                 fields = ['date', 'driver_name', 'company_name', 'client_name', 'amount', 'route_from', 'route_to', 'notes'];
             } else if (activeTab === 'revenues') {
-                headers = ['التاريخ', 'الشركات المستأجرة', 'العميل', 'المبلغ (SAR)', 'طريقة الدفع', 'الملاحظات', 'الإجراءات'];
+                headers = ['التاريخ', 'الشركة', 'العميل', 'المبلغ (SAR)', 'طريقة الدفع', 'الملاحظات', 'الإجراءات'];
                 fields = ['date', 'company_name', 'client_name', 'amount', 'payment_method', 'notes'];
             } else if (activeTab === 'draws') {
-                headers = ['التاريخ', 'الشركات المستأجرة', 'اسم الشخص', 'الصفة', 'نوع السحب', 'المبلغ (SAR)', 'الملاحظات', 'الإجراءات'];
+                headers = ['التاريخ', 'الشركة', 'اسم الشخص', 'الصفة', 'نوع السحب', 'المبلغ (SAR)', 'الملاحظات', 'الإجراءات'];
                 fields = ['date', 'company_name', 'person_name', 'person_type', 'draw_type', 'amount', 'notes'];
             } else if (activeTab === 'maintenance') {
-                headers = ['التاريخ', 'الشركات المستأجرة', 'السائق', 'نوع الصيانة', 'المبلغ (SAR)', 'الملاحظات', 'الإجراءات'];
+                headers = ['التاريخ', 'الشركة', 'السائق', 'نوع الصيانة', 'المبلغ (SAR)', 'الملاحظات', 'الإجراءات'];
                 fields = ['date', 'company_name', 'driver_name', 'service_type', 'amount', 'notes'];
             } else if (activeTab === 'rentals') {
                 headers = ['التاريخ', 'المالك / الشركة', 'المبلغ (SAR)', 'نوع السحب', 'الملاحظات', 'الإجراءات'];
@@ -646,14 +639,13 @@
                 headers = ['التاريخ', 'اسم الشخص / الجهة', 'نوع الدين', 'المبلغ (SAR)', 'حالة السداد', 'الملاحظات', 'الإجراءات'];
                 fields = ['date', 'person_name', 'debt_type', 'amount', 'is_paid', 'notes'];
             } else if (activeTab === 'expenses') {
-                headers = ['التاريخ', 'نوع المصروف', 'المبلغ (SAR)', 'الملاحظات', 'الإجراءات'];
-                fields = ['date', 'expense_type', 'amount', 'notes'];
+                headers = ['التاريخ', 'الشركة', 'نوع المصروف', 'المبلغ (SAR)', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'company_name', 'expense_type', 'amount', 'notes'];
             } else if (activeTab === 'invoices') {
                 headers = ['رقم الفاتورة', 'العميل', 'التاريخ', 'الحالة', 'المبلغ (SAR)', 'المدفوع', 'حالة السداد', 'الشهر', 'الملاحظات', 'الإجراءات'];
                 fields = ['invoice_number', 'client_name', 'date', 'status', 'amount', 'paid_amount', 'is_paid', 'month_year', 'notes'];
             }
 
-            // رسم الرأس
             let trHead = document.createElement('tr');
             headers.forEach(h => {
                 let th = document.createElement('th');
@@ -663,7 +655,6 @@
             });
             thead.appendChild(trHead);
 
-            // التقسيم الصفحي
             const start = (currentPage - 1) * pageSize;
             const paginatedData = data.slice(start, start + pageSize);
 
@@ -677,7 +668,6 @@
                     if (field === 'amount' || field === 'paid_amount') {
                         td.innerText = Number(item[field] || 0).toLocaleString() + ' SAR';
                     } else if (field === 'is_paid') {
-                        // إضافة خانة توضح هل تم السداد (تحديث رقم 3)
                         let paidVal = item[field];
                         if (paidVal === true || paidVal === 'مدفوع' || paidVal === 'تم السداد') {
                             td.innerHTML = `<span class="bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full font-bold text-[10px]">تم السداد</span>`;
@@ -690,7 +680,6 @@
                     tr.appendChild(td);
                 });
 
-                // خلية الإجراءات (تعديل + حذف) (تحديث رقم 2)
                 let tdAction = document.createElement('td');
                 tdAction.className = 'p-3 flex items-center gap-2';
                 
@@ -714,7 +703,6 @@
                 tbody.appendChild(tr);
             });
 
-            // حساب المجموع في التذييل
             let totalAmount = data.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
             let trFoot = document.createElement('tr');
             let tdFootLabel = document.createElement('td');
@@ -727,7 +715,7 @@
                 td.className = 'p-3';
                 if (headers[i].includes('المبلغ') || headers[i].includes('المدفوع')) {
                     td.innerText = totalAmount.toLocaleString() + ' SAR';
-                    totalAmount = 0; // لطباعته مرة واحدة
+                    totalAmount = 0;
                 }
                 trFoot.appendChild(td);
             }
@@ -753,7 +741,6 @@
             }
         }
 
-        // بناء حقول النماذج للإدخال أو التعديل
         function buildDynamicFormFields(table, dataItem = null, containerId = 'dynamic-fields-container') {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
@@ -765,7 +752,7 @@
                 fieldsDef = [
                     { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
                     { id: 'driver_name', label: 'اسم السائق', type: 'text', val: val('driver_name') },
-                    { id: 'company_name', label: 'الشركات المستأجرة', type: 'text', val: val('company_name') },
+                    { id: 'company_name', label: 'الشركة', type: 'text', val: val('company_name') },
                     { id: 'client_name', label: 'اسم العميل', type: 'text', val: val('client_name') },
                     { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
                     { id: 'route_from', label: 'من (المسار)', type: 'text', val: val('route_from') },
@@ -775,7 +762,7 @@
             } else if (table === 'revenues') {
                 fieldsDef = [
                     { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
-                    { id: 'company_name', label: 'الشركات المستأجرة', type: 'text', val: val('company_name') },
+                    { id: 'company_name', label: 'الشركة', type: 'text', val: val('company_name') },
                     { id: 'client_name', label: 'اسم العميل', type: 'text', val: val('client_name') },
                     { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
                     { id: 'payment_method', label: 'طريقة الدفع', type: 'text', val: val('payment_method') },
@@ -784,7 +771,7 @@
             } else if (table === 'draws') {
                 fieldsDef = [
                     { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
-                    { id: 'company_name', label: 'الشركات المستأجرة', type: 'text', val: val('company_name') },
+                    { id: 'company_name', label: 'الشركة', type: 'text', val: val('company_name') },
                     { id: 'person_name', label: 'اسم الشخص', type: 'text', val: val('person_name') },
                     { id: 'person_type', label: 'الصفة (سائق / عمال)', type: 'text', val: val('person_type') },
                     { id: 'draw_type', label: 'نوع السحب', type: 'text', val: val('draw_type') },
@@ -794,7 +781,7 @@
             } else if (table === 'maintenance') {
                 fieldsDef = [
                     { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
-                    { id: 'company_name', label: 'الشركات المستأجرة', type: 'text', val: val('company_name') },
+                    { id: 'company_name', label: 'الشركة', type: 'text', val: val('company_name') },
                     { id: 'driver_name', label: 'السائق', type: 'text', val: val('driver_name') },
                     { id: 'service_type', label: 'نوع الصيانة', type: 'text', val: val('service_type') },
                     { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
@@ -820,6 +807,7 @@
             } else if (table === 'expenses') {
                 fieldsDef = [
                     { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'company_name', label: 'الشركة', type: 'text', val: val('company_name') },
                     { id: 'expense_type', label: 'نوع المصروف', type: 'text', val: val('expense_type') },
                     { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
                     { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
@@ -891,7 +879,6 @@
             }
         }
 
-        // فتح نافذة التعديل
         function openEditModal(tab, item) {
             document.getElementById('edit-table-name').value = tab;
             document.getElementById('edit-record-id').value = item.id;
@@ -1005,7 +992,7 @@
 
         function shareWhatsApp() {
             const data = getFilteredData(activeTab);
-            let text = `*تقرير ${tableConfig[activeTab].title} - منظومة جسور اللوجستية*\n\n`;
+            let text = `*تقرير ${tableConfig[activeTab].title} - شركة جسور المسافات*\n\n`;
             data.slice(0, 10).forEach((item, idx) => {
                 text += `${idx+1}. التاريخ: ${item.date || '-'} | المبلغ: ${item.amount || 0} SAR\n`;
             });
