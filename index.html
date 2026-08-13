@@ -21,7 +21,7 @@
         .glass-header { backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="bg-slate-900 dark:bg-slate-900 bg-slate-100 font-sans text-slate-100 dark:text-slate-100 text-slate-800 min-h-screen flex flex-col transition-colors duration-200">
+<body class="bg-slate-900 dark:bg-slate-900 bg-slate-100 font-sans text-slate-100 dark:text-slate-100 text-slate-800 min-h-screen flex flex-col transition-colors duration-200" dir="rtl">
 
     <!-- شاشة تسجيل الدخول -->
     <div id="login-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
@@ -37,12 +37,12 @@
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">اسم المستخدم</label>
-                    <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" autocapitalize="none" autocomplete="off" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" autocapitalize="none" autocomplete="off" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none text-right">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور</label>
                     <div class="relative">
-                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" autocapitalize="none" autocomplete="current-password" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 pl-10 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" autocapitalize="none" autocomplete="current-password" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 pl-10 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none text-right">
                         <button type="button" onclick="togglePasswordVisibility('login-password', 'login-eye-icon')" class="absolute left-3 top-3.5 text-slate-400 hover:text-white">
                             <i id="login-eye-icon" class="fa-solid fa-eye"></i>
                         </button>
@@ -180,11 +180,11 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-400 mb-1">بحث سريع</label>
-                        <input type="text" id="search-query" onkeyup="renderCurrentTab()" placeholder="ابحث في الجدول الحالي..." class="w-full bg-slate-900 dark:bg-slate-900 bg-slate-50 border border-slate-700 dark:border-slate-700 border-slate-300 rounded-xl p-2.5 text-xs text-white dark:text-white text-slate-800 outline-none">
+                        <input type="text" id="search-query" onkeyup="renderCurrentTab()" placeholder="ابحث في الجدول الحالي..." class="w-full bg-slate-900 dark:bg-slate-900 bg-slate-50 border border-slate-700 dark:border-slate-700 border-slate-300 rounded-xl p-2.5 text-xs text-white dark:text-white text-slate-800 outline-none text-right">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-400 mb-1">التصفية بالشهر</label>
-                        <input type="month" id="filter-month" onchange="onMonthFilterChange()" class="w-full bg-slate-900 dark:bg-slate-900 bg-slate-50 border border-slate-700 dark:border-slate-700 border-slate-300 rounded-xl p-2.5 text-xs text-white dark:text-white text-slate-800 outline-none">
+                        <input type="month" id="filter-month" onchange="onMonthFilterChange()" class="w-full bg-slate-900 dark:bg-slate-900 bg-slate-50 border border-slate-700 dark:border-slate-700 border-slate-300 rounded-xl p-2.5 text-xs text-white dark:text-white text-slate-800 outline-none text-right">
                     </div>
                     <div class="flex items-end">
                         <button onclick="resetFilters()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold p-2.5 rounded-xl transition">إعادة ضبط الفلترة</button>
@@ -225,7 +225,7 @@
 
     <!-- نافذة إدارة المستخدمين -->
     <div id="modal-users" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 max-h-[85vh] overflow-y-auto text-slate-100">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 max-h-[85vh] overflow-y-auto text-slate-100 text-right">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-purple-400 text-sm"><i class="fa-solid fa-users-gear"></i> إدارة المستخدمين (جدول app_users)</h3>
                 <button onclick="closeModal('modal-users')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -236,16 +236,16 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">اسم المستخدم</label>
-                        <input type="text" id="new-username" required placeholder="اسم المستخدم" autocapitalize="none" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                        <input type="text" id="new-username" required placeholder="اسم المستخدم" autocapitalize="none" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none text-right">
                     </div>
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">كلمة المرور</label>
-                        <input type="password" id="new-password" required placeholder="كلمة المرور" autocapitalize="none" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                        <input type="password" id="new-password" required placeholder="كلمة المرور" autocapitalize="none" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none text-right">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">الصلاحية</label>
-                    <select id="new-role" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                    <select id="new-role" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none text-right">
                         <option value="editor">محرر (إدخال وتعديل)</option>
                         <option value="viewer">مشاهد فقط</option>
                     </select>
@@ -262,7 +262,7 @@
 
     <!-- نافذة الإدخال اليدوي -->
     <div id="modal-add-entry" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto text-slate-100">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto text-slate-100 text-right">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-white text-sm">إضافة عملية جديدة</h3>
                 <button onclick="closeModal('modal-add-entry')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -271,7 +271,7 @@
             <form onsubmit="handleFormSubmit(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">اختر الجدول المستهدف *</label>
-                    <select id="form-target-table" onchange="buildDynamicFormFields(this.value)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                    <select id="form-target-table" onchange="buildDynamicFormFields(this.value)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none text-right">
                         <option value="trips">1. جدول الرحلات</option>
                         <option value="revenues">2. جدول الإيرادات</option>
                         <option value="draws">3. سحبيات السائقين</option>
@@ -290,7 +290,7 @@
 
     <!-- نافذة التعديل -->
     <div id="modal-edit-entry" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto text-slate-100">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto text-slate-100 text-right">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-amber-400 text-sm"><i class="fa-solid fa-pen-to-square"></i> تعديل السجل</h3>
                 <button onclick="closeModal('modal-edit-entry')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -306,7 +306,7 @@
 
     <!-- سلة المهملات -->
     <div id="modal-trash" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto text-slate-100">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto text-slate-100 text-right">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-amber-400 text-sm"><i class="fa-solid fa-trash-arrow-up"></i> سلة المهملات (استرجاع أو حذف نهائي)</h3>
                 <button onclick="closeModal('modal-trash')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -338,7 +338,32 @@
             invoices: { name: 'app_invoices', title: 'الفواتير' }
         };
 
-        // دالة جلب الرقم التسلسلي التلقائي حسب الشهر لكل جدول
+        // خريطة لترجمة أسماء الأعمدة التقنية إلى مسميات عربية واضحة في الجدول
+        const columnLabels = {
+            'serial_no': 'الرقم التسلسلي',
+            'serial_id': 'الرقم المرجعي',
+            'date': 'التاريخ',
+            'driver_name': 'اسم السائق',
+            'company_name': 'اسم الشركة',
+            'client_name': 'اسم العميل',
+            'amount': 'المبلغ (SAR)',
+            'route_from': 'من',
+            'route_to': 'إلى',
+            'notes': 'ملاحظات',
+            'is_deleted': 'محذوف',
+            'created_at': 'وقت الإضافة',
+            'created_by': 'بواسطة',
+            'driver': 'السائق',
+            'client': 'العميل',
+            'trip_no': 'رقم الرحلة',
+            'company': 'الشركة',
+            'البيان': 'البيان',
+            'السائق': 'السائق',
+            'القيمة': 'القيمة (SAR)',
+            'التاريخ': 'التاريخ',
+            'ملاحظات': 'ملاحظات'
+        };
+
         async function getNextSerial(tableName) {
             const currentMonth = new Date().toISOString().slice(0, 7);
             const { data, error } = await db
@@ -484,7 +509,7 @@
         }
 
         function updateStats() {
-            const sumField = (arr, field) => arr.reduce((acc, curr) => acc + (parseFloat(curr[field]) || 0), 0);
+            const sumField = (arr, field) => arr.reduce((acc, curr) => acc + (parseFloat(curr[field]) || parseFloat(curr['amount']) || 0), 0);
             
             const tripsTotal = sumField(store.trips, 'القيمة');
             const revenuesTotal = sumField(store.revenues, 'القيمة');
@@ -571,11 +596,12 @@
             }
 
             const sample = data[0];
-            const keys = Object.keys(sample).filter(k => k !== 'id' && k !== 'deleted_at' && k !== 'created_by');
+            const keys = Object.keys(sample).filter(k => k !== 'id' && k !== 'deleted_at' && k !== 'created_by' && k !== 'is_deleted');
 
             let headerHTML = `<tr class="border-b border-slate-700"><th class="p-3 text-center w-12">م#</th>`;
             keys.forEach(k => {
-                headerHTML += `<th class="p-3">${k === 'serial_no' ? 'الرقم التسلسلي' : k}</th>`;
+                const displayName = columnLabels[k] || k;
+                headerHTML += `<th class="p-3">${displayName}</th>`;
             });
             headerHTML += `<th class="p-3 text-center no-print w-24">الإجراءات</th></tr>`;
             head.innerHTML = headerHTML;
@@ -603,11 +629,12 @@
             });
             body.innerHTML = bodyHTML;
 
-            if(keys.includes('القيمة')) {
-                const totalSum = data.reduce((acc, curr) => acc + (parseFloat(curr['القيمة']) || 0), 0);
+            const valueKey = keys.find(k => k === 'القيمة' || k === 'amount');
+            if(valueKey) {
+                const totalSum = data.reduce((acc, curr) => acc + (parseFloat(curr[valueKey]) || 0), 0);
                 let footHTML = `<tr><td class="p-3 font-bold text-right" colspan="2">الإجمالي للفلتر الحالي:</td>`;
                 for(let i = 2; i < keys.length + 1; i++) {
-                    if(keys[i-1] === 'القيمة') {
+                    if(keys[i-1] === valueKey) {
                         footHTML += `<td class="p-3 font-black text-emerald-400">${totalSum.toLocaleString()} SAR</td>`;
                     } else {
                         footHTML += `<td class="p-3"></td>`;
@@ -687,7 +714,7 @@
             schema.forEach(field => {
                 html += `<div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">${field.label} ${field.required ? '*' : ''}</label>
-                    <input type="${field.type}" name="${field.name}" ${field.required ? 'required' : ''} class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                    <input type="${field.type}" name="${field.name}" ${field.required ? 'required' : ''} class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none text-right">
                 </div>`;
             });
             container.innerHTML = html;
@@ -740,7 +767,7 @@
                 let val = record[field.name] !== undefined ? record[field.name] : '';
                 html += `<div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">${field.label}</label>
-                    <input type="${field.type}" name="${field.name}" value="${val}" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                    <input type="${field.type}" name="${field.name}" value="${val}" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none text-right">
                 </div>`;
             });
             container.innerHTML = html;
@@ -813,7 +840,7 @@
                 html += `<div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
                     <div>
                         <span class="text-blue-400 font-bold">[${tableConfig[item._tabKey].title}]</span>
-                        <span class="text-slate-300 mr-2">${item.البيان || item.السائق || 'بدون بيان'} - القيمة: ${item.القيمة || 0} SAR</span>
+                        <span class="text-slate-300 mr-2">${item.البيان || item.السائق || item.driver_name || 'بدون بيان'} - القيمة: ${item.القيمة || item.amount || 0} SAR</span>
                         <div class="text-[10px] text-slate-500">تاريخ الحذف: ${item.deleted_at ? item.deleted_at.replace('T', ' ').substring(0, 16) : ''}</div>
                     </div>
                     <div class="space-x-2 space-x-reverse">
@@ -916,7 +943,7 @@
             const data = store[activeTab] || [];
             let text = `*تقرير شركة جسور المسافات - jasur*\n*القسم:* ${title}\n*عدد السجلات:* ${data.length}\n\n`;
             data.slice(0, 5).forEach((item, idx) => {
-                text += `${idx+1}. البيان: ${item.البيان || item.السائق || '-'} | القيمة: ${item.القيمة || 0} SAR\n`;
+                text += `${idx+1}. البيان: ${item.البيان || item.driver_name || '-'} | القيمة: ${item.القيمة || item.amount || 0} SAR\n`;
             });
             text += `\nتم التصدير من المنظومة اللوجستية الذكية.`;
             const encoded = encodeURIComponent(text);
