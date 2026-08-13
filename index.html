@@ -21,7 +21,7 @@
         .glass-header { backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="bg-slate-900 dark:bg-slate-900 bg-slate-100 font-sans text-slate-100 dark:text-slate-100 text-slate-800 min-h-screen flex flex-col transition-colors duration-200" dir="rtl">
+<body class="bg-slate-900 dark:bg-slate-900 bg-slate-100 font-sans text-slate-100 dark:text-slate-100 text-slate-800 min-h-screen flex flex-col transition-colors duration-200">
 
     <!-- شاشة تسجيل الدخول -->
     <div id="login-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
@@ -37,12 +37,12 @@
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">اسم المستخدم</label>
-                    <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" autocapitalize="none" autocomplete="off" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none text-right">
+                    <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" autocapitalize="none" autocomplete="off" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور</label>
                     <div class="relative">
-                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" autocapitalize="none" autocomplete="current-password" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 pl-10 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none text-right">
+                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" autocapitalize="none" autocomplete="current-password" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 pl-10 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
                         <button type="button" onclick="togglePasswordVisibility('login-password', 'login-eye-icon')" class="absolute left-3 top-3.5 text-slate-400 hover:text-white">
                             <i id="login-eye-icon" class="fa-solid fa-eye"></i>
                         </button>
@@ -100,7 +100,7 @@
 
         <main class="max-w-7xl w-full mx-auto p-3 sm:p-4 space-y-6 flex-1">
             
-            <!-- شاشات المعلومات الـ 9 -->
+            <!-- شاشات المعلومات الـ 9 المرتبطة بالفلتر الشهري -->
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 no-print">
                 <div class="bg-slate-800/80 dark:bg-slate-800/80 bg-white border border-slate-700/60 dark:border-slate-700/60 border-slate-200 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
@@ -136,7 +136,7 @@
 
                 <div class="bg-slate-800/80 dark:bg-slate-800/80 bg-white border border-slate-700/60 dark:border-slate-700/60 border-slate-200 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] text-slate-400 font-bold">5. الشركة</p>
+                        <p class="text-[10px] text-slate-400 font-bold">5. الشركات المستأجرة</p>
                         <h3 id="stat-rentals" class="text-sm sm:text-base font-black text-indigo-400 mt-1">0 SAR</h3>
                     </div>
                     <div class="w-8 h-8 bg-indigo-500/10 text-indigo-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-handshake"></i></div>
@@ -180,11 +180,11 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-400 mb-1">بحث سريع</label>
-                        <input type="text" id="search-query" onkeyup="renderCurrentTab()" placeholder="ابحث في الجدول الحالي..." class="w-full bg-slate-900 dark:bg-slate-900 bg-slate-50 border border-slate-700 dark:border-slate-700 border-slate-300 rounded-xl p-2.5 text-xs text-white dark:text-white text-slate-800 outline-none text-right">
+                        <input type="text" id="search-query" onkeyup="renderCurrentTab()" placeholder="ابحث في الجدول الحالي..." class="w-full bg-slate-900 dark:bg-slate-900 bg-slate-50 border border-slate-700 dark:border-slate-700 border-slate-300 rounded-xl p-2.5 text-xs text-white dark:text-white text-slate-800 outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-400 mb-1">التصفية بالشهر</label>
-                        <input type="month" id="filter-month" onchange="onMonthFilterChange()" class="w-full bg-slate-900 dark:bg-slate-900 bg-slate-50 border border-slate-700 dark:border-slate-700 border-slate-300 rounded-xl p-2.5 text-xs text-white dark:text-white text-slate-800 outline-none text-right">
+                        <input type="month" id="filter-month" onchange="onMonthFilterChange()" class="w-full bg-slate-900 dark:bg-slate-900 bg-slate-50 border border-slate-700 dark:border-slate-700 border-slate-300 rounded-xl p-2.5 text-xs text-white dark:text-white text-slate-800 outline-none">
                     </div>
                     <div class="flex items-end">
                         <button onclick="resetFilters()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold p-2.5 rounded-xl transition">إعادة ضبط الفلترة</button>
@@ -198,7 +198,7 @@
                 <button onclick="switchTab('revenues')" id="tab-revenues" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">2. الإيرادات</button>
                 <button onclick="switchTab('draws')" id="tab-draws" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">3. سحبيات السائقين</button>
                 <button onclick="switchTab('maintenance')" id="tab-maintenance" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">4. الصيانة</button>
-                <button onclick="switchTab('rentals')" id="tab-rentals" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">5. الشركة</button>
+                <button onclick="switchTab('rentals')" id="tab-rentals" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">5. الشركات المستأجرة</button>
                 <button onclick="switchTab('debts')" id="tab-debts" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">6. الديون والالتزامات</button>
                 <button onclick="switchTab('expenses')" id="tab-expenses" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">7. المصروفات العامة</button>
                 <button onclick="switchTab('invoices')" id="tab-invoices" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">8. الفواتير</button>
@@ -225,7 +225,7 @@
 
     <!-- نافذة إدارة المستخدمين -->
     <div id="modal-users" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 max-h-[85vh] overflow-y-auto text-slate-100 text-right">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 max-h-[85vh] overflow-y-auto text-slate-100">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-purple-400 text-sm"><i class="fa-solid fa-users-gear"></i> إدارة المستخدمين (جدول app_users)</h3>
                 <button onclick="closeModal('modal-users')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -236,16 +236,16 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">اسم المستخدم</label>
-                        <input type="text" id="new-username" required placeholder="اسم المستخدم" autocapitalize="none" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none text-right">
+                        <input type="text" id="new-username" required placeholder="اسم المستخدم" autocapitalize="none" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
                     </div>
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">كلمة المرور</label>
-                        <input type="password" id="new-password" required placeholder="كلمة المرور" autocapitalize="none" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none text-right">
+                        <input type="password" id="new-password" required placeholder="كلمة المرور" autocapitalize="none" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">الصلاحية</label>
-                    <select id="new-role" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none text-right">
+                    <select id="new-role" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
                         <option value="editor">محرر (إدخال وتعديل)</option>
                         <option value="viewer">مشاهد فقط</option>
                     </select>
@@ -262,7 +262,7 @@
 
     <!-- نافذة الإدخال اليدوي -->
     <div id="modal-add-entry" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto text-slate-100 text-right">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto text-slate-100">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-white text-sm">إضافة عملية جديدة</h3>
                 <button onclick="closeModal('modal-add-entry')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -271,12 +271,12 @@
             <form onsubmit="handleFormSubmit(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">اختر الجدول المستهدف *</label>
-                    <select id="form-target-table" onchange="buildDynamicFormFields(this.value)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none text-right">
+                    <select id="form-target-table" onchange="buildDynamicFormFields(this.value)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
                         <option value="trips">1. جدول الرحلات</option>
                         <option value="revenues">2. جدول الإيرادات</option>
                         <option value="draws">3. سحبيات السائقين</option>
                         <option value="maintenance">4. جدول الصيانة</option>
-                        <option value="rentals">5. الشركة</option>
+                        <option value="rentals">5. الشركات المستأجرة</option>
                         <option value="debts">6. الديون والالتزامات</option>
                         <option value="expenses">7. المصروفات العامة</option>
                         <option value="invoices">8. جدول الفواتير</option>
@@ -290,7 +290,7 @@
 
     <!-- نافذة التعديل -->
     <div id="modal-edit-entry" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto text-slate-100 text-right">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto text-slate-100">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-amber-400 text-sm"><i class="fa-solid fa-pen-to-square"></i> تعديل السجل</h3>
                 <button onclick="closeModal('modal-edit-entry')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -306,7 +306,7 @@
 
     <!-- سلة المهملات -->
     <div id="modal-trash" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto text-slate-100 text-right">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto text-slate-100">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-amber-400 text-sm"><i class="fa-solid fa-trash-arrow-up"></i> سلة المهملات (استرجاع أو حذف نهائي)</h3>
                 <button onclick="closeModal('modal-trash')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -332,50 +332,11 @@
             revenues: { name: 'app_revenues', title: 'الإيرادات' },
             draws: { name: 'app_draws', title: 'سحبيات السائقين' },
             maintenance: { name: 'app_maintenance', title: 'الصيانة' },
-            rentals: { name: 'app_rentals', title: 'الشركة' },
+            rentals: { name: 'app_rentals', title: 'الشركات المستأجرة' },
             debts: { name: 'app_debts', title: 'الديون والالتزامات' },
             expenses: { name: 'app_expenses', title: 'المصروفات العامة' },
             invoices: { name: 'app_invoices', title: 'الفواتير' }
         };
-
-        // خريطة لترجمة أسماء الأعمدة التقنية إلى مسميات عربية واضحة في الجدول
-        const columnLabels = {
-            'serial_no': 'الرقم التسلسلي',
-            'serial_id': 'الرقم المرجعي',
-            'date': 'التاريخ',
-            'driver_name': 'اسم السائق',
-            'company_name': 'اسم الشركة',
-            'client_name': 'اسم العميل',
-            'amount': 'المبلغ (SAR)',
-            'route_from': 'من',
-            'route_to': 'إلى',
-            'notes': 'ملاحظات',
-            'is_deleted': 'محذوف',
-            'created_at': 'وقت الإضافة',
-            'created_by': 'بواسطة',
-            'driver': 'السائق',
-            'client': 'العميل',
-            'trip_no': 'رقم الرحلة',
-            'company': 'الشركة',
-            'البيان': 'البيان',
-            'السائق': 'السائق',
-            'القيمة': 'القيمة (SAR)',
-            'التاريخ': 'التاريخ',
-            'ملاحظات': 'ملاحظات'
-        };
-
-        async function getNextSerial(tableName) {
-            const currentMonth = new Date().toISOString().slice(0, 7);
-            const { data, error } = await db
-                .from(tableName)
-                .select('serial_no')
-                .gte('created_at', `${currentMonth}-01`)
-                .order('serial_no', { ascending: false })
-                .limit(1);
-
-            if (error || !data || data.length === 0) return 1;
-            return (parseInt(data[0].serial_no) || 0) + 1;
-        }
 
         document.addEventListener('DOMContentLoaded', () => {
             const loggedUser = localStorage.getItem('sys_current_user');
@@ -504,393 +465,42 @@
             store.expenses = e.data || [];
             store.invoices = i.data || [];
 
-            updateStats();
+            updateAnalyticsDashboard();
             renderCurrentTab();
         }
 
-        function updateStats() {
-            const sumField = (arr, field) => arr.reduce((acc, curr) => acc + (parseFloat(curr[field]) || parseFloat(curr['amount']) || 0), 0);
-            
-            const tripsTotal = sumField(store.trips, 'القيمة');
-            const revenuesTotal = sumField(store.revenues, 'القيمة');
-            const drawsTotal = sumField(store.draws, 'القيمة');
-            const maintenanceTotal = sumField(store.maintenance, 'القيمة');
-            const rentalsTotal = sumField(store.rentals, 'القيمة');
-            const debtsTotal = sumField(store.debts, 'القيمة');
-            const expensesTotal = sumField(store.expenses, 'القيمة');
-            const invoicesTotal = sumField(store.invoices, 'القيمة');
-
-            document.getElementById('stat-trips').innerText = tripsTotal.toLocaleString() + ' SAR';
-            document.getElementById('stat-revenues').innerText = revenuesTotal.toLocaleString() + ' SAR';
-            document.getElementById('stat-draws').innerText = drawsTotal.toLocaleString() + ' SAR';
-            document.getElementById('stat-maintenance').innerText = maintenanceTotal.toLocaleString() + ' SAR';
-            document.getElementById('stat-rentals').innerText = rentalsTotal.toLocaleString() + ' SAR';
-            document.getElementById('stat-debts').innerText = debtsTotal.toLocaleString() + ' SAR';
-            document.getElementById('stat-expenses').innerText = expensesTotal.toLocaleString() + ' SAR';
-            document.getElementById('stat-invoices').innerText = invoicesTotal.toLocaleString() + ' SAR';
-
-            const totalIncomes = revenuesTotal + tripsTotal;
-            const totalOutcomes = drawsTotal + maintenanceTotal + rentalsTotal + expensesTotal;
-            const netProfit = totalIncomes - totalOutcomes;
-            
-            const profitLossEl = document.getElementById('stat-profit-loss');
-            profitLossEl.innerText = netProfit.toLocaleString() + ' SAR';
-            if(netProfit >= 0) {
-                profitLossEl.className = 'text-sm sm:text-lg font-black text-emerald-400 mt-1';
-            } else {
-                profitLossEl.className = 'text-sm sm:text-lg font-black text-rose-400 mt-1';
-            }
-        }
-
-        function switchTab(tabKey) {
-            activeTab = tabKey;
-            currentPage = 1;
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-500');
-                btn.classList.add('bg-slate-800', 'text-slate-300', 'border-slate-700');
-            });
-            const activeBtn = document.getElementById(`tab-${tabKey}`);
-            if(activeBtn) {
-                activeBtn.classList.remove('bg-slate-800', 'text-slate-300', 'border-slate-700');
-                activeBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-500');
-            }
-            renderCurrentTab();
-        }
-
-        function renderCurrentTab() {
-            const head = document.getElementById('table-head');
-            const body = document.getElementById('table-body');
-            const foot = document.getElementById('table-foot');
-            
-            head.innerHTML = '';
-            body.innerHTML = '';
-            foot.innerHTML = '';
-
-            let data = [...(store[activeTab] || [])];
-            
-            const searchQuery = document.getElementById('search-query').value.trim().toLowerCase();
-            const filterMonth = document.getElementById('filter-month').value;
-
-            if(filterMonth) {
-                data = data.filter(item => item.created_at && item.created_at.startsWith(filterMonth));
-            }
-
-            if(searchQuery) {
-                data = data.filter(item => {
-                    return Object.values(item).some(val => String(val).toLowerCase().includes(searchQuery));
-                });
-            }
-
-            const totalPages = Math.ceil(data.length / pageSize) || 1;
-            if(currentPage > totalPages) currentPage = totalPages;
-            if(currentPage < 1) currentPage = 1;
-
-            document.getElementById('page-info').innerText = `الصفحة ${currentPage} من ${totalPages} (إجمالي السجلات: ${data.length})`;
-
-            const startIdx = (currentPage - 1) * pageSize;
-            const paginatedData = data.slice(startIdx, startIdx + pageSize);
-
-            if(data.length === 0) {
-                head.innerHTML = `<tr><th class="p-3 text-center">لا توجد بيانات متاحة</th></tr>`;
-                return;
-            }
-
-            const sample = data[0];
-            const keys = Object.keys(sample).filter(k => k !== 'id' && k !== 'deleted_at' && k !== 'created_by' && k !== 'is_deleted');
-
-            let headerHTML = `<tr class="border-b border-slate-700"><th class="p-3 text-center w-12">م#</th>`;
-            keys.forEach(k => {
-                const displayName = columnLabels[k] || k;
-                headerHTML += `<th class="p-3">${displayName}</th>`;
-            });
-            headerHTML += `<th class="p-3 text-center no-print w-24">الإجراءات</th></tr>`;
-            head.innerHTML = headerHTML;
-
-            let bodyHTML = '';
-            paginatedData.forEach((item, index) => {
-                bodyHTML += `<tr class="hover:bg-slate-700/30 transition">`;
-                bodyHTML += `<td class="p-3 text-center font-bold text-blue-400">${item.serial_no || (startIdx + index + 1)}</td>`;
-                keys.forEach(k => {
-                    let val = item[k];
-                    if(k === 'created_at' && val) {
-                        val = val.replace('T', ' ').substring(0, 16);
-                    }
-                    bodyHTML += `<td class="p-3">${val !== undefined && val !== null ? val : ''}</td>`;
-                });
-                
-                bodyHTML += `<td class="p-3 text-center no-print space-x-2 space-x-reverse">`;
-                if(currentUserRole === 'editor' || currentLoggedInUser === 'raad') {
-                    bodyHTML += `<button onclick="openEditModal('${activeTab}', '${item.id}')" class="text-amber-400 hover:text-amber-300 p-1" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>`;
-                    bodyHTML += `<button onclick="softDeleteRecord('${activeTab}', '${item.id}')" class="text-rose-400 hover:text-rose-300 p-1" title="حذف"><i class="fa-solid fa-trash"></i></button>`;
-                } else {
-                    bodyHTML += `<span class="text-slate-500 text-[10px]">عرض فقط</span>`;
-                }
-                bodyHTML += `</td></tr>`;
-            });
-            body.innerHTML = bodyHTML;
-
-            const valueKey = keys.find(k => k === 'القيمة' || k === 'amount');
-            if(valueKey) {
-                const totalSum = data.reduce((acc, curr) => acc + (parseFloat(curr[valueKey]) || 0), 0);
-                let footHTML = `<tr><td class="p-3 font-bold text-right" colspan="2">الإجمالي للفلتر الحالي:</td>`;
-                for(let i = 2; i < keys.length + 1; i++) {
-                    if(keys[i-1] === valueKey) {
-                        footHTML += `<td class="p-3 font-black text-emerald-400">${totalSum.toLocaleString()} SAR</td>`;
-                    } else {
-                        footHTML += `<td class="p-3"></td>`;
-                    }
-                }
-                footHTML += `<td class="no-print"></td></tr>`;
-                foot.innerHTML = footHTML;
-            }
-        }
-
-        function nextPage() { currentPage++; renderCurrentTab(); }
-        function prevPage() { currentPage--; renderCurrentTab(); }
-        function onMonthFilterChange() { currentPage = 1; renderCurrentTab(); }
-        function resetFilters() {
-            document.getElementById('search-query').value = '';
-            document.getElementById('filter-month').value = '';
-            currentPage = 1;
-            renderCurrentTab();
-        }
-
-        const formFieldsSchema = {
-            trips: [
-                { label: 'التاريخ', name: 'التاريخ', type: 'date', required: true },
-                { label: 'رقم الرحلة / الخط', name: 'البيان', type: 'text', required: true },
-                { label: 'اسم السائق', name: 'السائق', type: 'text', required: true },
-                { label: 'القيمة (SAR)', name: 'القيمة', type: 'number', required: true },
-                { label: 'ملاحظات', name: 'ملاحظات', type: 'text', required: false }
-            ],
-            revenues: [
-                { label: 'التاريخ', name: 'التاريخ', type: 'date', required: true },
-                { label: 'بيان الإيراد', name: 'البيان', type: 'text', required: true },
-                { label: 'القيمة (SAR)', name: 'القيمة', type: 'number', required: true },
-                { label: 'ملاحظات', name: 'ملاحظات', type: 'text', required: false }
-            ],
-            draws: [
-                { label: 'التاريخ', name: 'التاريخ', type: 'date', required: true },
-                { label: 'اسم السائق', name: 'السائق', type: 'text', required: true },
-                { label: 'القيمة المسحوبة (SAR)', name: 'القيمة', type: 'number', required: true },
-                { label: 'ملاحظات', name: 'ملاحظات', type: 'text', required: false }
-            ],
-            maintenance: [
-                { label: 'التاريخ', name: 'التاريخ', type: 'date', required: true },
-                { label: 'نوع الصيانة / الورشة', name: 'البيان', type: 'text', required: true },
-                { label: 'التكلفة (SAR)', name: 'القيمة', type: 'number', required: true },
-                { label: 'ملاحظات', name: 'ملاحظات', type: 'text', required: false }
-            ],
-            rentals: [
-                { label: 'التاريخ', name: 'التاريخ', type: 'date', required: true },
-                { label: 'البيان', name: 'البيان', type: 'text', required: true },
-                { label: 'القيمة (SAR)', name: 'القيمة', type: 'number', required: true },
-                { label: 'ملاحظات', name: 'ملاحظات', type: 'text', required: false }
-            ],
-            debts: [
-                { label: 'التاريخ', name: 'التاريخ', type: 'date', required: true },
-                { label: 'الجهة / الدائن', name: 'البيان', type: 'text', required: true },
-                { label: 'المبلغ (SAR)', name: 'القيمة', type: 'number', required: true },
-                { label: 'ملاحظات', name: 'ملاحظات', type: 'text', required: false }
-            ],
-            expenses: [
-                { label: 'التاريخ', name: 'التاريخ', type: 'date', required: true },
-                { label: 'نوع المصروف', name: 'البيان', type: 'text', required: true },
-                { label: 'القيمة (SAR)', name: 'القيمة', type: 'number', required: true },
-                { label: 'ملاحظات', name: 'ملاحظات', type: 'text', required: false }
-            ],
-            invoices: [
-                { label: 'التاريخ', name: 'التاريخ', type: 'date', required: true },
-                { label: 'رقم الفاتورة / العميل', name: 'البيان', type: 'text', required: true },
-                { label: 'القيمة (SAR)', name: 'القيمة', type: 'number', required: true },
-                { label: 'ملاحظات', name: 'ملاحظات', type: 'text', required: false }
-            ]
-        };
-
-        function buildDynamicFormFields(tableKey) {
-            const container = document.getElementById('dynamic-fields-container');
-            const schema = formFieldsSchema[tableKey] || [];
-            let html = '';
-            schema.forEach(field => {
-                html += `<div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1">${field.label} ${field.required ? '*' : ''}</label>
-                    <input type="${field.type}" name="${field.name}" ${field.required ? 'required' : ''} class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none text-right">
-                </div>`;
-            });
-            container.innerHTML = html;
-        }
-
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-            const targetTableKey = document.getElementById('form-target-table').value;
-            const dbTableName = tableConfig[targetTableKey].name;
-            
-            const container = document.getElementById('dynamic-fields-container');
-            const inputs = container.querySelectorAll('input');
-            
-            const nextSerial = await getNextSerial(dbTableName);
-
-            let recordData = {
-                serial_no: nextSerial,
-                created_at: new Date().toISOString(),
-                created_by: currentLoggedInUser
-            };
-
-            inputs.forEach(input => {
-                let val = input.value;
-                if(input.type === 'number') val = parseFloat(val) || 0;
-                recordData[input.name] = val;
-            });
-
-            const { error } = await db.from(dbTableName).insert([recordData]);
-            if(error) {
-                alert('حدث خطأ أثناء الحفظ: ' + error.message);
-                return;
-            }
-
-            closeModal('modal-add-entry');
-            await loadAllData();
-            alert('تم حفظ السجل بنجاح برقم تسلسلي: ' + nextSerial);
-        }
-
-        async function openEditModal(tabKey, recordId) {
-            const record = store[tabKey].find(r => r.id == recordId);
-            if(!record) return;
-
-            document.getElementById('edit-table-name').value = tabKey;
-            document.getElementById('edit-record-id').value = recordId;
-
-            const container = document.getElementById('edit-dynamic-fields-container');
-            const schema = formFieldsSchema[tabKey] || [];
-            let html = '';
-            schema.forEach(field => {
-                let val = record[field.name] !== undefined ? record[field.name] : '';
-                html += `<div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1">${field.label}</label>
-                    <input type="${field.type}" name="${field.name}" value="${val}" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none text-right">
-                </div>`;
-            });
-            container.innerHTML = html;
-            openModal('modal-edit-entry');
-        }
-
-        async function handleEditSubmit(e) {
-            e.preventDefault();
-            const tabKey = document.getElementById('edit-table-name').value;
-            const recordId = document.getElementById('edit-record-id').value;
-            const dbTableName = tableConfig[tabKey].name;
-
-            const container = document.getElementById('edit-dynamic-fields-container');
-            const inputs = container.querySelectorAll('input');
-
-            let updateData = {};
-            inputs.forEach(input => {
-                let val = input.value;
-                if(input.type === 'number') val = parseFloat(val) || 0;
-                updateData[input.name] = val;
-            });
-
-            const { error } = await db.from(dbTableName).update(updateData).eq('id', recordId);
-            if(error) {
-                alert('حدث خطأ أثناء التحديث: ' + error.message);
-                return;
-            }
-
-            closeModal('modal-edit-entry');
-            await loadAllData();
-            alert('تم تحديث السجل بنجاح');
-        }
-
-        async function softDeleteRecord(tabKey, recordId) {
-            if(!confirm('هل أنت متأكد من حذف هذا السجل ونقله إلى سلة المهملات؟')) return;
-            const dbTableName = tableConfig[tabKey].name;
-
-            const { error } = await db.from(dbTableName).update({ deleted_at: new Date().toISOString() }).eq('id', recordId);
-            if(error) {
-                alert('خطأ في الحذف: ' + error.message);
-                return;
-            }
-            await loadAllData();
-        }
-
-        async function openTrashModal() {
-            const trashListEl = document.getElementById('trash-list');
-            trashListEl.innerHTML = 'جاري تحميل المهملات...';
-            openModal('modal-trash');
-
-            let allTrash = [];
-            for(let key in tableConfig) {
-                const tableName = tableConfig[key].name;
-                const { data } = await db.from(tableName).select('*').not('deleted_at', 'is', null);
-                if(data) {
-                    data.forEach(item => {
-                        item._tabKey = key;
-                        allTrash.push(item);
-                    });
-                }
-            }
-
-            if(allTrash.length === 0) {
-                trashListEl.innerHTML = '<p class="text-slate-400 text-center py-4">سلة المهملات فارغة</p>';
-                return;
-            }
-
-            let html = '';
-            allTrash.forEach(item => {
-                html += `<div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
-                    <div>
-                        <span class="text-blue-400 font-bold">[${tableConfig[item._tabKey].title}]</span>
-                        <span class="text-slate-300 mr-2">${item.البيان || item.السائق || item.driver_name || 'بدون بيان'} - القيمة: ${item.القيمة || item.amount || 0} SAR</span>
-                        <div class="text-[10px] text-slate-500">تاريخ الحذف: ${item.deleted_at ? item.deleted_at.replace('T', ' ').substring(0, 16) : ''}</div>
-                    </div>
-                    <div class="space-x-2 space-x-reverse">
-                        <button onclick="restoreRecord('${item._tabKey}', '${item.id}')" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg text-white text-xs font-bold">استرجاع</button>
-                        <button onclick="permanentDeleteRecord('${item._tabKey}', '${item.id}')" class="bg-rose-600 hover:bg-rose-500 px-3 py-1.5 rounded-lg text-white text-xs font-bold">حذف نهائي</button>
-                    </div>
-                </div>`;
-            });
-            trashListEl.innerHTML = html;
-        }
-
-        async function restoreRecord(tabKey, recordId) {
-            const dbTableName = tableConfig[tabKey].name;
-            await db.from(dbTableName).update({ deleted_at: null }).eq('id', recordId);
-            openTrashModal();
-            loadAllData();
-        }
-
-        async function permanentDeleteRecord(tabKey, recordId) {
-            if(!confirm('هل أنت متأكد من الحذف النهائي؟ لا يمكن التراجع عن هذا الإجراء.')) return;
-            const dbTableName = tableConfig[tabKey].name;
-            await db.from(dbTableName).delete().eq('id', recordId);
-            openTrashModal();
-            loadAllData();
-        }
-
-        async function openUsersModal() {
+        function openUsersModal() {
             openModal('modal-users');
-            loadUsersList();
+            renderUsersList();
         }
 
-        async function loadUsersList() {
+        async function renderUsersList() {
             const container = document.getElementById('users-list-container');
             container.innerHTML = 'جاري التحميل...';
-            const { data, error } = await db.from('app_users').select('*');
-            if(error || !data || data.length === 0) {
-                container.innerHTML = '<p class="text-slate-400 text-xs">لا توجد حسابات مسجلة سحابياً (باستثناء المدير العام raad)</p>';
+            const { data: users, error } = await db.from('app_users').select('*');
+
+            if (error) {
+                container.innerHTML = `<p class="text-rose-400 text-xs">خطأ في الاتصال بالجدول: ${error.message}</p>`;
                 return;
             }
-            let html = '';
-            data.forEach(u => {
-                html += `<div class="bg-slate-800 p-2.5 rounded-xl flex justify-between items-center text-xs border border-slate-700">
-                    <div>
-                        <span class="font-bold text-white">${u.username}</span>
-                        <span class="text-xs text-purple-300 mr-2">(${u.role === 'editor' ? 'محرر' : 'مشاهد فقط'})</span>
-                    </div>
-                    <button onclick="deleteCloudUser('${u.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button>
-                </div>`;
-            });
-            container.innerHTML = html;
+
+            container.innerHTML = `
+                <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
+                    <div><span class="text-white font-bold">raad</span><span class="bg-blue-500/20 text-blue-400 text-[10px] px-2 py-0.5 rounded-md mr-2">مالك النظام</span></div>
+                </div>
+            `;
+
+            if (users) {
+                users.forEach((user) => {
+                    let roleText = user.role === 'editor' ? 'محرر' : 'مشاهد فقط';
+                    container.innerHTML += `
+                        <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
+                            <div><span class="text-white font-bold">${user.username}</span><span class="bg-purple-500/20 text-purple-400 text-[10px] px-2 py-0.5 rounded-md mr-2">${roleText}</span></div>
+                            <button onclick="deleteCloudUser('${user.id}')" class="text-rose-400 hover:text-rose-300 text-xs font-bold bg-rose-500/10 px-2.5 py-1 rounded-lg">حذف</button>
+                        </div>
+                    `;
+                });
+            }
         }
 
         async function handleCreateUser(e) {
@@ -900,54 +510,493 @@
             const role = document.getElementById('new-role').value;
 
             const { error } = await db.from('app_users').insert([{ username, password, role }]);
-            if(error) {
-                alert('خطأ أثناء إنشاء المستخدم: ' + error.message);
+            if (error) {
+                alert('خطأ أثناء حفظ المستخدم: ' + error.message);
+            } else {
+                document.getElementById('new-username').value = '';
+                document.getElementById('new-password').value = '';
+                renderUsersList();
+                alert('تم حفظ المستخدم بنجاح!');
+            }
+        }
+
+        async function deleteCloudUser(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+                await db.from('app_users').delete().eq('id', id);
+                renderUsersList();
+            }
+        }
+
+        function getFilteredData(tab) {
+            const query = document.getElementById('search-query').value.toLowerCase().trim();
+            const monthFilter = document.getElementById('filter-month').value;
+
+            return store[tab].filter(item => {
+                if (item.is_deleted) return false;
+                
+                if (monthFilter) {
+                    const itemDate = item.date || item.month_year || '';
+                    if (!itemDate.startsWith(monthFilter)) return false;
+                }
+
+                if (!query) return true;
+                return Object.values(item).some(val => 
+                    val && String(val).toLowerCase().includes(query)
+                );
+            });
+        }
+
+        function onMonthFilterChange() {
+            updateAnalyticsDashboard();
+            renderCurrentTab();
+        }
+
+        function resetFilters() {
+            document.getElementById('search-query').value = '';
+            document.getElementById('filter-month').value = '';
+            updateAnalyticsDashboard();
+            renderCurrentTab();
+        }
+
+        function updateAnalyticsDashboard() {
+            const getSum = (tab) => getFilteredData(tab).reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+
+            const tripsTotal = getSum('trips');
+            const revenuesTotal = getSum('revenues');
+            const drawsTotal = getSum('draws');
+            const maintenanceTotal = getSum('maintenance');
+            const rentalsTotal = getSum('rentals');
+            const debtsTotal = getSum('debts');
+            const expensesTotal = getSum('expenses');
+            const invoicesTotal = getSum('invoices');
+
+            const netProfit = revenuesTotal - (drawsTotal + maintenanceTotal + expensesTotal + rentalsTotal);
+
+            document.getElementById('stat-trips').innerText = tripsTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-revenues').innerText = revenuesTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-draws').innerText = drawsTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-maintenance').innerText = maintenanceTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-rentals').innerText = rentalsTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-debts').innerText = debtsTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-expenses').innerText = expensesTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-invoices').innerText = invoicesTotal.toLocaleString() + ' SAR';
+            
+            const profitEl = document.getElementById('stat-profit-loss');
+            profitEl.innerText = netProfit.toLocaleString() + ' SAR';
+            profitEl.className = netProfit >= 0 ? 'text-sm sm:text-lg font-black text-emerald-400 mt-1' : 'text-sm sm:text-lg font-black text-rose-400 mt-1';
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+            currentPage = 1;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-500');
+                btn.classList.add('bg-slate-800', 'text-slate-300', 'border-slate-700');
+            });
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-800', 'text-slate-300', 'border-slate-700');
+                activeBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-500');
+            }
+            renderCurrentTab();
+        }
+
+        function renderCurrentTab() {
+            const data = getFilteredData(activeTab);
+            const thead = document.getElementById('table-head');
+            const tbody = document.getElementById('table-body');
+            const tfoot = document.getElementById('table-foot');
+
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+            tfoot.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center py-6 text-slate-400">لا توجد بيانات متاحة</td></tr>`;
+                document.getElementById('page-info').innerText = 'الصفحة 1 من 1';
                 return;
             }
-            alert('تم إنشاء المستخدم بنجاح');
-            document.getElementById('new-username').value = '';
-            document.getElementById('new-password').value = '';
-            loadUsersList();
+
+            let headers = [];
+            let fields = [];
+
+            if (activeTab === 'trips') {
+                headers = ['التاريخ', 'السائق', 'الشركة', 'العميل', 'المبلغ (SAR)', 'من', 'إلى', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'driver_name', 'company_name', 'client_name', 'amount', 'route_from', 'route_to', 'notes'];
+            } else if (activeTab === 'revenues') {
+                headers = ['التاريخ', 'الشركة', 'العميل', 'المبلغ (SAR)', 'طريقة الدفع', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'company_name', 'client_name', 'amount', 'payment_method', 'notes'];
+            } else if (activeTab === 'draws') {
+                headers = ['التاريخ', 'الشركة', 'اسم الشخص', 'الصفة', 'نوع السحب', 'المبلغ (SAR)', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'company_name', 'person_name', 'person_type', 'draw_type', 'amount', 'notes'];
+            } else if (activeTab === 'maintenance') {
+                headers = ['التاريخ', 'الشركة', 'السائق', 'نوع الصيانة', 'المبلغ (SAR)', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'company_name', 'driver_name', 'service_type', 'amount', 'notes'];
+            } else if (activeTab === 'rentals') {
+                headers = ['التاريخ', 'المالك / الشركة', 'المبلغ (SAR)', 'نوع السحب', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'owner_name', 'amount', 'draw_type', 'notes'];
+            } else if (activeTab === 'debts') {
+                headers = ['التاريخ', 'اسم الشخص / الجهة', 'نوع الدين', 'المبلغ (SAR)', 'حالة السداد', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'person_name', 'debt_type', 'amount', 'is_paid', 'notes'];
+            } else if (activeTab === 'expenses') {
+                headers = ['التاريخ', 'الشركة', 'نوع المصروف', 'المبلغ (SAR)', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'company_name', 'expense_type', 'amount', 'notes'];
+            } else if (activeTab === 'invoices') {
+                headers = ['رقم الفاتورة', 'العميل', 'التاريخ', 'الحالة', 'المبلغ (SAR)', 'المدفوع', 'حالة السداد', 'الشهر', 'الملاحظات', 'الإجراءات'];
+                fields = ['invoice_number', 'client_name', 'date', 'status', 'amount', 'paid_amount', 'is_paid', 'month_year', 'notes'];
+            }
+
+            let trHead = document.createElement('tr');
+            headers.forEach(h => {
+                let th = document.createElement('th');
+                th.className = 'p-3 text-right';
+                th.innerText = h;
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
+
+            const start = (currentPage - 1) * pageSize;
+            const paginatedData = data.slice(start, start + pageSize);
+
+            paginatedData.forEach(item => {
+                let tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-700/30 transition';
+
+                fields.forEach(field => {
+                    let td = document.createElement('td');
+                    td.className = 'p-3';
+                    if (field === 'amount' || field === 'paid_amount') {
+                        td.innerText = Number(item[field] || 0).toLocaleString() + ' SAR';
+                    } else if (field === 'is_paid') {
+                        let paidVal = item[field];
+                        if (paidVal === true || paidVal === 'مدفوع' || paidVal === 'تم السداد') {
+                            td.innerHTML = `<span class="bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full font-bold text-[10px]">تم السداد</span>`;
+                        } else {
+                            td.innerHTML = `<span class="bg-rose-500/20 text-rose-400 px-2.5 py-1 rounded-full font-bold text-[10px]">غير مدفوع</span>`;
+                        }
+                    } else {
+                        td.innerText = item[field] || '-';
+                    }
+                    tr.appendChild(td);
+                });
+
+                let tdAction = document.createElement('td');
+                tdAction.className = 'p-3 flex items-center gap-2';
+                
+                if (currentUserRole === 'editor' || currentLoggedInUser === 'raad') {
+                    let editBtn = document.createElement('button');
+                    editBtn.className = 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-2.5 py-1 rounded-lg font-bold text-xs flex items-center gap-1';
+                    editBtn.innerHTML = `<i class="fa-solid fa-pen"></i> تعديل`;
+                    editBtn.onclick = () => openEditModal(activeTab, item);
+                    tdAction.appendChild(editBtn);
+
+                    let delBtn = document.createElement('button');
+                    delBtn.className = 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 px-2.5 py-1 rounded-lg font-bold text-xs flex items-center gap-1';
+                    delBtn.innerHTML = `<i class="fa-solid fa-trash"></i> حذف`;
+                    delBtn.onclick = () => softDeleteRecord(activeTab, item.id);
+                    tdAction.appendChild(delBtn);
+                } else {
+                    tdAction.innerText = 'عرض فقط';
+                }
+
+                tr.appendChild(tdAction);
+                tbody.appendChild(tr);
+            });
+
+            let totalAmount = data.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            let trFoot = document.createElement('tr');
+            let tdFootLabel = document.createElement('td');
+            tdFootLabel.className = 'p-3';
+            tdFootLabel.innerText = 'الإجمالي الكلي للنتائج';
+            trFoot.appendChild(tdFootLabel);
+
+            for (let i = 1; i < headers.length; i++) {
+                let td = document.createElement('td');
+                td.className = 'p-3';
+                if (headers[i].includes('المبلغ') || headers[i].includes('المدفوع')) {
+                    td.innerText = totalAmount.toLocaleString() + ' SAR';
+                    totalAmount = 0;
+                }
+                trFoot.appendChild(td);
+            }
+            tfoot.appendChild(trFoot);
+
+            const totalPages = Math.ceil(data.length / pageSize) || 1;
+            document.getElementById('page-info').innerText = `الصفحة ${currentPage} من ${totalPages}`;
         }
 
-        async function deleteCloudUser(userId) {
-            if(!confirm('هل أنت متأكد من حذف هذا المستخدم؟')) return;
-            await db.from('app_users').delete().eq('id', userId);
-            loadUsersList();
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderCurrentTab();
+            }
         }
 
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.remove('hidden');
-            document.getElementById(modalId).classList.add('flex');
+        function nextPage() {
+            const data = getFilteredData(activeTab);
+            const totalPages = Math.ceil(data.length / pageSize) || 1;
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderCurrentTab();
+            }
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('flex');
-            document.getElementById(modalId).classList.add('hidden');
+        function buildDynamicFormFields(table, dataItem = null, containerId = 'dynamic-fields-container') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            let fieldsDef = [];
+
+            const val = (key) => dataItem ? (dataItem[key] || '') : '';
+
+            if (table === 'trips') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'driver_name', label: 'اسم السائق', type: 'text', val: val('driver_name') },
+                    { id: 'company_name', label: 'الشركة', type: 'text', val: val('company_name') },
+                    { id: 'client_name', label: 'اسم العميل', type: 'text', val: val('client_name') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'route_from', label: 'من (المسار)', type: 'text', val: val('route_from') },
+                    { id: 'route_to', label: 'إلى (المسار)', type: 'text', val: val('route_to') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'revenues') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'company_name', label: 'الشركة', type: 'text', val: val('company_name') },
+                    { id: 'client_name', label: 'اسم العميل', type: 'text', val: val('client_name') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'payment_method', label: 'طريقة الدفع', type: 'text', val: val('payment_method') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'draws') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'company_name', label: 'الشركة', type: 'text', val: val('company_name') },
+                    { id: 'person_name', label: 'اسم الشخص', type: 'text', val: val('person_name') },
+                    { id: 'person_type', label: 'الصفة (سائق / عمال)', type: 'text', val: val('person_type') },
+                    { id: 'draw_type', label: 'نوع السحب', type: 'text', val: val('draw_type') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'maintenance') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'company_name', label: 'الشركة', type: 'text', val: val('company_name') },
+                    { id: 'driver_name', label: 'السائق', type: 'text', val: val('driver_name') },
+                    { id: 'service_type', label: 'نوع الصيانة', type: 'text', val: val('service_type') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'rentals') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'owner_name', label: 'المالك / الشركة', type: 'text', val: val('owner_name') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'draw_type', label: 'نوع السحب / البند', type: 'text', val: val('draw_type') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'debts') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'person_name', label: 'اسم الشخص / الجهة', type: 'text', val: val('person_name') },
+                    { id: 'debt_type', label: 'نوع الدين', type: 'text', val: val('debt_type') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'is_paid', label: 'حالة السداد', type: 'select', options: ['تم السداد', 'غير مدفوع'], val: val('is_paid') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'expenses') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'company_name', label: 'الشركة', type: 'text', val: val('company_name') },
+                    { id: 'expense_type', label: 'نوع المصروف', type: 'text', val: val('expense_type') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'invoices') {
+                fieldsDef = [
+                    { id: 'invoice_number', label: 'رقم الفاتورة', type: 'text', val: val('invoice_number') },
+                    { id: 'client_name', label: 'اسم العميل', type: 'text', val: val('client_name') },
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'status', label: 'حالة الفاتورة', type: 'text', val: val('status') },
+                    { id: 'amount', label: 'المبلغ الإجمالي (SAR)', type: 'number', val: val('amount') },
+                    { id: 'paid_amount', label: 'المبلغ المدفوع (SAR)', type: 'number', val: val('paid_amount') },
+                    { id: 'is_paid', label: 'حالة السداد', type: 'select', options: ['تم السداد', 'غير مدفوع'], val: val('is_paid') },
+                    { id: 'month_year', label: 'الشهر (YYYY-MM)', type: 'text', val: val('month_year') || new Date().toISOString().slice(0,7) },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            }
+
+            fieldsDef.forEach(field => {
+                let div = document.createElement('div');
+                div.innerHTML = `<label class="block text-xs font-bold text-slate-400 mb-1">${field.label}</label>`;
+                
+                if (field.type === 'select') {
+                    let select = document.createElement('select');
+                    select.id = `${containerId === 'edit-dynamic-fields-container' ? 'edit-' : 'form-'}${field.id}`;
+                    select.className = 'w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none';
+                    field.options.forEach(opt => {
+                        let option = document.createElement('option');
+                        option.value = opt;
+                        option.innerText = opt;
+                        if (field.val === opt) option.selected = true;
+                        select.appendChild(option);
+                    });
+                    div.appendChild(select);
+                } else {
+                    let input = document.createElement('input');
+                    input.type = field.type;
+                    input.id = `${containerId === 'edit-dynamic-fields-container' ? 'edit-' : 'form-'}${field.id}`;
+                    input.value = field.val;
+                    input.required = field.label.includes('*');
+                    input.className = 'w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none';
+                    div.appendChild(input);
+                }
+                container.appendChild(div);
+            });
         }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const targetTableKey = document.getElementById('form-target-table').value;
+            const tableName = tableConfig[targetTableKey].name;
+
+            let recordData = {};
+            const container = document.getElementById('dynamic-fields-container');
+            const inputs = container.querySelectorAll('input, select');
+
+            inputs.forEach(input => {
+                const fieldId = input.id.replace('form-', '');
+                recordData[fieldId] = input.type === 'number' ? Number(input.value) : input.value;
+            });
+
+            const { error } = await db.from(tableName).insert([recordData]);
+            if (error) {
+                alert('خطأ أثناء الحفظ: ' + error.message);
+            } else {
+                closeModal('modal-add-entry');
+                await loadAllData();
+                alert('تمت إضافة السجل بنجاح!');
+            }
+        }
+
+        function openEditModal(tab, item) {
+            document.getElementById('edit-table-name').value = tab;
+            document.getElementById('edit-record-id').value = item.id;
+            buildDynamicFormFields(tab, item, 'edit-dynamic-fields-container');
+            openModal('modal-edit-entry');
+        }
+
+        async function handleEditSubmit(e) {
+            e.preventDefault();
+            const tabKey = document.getElementById('edit-table-name').value;
+            const recordId = document.getElementById('edit-record-id').value;
+            const tableName = tableConfig[tabKey].name;
+
+            let recordData = {};
+            const container = document.getElementById('edit-dynamic-fields-container');
+            const inputs = container.querySelectorAll('input, select');
+
+            inputs.forEach(input => {
+                const fieldId = input.id.replace('edit-', '');
+                recordData[fieldId] = input.type === 'number' ? Number(input.value) : input.value;
+            });
+
+            const { error } = await db.from(tableName).update(recordData).eq('id', recordId);
+            if (error) {
+                alert('خطأ أثناء التحديث: ' + error.message);
+            } else {
+                closeModal('modal-edit-entry');
+                await loadAllData();
+                alert('تم تحديث السجل بنجاح!');
+            }
+        }
+
+        async function softDeleteRecord(tab, id) {
+            if (confirm('هل أنت متأكد من نقل هذا السجل إلى سلة المهملات؟')) {
+                const tableName = tableConfig[tab].name;
+                const { error } = await db.from(tableName).update({ is_deleted: true }).eq('id', id);
+                if (error) {
+                    alert('خطأ أثناء الحذف: ' + error.message);
+                } else {
+                    await loadAllData();
+                }
+            }
+        }
+
+        async function openTrashModal() {
+            openModal('modal-trash');
+            const listContainer = document.getElementById('trash-list');
+            listContainer.innerHTML = 'جاري التحميل...';
+
+            let allDeleted = [];
+            for (let key in tableConfig) {
+                let { data } = await db.from(tableConfig[key].name).select('*').eq('is_deleted', true);
+                if (data) {
+                    data.forEach(item => {
+                        item._tabKey = key;
+                        allDeleted.push(item);
+                    });
+                }
+            }
+
+            if (allDeleted.length === 0) {
+                listContainer.innerHTML = '<p class="text-slate-400 text-center py-4">سلة المهملات فارغة</p>';
+                return;
+            }
+
+            listContainer.innerHTML = '';
+            allDeleted.forEach(item => {
+                let div = document.createElement('div');
+                div.className = 'bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700';
+                div.innerHTML = `
+                    <div>
+                        <span class="text-amber-400 font-bold">[${tableConfig[item._tabKey].title}]</span>
+                        <span class="text-white mr-2">${item.date || item.invoice_number || 'سجل'} - ${item.amount ? item.amount + ' SAR' : ''}</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="restoreRecord('${item._tabKey}', '${item.id}')" class="bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-lg font-bold">استرجاع</button>
+                        <button onclick="permanentDeleteRecord('${item._tabKey}', '${item.id}')" class="bg-rose-500/10 text-rose-400 px-2.5 py-1 rounded-lg font-bold">حذف نهائي</button>
+                    </div>
+                `;
+                listContainer.appendChild(div);
+            });
+        }
+
+        async function restoreRecord(tab, id) {
+            const tableName = tableConfig[tab].name;
+            await db.from(tableName).update({ is_deleted: false }).eq('id', id);
+            openTrashModal();
+            loadAllData();
+        }
+
+        async function permanentDeleteRecord(tab, id) {
+            if (confirm('هل أنت متأكد من الحذف النهائي؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                const tableName = tableConfig[tab].name;
+                await db.from(tableName).delete().eq('id', id);
+                openTrashModal();
+                loadAllData();
+            }
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
 
         function exportToExcel() {
-            const data = store[activeTab];
-            if(!data || data.length === 0) {
-                alert('لا توجد بيانات لتصديرها');
-                return;
-            }
-            const worksheet = XLSX.utils.json_to_sheet(data);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, tableConfig[activeTab].title);
-            XLSX.writeFile(workbook, `${activeTab}_jasur_export.xlsx`);
+            const data = getFilteredData(activeTab);
+            if (data.length === 0) { alert('لا توجد بيانات للتصدير!'); return; }
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, tableConfig[activeTab].title);
+            XLSX.writeFile(wb, `${activeTab}_report.xlsx`);
         }
 
         function shareWhatsApp() {
-            const title = tableConfig[activeTab].title;
-            const data = store[activeTab] || [];
-            let text = `*تقرير شركة جسور المسافات - jasur*\n*القسم:* ${title}\n*عدد السجلات:* ${data.length}\n\n`;
-            data.slice(0, 5).forEach((item, idx) => {
-                text += `${idx+1}. البيان: ${item.البيان || item.driver_name || '-'} | القيمة: ${item.القيمة || item.amount || 0} SAR\n`;
+            const data = getFilteredData(activeTab);
+            let text = `*تقرير ${tableConfig[activeTab].title} - شركة جسور المسافات*\n\n`;
+            data.slice(0, 10).forEach((item, idx) => {
+                text += `${idx+1}. التاريخ: ${item.date || '-'} | المبلغ: ${item.amount || 0} SAR\n`;
             });
-            text += `\nتم التصدير من المنظومة اللوجستية الذكية.`;
-            const encoded = encodeURIComponent(text);
-            window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
         }
     </script>
 </body>
