@@ -403,14 +403,14 @@
 
         async function loadAllData() {
             const [t, rev, d, m, r, b, e, i] = await Promise.all([
-                db.from('app_trips').select('*').order('created_at', {ascending:false}),
-                db.from('app_revenues').select('*').order('created_at', {ascending:false}),
-                db.from('app_draws').select('*').order('created_at', {ascending:false}),
-                db.from('app_maintenance').select('*').order('created_at', {ascending:false}),
-                db.from('app_rentals').select('*').order('created_at', {ascending:false}),
-                db.from('app_debts').select('*').order('created_at', {ascending:false}),
-                db.from('app_expenses').select('*').order('created_at', {ascending:false}),
-                db.from('app_invoices').select('*').order('created_at', {ascending:false})
+                db.from('app_trips').select('*').order('id', {ascending:false}),
+                db.from('app_revenues').select('*').order('id', {ascending:false}),
+                db.from('app_draws').select('*').order('id', {ascending:false}),
+                db.from('app_maintenance').select('*').order('id', {ascending:false}),
+                db.from('app_rentals').select('*').order('id', {ascending:false}),
+                db.from('app_debts').select('*').order('id', {ascending:false}),
+                db.from('app_expenses').select('*').order('id', {ascending:false}),
+                db.from('app_invoices').select('*').order('id', {ascending:false})
             ]);
 
             store.trips = t.data || [];
@@ -422,7 +422,6 @@
             store.expenses = e.data || [];
             store.invoices = i.data || [];
 
-            updateAnalyticsDashboard();
             renderCurrentTab();
         }
 
@@ -535,16 +534,25 @@
         }
 
         function updateAnalyticsDashboard() {
-            let sumTrips = store.trips.filter(i=>!i.is_deleted).reduce((acc, cur) => acc + (parseFloat(cur.amount || cur.price || 0)), 0);
-            let sumRevenues = store.revenues.filter(i=>!i.is_deleted).reduce((acc, cur) => acc + (parseFloat(cur.amount || 0)), 0);
-            let sumDraws = store.draws.filter(i=>!i.is_deleted).reduce((acc, cur) => acc + (parseFloat(cur.amount || 0)), 0);
-            let sumMaintenance = store.maintenance.filter(i=>!i.is_deleted).reduce((acc, cur) => acc + (parseFloat(cur.cost || cur.amount || 0)), 0);
-            let sumRentals = store.rentals.filter(i=>!i.is_deleted).reduce((acc, cur) => acc + (parseFloat(cur.amount || 0)), 0);
-            let sumDebts = store.debts.filter(i=>!i.is_deleted).reduce((acc, cur) => acc + (parseFloat(cur.amount || 0)), 0);
-            let sumExpenses = store.expenses.filter(i=>!i.is_deleted).reduce((acc, cur) => acc + (parseFloat(cur.amount || 0)), 0);
-            let sumInvoices = store.invoices.filter(i=>!i.is_deleted).reduce((acc, cur) => acc + (parseFloat(cur.amount || 0)), 0);
+            // حساب المجاميع بناءً على البيانات المفلترة حالياً لكل جدول لكي تتحدث البطاقات العلوية مع الفلترة
+            let filteredTrips = getFilteredData('trips');
+            let filteredRevenues = getFilteredData('revenues');
+            let filteredDraws = getFilteredData('draws');
+            let filteredMaintenance = getFilteredData('maintenance');
+            let filteredRentals = getFilteredData('rentals');
+            let filteredDebts = getFilteredData('debts');
+            let filteredExpenses = getFilteredData('expenses');
+            let filteredInvoices = getFilteredData('invoices');
 
-            // حساب صافي الربح والخسارة الإجمالي
+            let sumTrips = filteredTrips.reduce((acc, cur) => acc + (parseFloat(cur.amount || cur.price || 0)), 0);
+            let sumRevenues = filteredRevenues.reduce((acc, cur) => acc + (parseFloat(cur.amount || 0)), 0);
+            let sumDraws = filteredDraws.reduce((acc, cur) => acc + (parseFloat(cur.amount || 0)), 0);
+            let sumMaintenance = filteredMaintenance.reduce((acc, cur) => acc + (parseFloat(cur.cost || cur.amount || 0)), 0);
+            let sumRentals = filteredRentals.reduce((acc, cur) => acc + (parseFloat(cur.amount || 0)), 0);
+            let sumDebts = filteredDebts.reduce((acc, cur) => acc + (parseFloat(cur.amount || 0)), 0);
+            let sumExpenses = filteredExpenses.reduce((acc, cur) => acc + (parseFloat(cur.amount || 0)), 0);
+            let sumInvoices = filteredInvoices.reduce((acc, cur) => acc + (parseFloat(cur.amount || 0)), 0);
+
             let netProfit = sumRevenues - (sumDraws + sumMaintenance + sumRentals + sumExpenses);
 
             document.getElementById('stat-trips').innerText = sumTrips.toLocaleString() + ' SAR';
@@ -566,6 +574,9 @@
         }
 
         function renderCurrentTab() {
+            // تحديث بطاقات المعلومات العلوية أولاً لتستجيب لأي فلترة أو بحث
+            updateAnalyticsDashboard();
+
             const data = getFilteredData(activeTab);
             const thead = document.getElementById('table-head');
             const tbody = document.getElementById('table-body');
@@ -809,7 +820,7 @@
             if (tab === 'trips') fieldsConfig = ['date', 'truck_no', 'driver', 'route', 'amount', 'status'];
             else if (tab === 'revenues') fieldsConfig = ['date', 'reference', 'source', 'amount', 'notes'];
             else if (tab === 'draws') fieldsConfig = ['date', 'driver_name', 'amount', 'notes'];
-            else if (tab === 'maintenance') fieldsConfig = ['date', 'truck_no', 'maintenance_type', 'cost', 'workshop'];
+            else if (tab === 'maintenance') fieldsConfig, fieldsConfig = ['date', 'truck_no', 'maintenance_type', 'cost', 'workshop'];
             else if (tab === 'rentals') fieldsConfig = ['date', 'company_name', 'amount', 'details'];
             else if (tab === 'debts') fieldsConfig = ['date', 'entity', 'amount', 'debt_type', 'status'];
             else if (tab === 'expenses') fieldsConfig = ['date', 'expense_item', 'amount', 'notes'];
