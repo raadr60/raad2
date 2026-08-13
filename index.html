@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة الإدارة اللوجستية والحسابات الذكية - شركة جسور المسافات</title>
+    <title>منظومة الإدارة اللوجستية والحسابات الذكية - جسور وركن المشروعات</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,20 +18,20 @@
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; }
         }
-        .glass-header { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); }
+        .glass-header { backdrop-filter: blur(10px); }
     </style>
 </head>
-<body id="app-body" class="bg-slate-900 font-sans text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+<body class="bg-slate-900 dark:bg-slate-900 bg-slate-100 font-sans text-slate-100 dark:text-slate-100 text-slate-800 min-h-screen flex flex-col transition-colors duration-200">
 
     <!-- شاشة تسجيل الدخول -->
     <div id="login-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-6 shadow-2xl">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-6 shadow-2xl text-slate-100">
             <div class="text-center space-y-2">
                 <div class="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-lg shadow-blue-500/30">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <h2 class="text-2xl font-black text-white">تسجيل الدخول الآمن</h2>
-                <p class="text-xs text-slate-400">شركة جسور المسافات - الحسابات والعمليات اللوجستية</p>
+                <p class="text-xs text-slate-400">منظومة الحسابات والعمليات اللوجستية</p>
                 <p class="text-[11px] font-bold text-blue-400 pt-1">المطور رعد الشغدري</p>
             </div>
             
@@ -53,28 +58,24 @@
 
     <!-- التطبيق الرئيسي -->
     <div id="main-app" class="hidden flex-1 flex flex-col">
-        <header class="glass-header text-white px-4 py-3 sticky top-0 z-40 border-b border-slate-800 no-print">
+        <header class="glass-header bg-slate-900/95 dark:bg-slate-900/95 bg-white/95 text-white dark:text-white text-slate-900 px-4 py-3 sticky top-0 z-40 border-b border-slate-800 dark:border-slate-800 border-slate-200 no-print">
             <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
                 <div class="flex items-center gap-3">
                     <div class="bg-blue-600 p-2.5 rounded-xl text-xl text-white shadow-lg">
                         <i class="fa-solid fa-truck-fast"></i>
                     </div>
                     <div>
-                        <h1 class="text-sm sm:text-base font-black tracking-wide">شركة جسور المسافات (jasur)</h1>
+                        <h1 class="text-sm sm:text-base font-black tracking-wide">لوحة التحكم اللوجستية الذكية</h1>
                         <span id="current-user-badge" class="text-xs text-blue-400 font-medium">المدير العام</span>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2 flex-wrap">
-                    <!-- أداة تغيير الألوان الثيم -->
-                    <select id="theme-selector" onchange="changeTheme(this.value)" class="bg-slate-800 border border-slate-700 text-slate-200 px-2.5 py-2 rounded-xl text-xs font-bold outline-none cursor-pointer">
-                        <option value="slate">ثيم الداكن الأنيق</option>
-                        <option value="zinc">ثيم الرمادي العصري</option>
-                        <option value="neutral">ثيم الفحم الكلاسيكي</option>
-                        <option value="gray">ثيم الرمادي الهادئ</option>
-                    </select>
-
-                    <button id="add-entry-btn" onclick="openAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg">
+                    <!-- زر تبديل المظهر (فاتح / غامق) -->
+                    <button onclick="toggleDarkMode()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5" title="تغيير المظهر">
+                        <i id="theme-icon" class="fa-solid fa-sun"></i>
+                    </button>
+                    <button id="add-entry-btn" onclick="openModal('modal-add-entry')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg">
                         <i class="fa-solid fa-plus"></i> إضافة عملية
                     </button>
                     <button id="admin-users-btn" onclick="openUsersModal()" class="hidden bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-xl text-xs font-bold items-center gap-1.5">
@@ -101,10 +102,9 @@
 
         <main class="max-w-7xl w-full mx-auto p-3 sm:p-4 space-y-6 flex-1">
             
-            <!-- شاشات المعلومات الـ 9 (تتفاعل تلقائياً مع الفلترة الشهرية) -->
+            <!-- شاشات المعلومات الـ 9 المحدثة لترتبط بالفلتر الشهري -->
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 no-print">
-                <!-- 1. شاشة الرحلات -->
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
+                <div class="bg-slate-800/80 dark:bg-slate-800/80 bg-white border border-slate-700/60 dark:border-slate-700/60 border-slate-200 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
                         <p class="text-[10px] text-slate-400 font-bold">1. إجمالي الرحلات</p>
                         <h3 id="stat-trips" class="text-sm sm:text-base font-black text-blue-400 mt-1">0 SAR</h3>
@@ -112,8 +112,7 @@
                     <div class="w-8 h-8 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-route"></i></div>
                 </div>
 
-                <!-- 2. شاشة الإيرادات -->
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
+                <div class="bg-slate-800/80 dark:bg-slate-800/80 bg-white border border-slate-700/60 dark:border-slate-700/60 border-slate-200 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
                         <p class="text-[10px] text-slate-400 font-bold">2. إجمالي الإيرادات</p>
                         <h3 id="stat-revenues" class="text-sm sm:text-base font-black text-emerald-400 mt-1">0 SAR</h3>
@@ -121,8 +120,7 @@
                     <div class="w-8 h-8 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-chart-line"></i></div>
                 </div>
 
-                <!-- 3. شاشة سحبيات السائقين -->
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
+                <div class="bg-slate-800/80 dark:bg-slate-800/80 bg-white border border-slate-700/60 dark:border-slate-700/60 border-slate-200 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
                         <p class="text-[10px] text-slate-400 font-bold">3. سحبيات السائقين</p>
                         <h3 id="stat-draws" class="text-sm sm:text-base font-black text-amber-400 mt-1">0 SAR</h3>
@@ -130,8 +128,7 @@
                     <div class="w-8 h-8 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-users"></i></div>
                 </div>
 
-                <!-- 4. شاشة الصيانة -->
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
+                <div class="bg-slate-800/80 dark:bg-slate-800/80 bg-white border border-slate-700/60 dark:border-slate-700/60 border-slate-200 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
                         <p class="text-[10px] text-slate-400 font-bold">4. تكاليف الصيانة</p>
                         <h3 id="stat-maintenance" class="text-sm sm:text-base font-black text-rose-400 mt-1">0 SAR</h3>
@@ -139,8 +136,7 @@
                     <div class="w-8 h-8 bg-rose-500/10 text-rose-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-screwdriver-wrench"></i></div>
                 </div>
 
-                <!-- 5. شاشة الشركات المستأجرة -->
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
+                <div class="bg-slate-800/80 dark:bg-slate-800/80 bg-white border border-slate-700/60 dark:border-slate-700/60 border-slate-200 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
                         <p class="text-[10px] text-slate-400 font-bold">5. الشركات المستأجرة</p>
                         <h3 id="stat-rentals" class="text-sm sm:text-base font-black text-indigo-400 mt-1">0 SAR</h3>
@@ -148,8 +144,7 @@
                     <div class="w-8 h-8 bg-indigo-500/10 text-indigo-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-handshake"></i></div>
                 </div>
 
-                <!-- 6. شاشة الديون والالتزامات -->
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
+                <div class="bg-slate-800/80 dark:bg-slate-800/80 bg-white border border-slate-700/60 dark:border-slate-700/60 border-slate-200 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
                         <p class="text-[10px] text-slate-400 font-bold">6. الديون والالتزامات</p>
                         <h3 id="stat-debts" class="text-sm sm:text-base font-black text-orange-400 mt-1">0 SAR</h3>
@@ -157,8 +152,7 @@
                     <div class="w-8 h-8 bg-orange-500/10 text-orange-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-file-invoice"></i></div>
                 </div>
 
-                <!-- 7. شاشة المصروفات العامة -->
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
+                <div class="bg-slate-800/80 dark:bg-slate-800/80 bg-white border border-slate-700/60 dark:border-slate-700/60 border-slate-200 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
                         <p class="text-[10px] text-slate-400 font-bold">7. المصروفات العامة</p>
                         <h3 id="stat-expenses" class="text-sm sm:text-base font-black text-pink-400 mt-1">0 SAR</h3>
@@ -166,8 +160,7 @@
                     <div class="w-8 h-8 bg-pink-500/10 text-pink-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-wallet"></i></div>
                 </div>
 
-                <!-- 8. شاشة الفواتير -->
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl shadow-lg flex items-center justify-between">
+                <div class="bg-slate-800/80 dark:bg-slate-800/80 bg-white border border-slate-700/60 dark:border-slate-700/60 border-slate-200 p-3 rounded-2xl shadow-lg flex items-center justify-between">
                     <div>
                         <p class="text-[10px] text-slate-400 font-bold">8. إجمالي الفواتير</p>
                         <h3 id="stat-invoices" class="text-sm sm:text-base font-black text-teal-400 mt-1">0 SAR</h3>
@@ -175,8 +168,7 @@
                     <div class="w-8 h-8 bg-teal-500/10 text-teal-400 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                 </div>
 
-                <!-- 9. بطاقة الربح والخسارة -->
-                <div class="bg-slate-800/90 border-2 border-emerald-500/40 p-3 rounded-2xl shadow-xl flex items-center justify-between col-span-2 sm:col-span-1 lg:col-span-2">
+                <div class="bg-slate-800/90 dark:bg-slate-800/90 bg-white border-2 border-emerald-500/40 p-3 rounded-2xl shadow-xl flex items-center justify-between col-span-2 sm:col-span-1 lg:col-span-2">
                     <div>
                         <p class="text-[11px] text-emerald-300 font-bold">9. صافي الربح / الخسارة</p>
                         <h3 id="stat-profit-loss" class="text-sm sm:text-lg font-black text-emerald-400 mt-1">0 SAR</h3>
@@ -186,15 +178,15 @@
             </div>
 
             <!-- شريط البحث والفلترة -->
-            <div class="bg-slate-800/60 border border-slate-700/50 p-3 sm:p-4 rounded-2xl space-y-3 no-print">
+            <div class="bg-slate-800/60 dark:bg-slate-800/60 bg-white border border-slate-700/50 dark:border-slate-700/50 border-slate-200 p-3 sm:p-4 rounded-2xl space-y-3 no-print">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-400 mb-1">بحث سريع</label>
-                        <input type="text" id="search-query" onkeyup="renderCurrentTab()" placeholder="ابحث في الجدول الحالي..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                        <input type="text" id="search-query" onkeyup="renderCurrentTab()" placeholder="ابحث في الجدول الحالي..." class="w-full bg-slate-900 dark:bg-slate-900 bg-slate-50 border border-slate-700 dark:border-slate-700 border-slate-300 rounded-xl p-2.5 text-xs text-white dark:text-white text-slate-800 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1">التصفية بالشهر (تحديث البطاقات والجداول)</label>
-                        <input type="month" id="filter-month" onchange="onMonthFilterChange()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
+                        <label class="block text-xs font-bold text-slate-400 mb-1">التصفية بالشهر</label>
+                        <input type="month" id="filter-month" onchange="onMonthFilterChange()" class="w-full bg-slate-900 dark:bg-slate-900 bg-slate-50 border border-slate-700 dark:border-slate-700 border-slate-300 rounded-xl p-2.5 text-xs text-white dark:text-white text-slate-800 outline-none">
                     </div>
                     <div class="flex items-end">
                         <button onclick="resetFilters()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold p-2.5 rounded-xl transition">إعادة ضبط الفلترة</button>
@@ -203,7 +195,7 @@
             </div>
 
             <!-- التبويبات المتوافقة -->
-            <div class="flex border-b border-slate-800 gap-2 overflow-x-auto text-xs font-bold no-print pb-2">
+            <div class="flex border-b border-slate-800 dark:border-slate-800 border-slate-200 gap-2 overflow-x-auto text-xs font-bold no-print pb-2">
                 <button onclick="switchTab('trips')" id="tab-trips" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">1. الرحلات</button>
                 <button onclick="switchTab('revenues')" id="tab-revenues" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">2. الإيرادات</button>
                 <button onclick="switchTab('draws')" id="tab-draws" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap shadow-sm">3. سحبيات السائقين</button>
@@ -215,19 +207,19 @@
             </div>
 
             <!-- الجدول الديناميكي -->
-            <div class="bg-slate-800/85 border border-slate-700/60 rounded-2xl overflow-hidden shadow-xl">
+            <div class="bg-slate-800/85 dark:bg-slate-800/85 bg-white border border-slate-700/60 dark:border-slate-700/60 border-slate-200 rounded-2xl overflow-hidden shadow-xl">
                 <div class="overflow-x-auto">
                     <table id="data-table" class="w-full text-right text-xs">
-                        <thead id="table-head" class="bg-slate-900 border-b border-slate-700 text-slate-300 font-bold"></thead>
-                        <tbody id="table-body" class="divide-y divide-slate-700/50 text-slate-200"></tbody>
-                        <tfoot id="table-foot" class="bg-slate-900/90 border-t border-slate-700 font-bold text-slate-200"></tfoot>
+                        <thead id="table-head" class="bg-slate-900 dark:bg-slate-900 bg-slate-100 border-b border-slate-700 dark:border-slate-700 border-slate-200 text-slate-300 dark:text-slate-300 text-slate-700 font-bold"></thead>
+                        <tbody id="table-body" class="divide-y divide-slate-700/50 dark:divide-slate-700/50 divide-slate-200 text-slate-200 dark:text-slate-200 text-slate-700"></tbody>
+                        <tfoot id="table-foot" class="bg-slate-900/90 dark:bg-slate-900/90 bg-slate-100 border-t border-slate-700 dark:border-slate-700 border-slate-200 font-bold text-slate-200 dark:text-slate-200 text-slate-800"></tfoot>
                     </table>
                 </div>
                 <!-- الصفحات -->
-                <div id="pagination-container" class="p-3 bg-slate-900/60 border-t border-slate-700/60 flex justify-between items-center text-xs text-slate-400 no-print">
-                    <button onclick="prevPage()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 text-white font-bold">السابقة</button>
+                <div id="pagination-container" class="p-3 bg-slate-900/60 dark:bg-slate-900/60 bg-slate-50 border-t border-slate-700/60 dark:border-slate-700/60 border-slate-200 flex justify-between items-center text-xs text-slate-400 no-print">
+                    <button onclick="prevPage()" class="bg-slate-800 dark:bg-slate-800 bg-white hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 text-white dark:text-white text-slate-800 font-bold">السابقة</button>
                     <span id="page-info">الصفحة 1</span>
-                    <button onclick="nextPage()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 text-white font-bold">التالية</button>
+                    <button onclick="nextPage()" class="bg-slate-800 dark:bg-slate-800 bg-white hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 text-white dark:text-white text-slate-800 font-bold">التالية</button>
                 </div>
             </div>
         </main>
@@ -235,7 +227,7 @@
 
     <!-- نافذة إدارة المستخدمين -->
     <div id="modal-users" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 max-h-[85vh] overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 max-h-[85vh] overflow-y-auto text-slate-100">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-purple-400 text-sm"><i class="fa-solid fa-users-gear"></i> إدارة المستخدمين (جدول app_users)</h3>
                 <button onclick="closeModal('modal-users')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -270,16 +262,15 @@
         </div>
     </div>
 
-    <!-- نافذة الإدخال أو التعديل اليدوي (تدعم CRUD كاملاً) -->
+    <!-- نافذة الإدخال اليدوي -->
     <div id="modal-add-entry" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto text-slate-100">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 id="modal-entry-title" class="font-bold text-white text-sm">إضافة عملية جديدة</h3>
+                <h3 class="font-bold text-white text-sm">إضافة عملية جديدة</h3>
                 <button onclick="closeModal('modal-add-entry')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
             <form onsubmit="handleFormSubmit(event)" class="space-y-3">
-                <input type="hidden" id="edit-record-id" value="">
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">اختر الجدول المستهدف *</label>
                     <select id="form-target-table" onchange="buildDynamicFormFields(this.value)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
@@ -294,14 +285,30 @@
                     </select>
                 </div>
                 <div id="dynamic-fields-container" class="space-y-3"></div>
-                <button type="submit" id="form-submit-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl text-xs shadow-lg transition">حفظ السجل</button>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl text-xs shadow-lg transition">حفظ السجل</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة التعديل الجديدة -->
+    <div id="modal-edit-entry" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto text-slate-100">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-amber-400 text-sm"><i class="fa-solid fa-pen-to-square"></i> تعديل السجل</h3>
+                <button onclick="closeModal('modal-edit-entry')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleEditSubmit(event)" class="space-y-3">
+                <input type="hidden" id="edit-table-name">
+                <input type="hidden" id="edit-record-id">
+                <div id="edit-dynamic-fields-container" class="space-y-3"></div>
+                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded-xl text-xs shadow-lg transition">تحديث السجل</button>
             </form>
         </div>
     </div>
 
     <!-- سلة المهملات -->
     <div id="modal-trash" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto text-slate-100">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="font-bold text-amber-400 text-sm"><i class="fa-solid fa-trash-arrow-up"></i> سلة المهملات (استرجاع أو حذف نهائي)</h3>
                 <button onclick="closeModal('modal-trash')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -338,25 +345,29 @@
             if (loggedUser) {
                 showMainApp(loggedUser);
             }
-            const savedTheme = localStorage.getItem('sys_theme') || 'slate';
-            document.getElementById('theme-selector').value = savedTheme;
-            changeTheme(savedTheme, false);
             buildDynamicFormFields('trips');
         });
 
-        function changeTheme(themeName, save = true) {
-            const body = document.getElementById('app-body');
-            body.className = fontClassByTheme(themeName) + " font-sans text-slate-100 min-h-screen flex flex-col transition-colors duration-300";
-            if (save) localStorage.setItem('sys_theme', themeName);
+        // ميزة تبديل المظهر (فاتح / غامق)
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            }
         }
 
-        function fontClassByTheme(theme) {
-            switch(theme) {
-                case 'zinc': return 'bg-zinc-900';
-                case 'neutral': return 'bg-neutral-900';
-                case 'gray': return 'bg-gray-900';
-                default: return 'bg-slate-900';
-            }
+        // استرجاع المظهر المحفوظ
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
         }
 
         function togglePasswordVisibility(inputId, iconId) {
@@ -417,17 +428,17 @@
             currentUserRole = localStorage.getItem('sys_current_role') || 'viewer';
 
             if (username === 'raad') {
-                badge.innerText = 'شركة جسور المسافات - المدير العام (تحكم كامل)';
+                badge.innerText = 'المدير العام (تحكم كامل)';
                 adminBtn.classList.remove('hidden');
                 adminBtn.classList.add('flex');
                 addBtn.classList.remove('hidden');
                 trashBtn.classList.remove('hidden');
             } else {
                 if (currentUserRole === 'editor') {
-                    badge.innerText = `شركة جسور المسافات - ${username} (إدخال وتعديل)`;
+                    badge.innerText = `مستخدم النظام: ${username} (إدخال وتعديل)`;
                     addBtn.classList.remove('hidden');
                 } else {
-                    badge.innerText = `شركة جسور المسافات - ${username} (مشاهدة فقط)`;
+                    badge.innerText = `مستخدم النظام: ${username} (مشاهدة فقط)`;
                     addBtn.classList.add('hidden');
                 }
                 adminBtn.classList.add('hidden');
@@ -520,11 +531,7 @@
             }
         }
 
-        function onMonthFilterChange() {
-            updateAnalyticsDashboard();
-            renderCurrentTab();
-        }
-
+        // فلترة البيانات بناءً على الشهر المدخل للبطاقات والجداول
         function getFilteredData(tab) {
             const query = document.getElementById('search-query').value.toLowerCase().trim();
             const monthFilter = document.getElementById('filter-month').value; // مثلاً: "2026-07"
@@ -533,50 +540,57 @@
                 if (item.is_deleted) return false;
                 
                 if (monthFilter) {
-                    const itemDate = item.date || item.created_at || '';
+                    const itemDate = item.date || item.month_year || '';
                     if (!itemDate.startsWith(monthFilter)) return false;
                 }
 
                 if (!query) return true;
                 return Object.values(item).some(val => 
-                    val && val.toString().toLowerCase().includes(query)
+                    val && String(val).toLowerCase().includes(query)
                 );
             });
         }
 
+        function onMonthFilterChange() {
+            updateAnalyticsDashboard();
+            renderCurrentTab();
+        }
+
+        function resetFilters() {
+            document.getElementById('search-query').value = '';
+            document.getElementById('filter-month').value = '';
+            updateAnalyticsDashboard();
+            renderCurrentTab();
+        }
+
+        // تحديث بطاقات المعلومات التسع لتتفاعل مع الفلتر الشهري
         function updateAnalyticsDashboard() {
-            const monthFilter = document.getElementById('filter-month').value;
+            const getSum = (tab) => getFilteredData(tab).reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
 
-            const calcSum = (tabKey, fieldName) => {
-                const data = store[tabKey].filter(i => !i.is_deleted);
-                const filtered = monthFilter ? data.filter(i => (i.date || i.created_at || '').startsWith(monthFilter)) : data;
-                return filtered.reduce((acc, curr) => acc + (parseFloat(curr[fieldName]) || 0), 0);
-            };
+            const tripsTotal = getSum('trips');
+            const revenuesTotal = getSum('revenues');
+            const drawsTotal = getSum('draws');
+            const maintenanceTotal = getSum('maintenance');
+            const rentalsTotal = getSum('rentals');
+            const debtsTotal = getSum('debts');
+            const expensesTotal = getSum('expenses');
+            const invoicesTotal = getSum('invoices');
 
-            const tripsCount = getFilteredData('trips').length;
-            const revenuesSum = calcSum('revenues', 'amount');
-            const drawsSum = calcSum('draws', 'amount');
-            const maintenanceSum = calcSum('maintenance', 'cost');
-            const rentalsSum = calcSum('rentals', 'amount');
-            const debtsSum = calcSum('debts', 'amount');
-            const expensesSum = calcSum('expenses', 'amount');
-            const invoicesSum = calcSum('invoices', 'amount');
+            // صافي الربح = الإيرادات - (السحبيات + الصيانة + المصروفات + الشركات المستأجرة)
+            const netProfit = revenuesTotal - (drawsTotal + maintenanceTotal + expensesTotal + rentalsTotal);
 
-            const totalOutflows = drawsSum + maintenanceSum + rentalsSum + expensesSum;
-            const netProfit = revenuesSum - totalOutflows;
-
-            document.getElementById('stat-trips').innerText = tripsCount + ' رحلة';
-            document.getElementById('stat-revenues').innerText = revenuesSum.toLocaleString() + ' SAR';
-            document.getElementById('stat-draws').innerText = drawsSum.toLocaleString() + ' SAR';
-            document.getElementById('stat-maintenance').innerText = maintenanceSum.toLocaleString() + ' SAR';
-            document.getElementById('stat-rentals').innerText = rentalsSum.toLocaleString() + ' SAR';
-            document.getElementById('stat-debts').innerText = debtsSum.toLocaleString() + ' SAR';
-            document.getElementById('stat-expenses').innerText = expensesSum.toLocaleString() + ' SAR';
-            document.getElementById('stat-invoices').innerText = invoicesSum.toLocaleString() + ' SAR';
+            document.getElementById('stat-trips').innerText = tripsTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-revenues').innerText = revenuesTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-draws').innerText = drawsTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-maintenance').innerText = maintenanceTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-rentals').innerText = rentalsTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-debts').innerText = debtsTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-expenses').innerText = expensesTotal.toLocaleString() + ' SAR';
+            document.getElementById('stat-invoices').innerText = invoicesTotal.toLocaleString() + ' SAR';
             
-            const profitElem = document.getElementById('stat-profit-loss');
-            profitElem.innerText = netProfit.toLocaleString() + ' SAR';
-            profitElem.className = netProfit >= 0 ? 'text-sm sm:text-lg font-black text-emerald-400 mt-1' : 'text-sm sm:text-lg font-black text-rose-400 mt-1';
+            const profitEl = document.getElementById('stat-profit-loss');
+            profitEl.innerText = netProfit.toLocaleString() + ' SAR';
+            profitEl.className = netProfit >= 0 ? 'text-sm sm:text-lg font-black text-emerald-400 mt-1' : 'text-sm sm:text-lg font-black text-rose-400 mt-1';
         }
 
         function switchTab(tab) {
@@ -584,217 +598,330 @@
             currentPage = 1;
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-500');
-                btn.classList.add('bg-slate-800', 'text-slate-300');
+                btn.classList.add('bg-slate-800', 'text-slate-300', 'border-slate-700');
             });
             const activeBtn = document.getElementById(`tab-${tab}`);
             if (activeBtn) {
-                activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
+                activeBtn.classList.remove('bg-slate-800', 'text-slate-300', 'border-slate-700');
                 activeBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-500');
             }
             renderCurrentTab();
         }
 
-        const tableFieldsDef = {
-            trips: [
-                { key: 'date', label: 'التاريخ', type: 'date' },
-                { key: 'trip_number', label: 'رقم الرحلة', type: 'text' },
-                { key: 'driver_name', label: 'اسم السائق', type: 'text' },
-                { key: 'truck_plate', label: 'رقم اللوحة', type: 'text' },
-                { key: 'destination', label: 'وجهة الرحلة', type: 'text' },
-                { key: 'amount', label: 'قيمة الرحلة (SAR)', type: 'number' }
-            ],
-            revenues: [
-                { key: 'date', label: 'التاريخ', type: 'date' },
-                { key: 'title', label: 'بند الإيراد', type: 'text' },
-                { key: 'amount', label: 'المبلغ (SAR)', type: 'number' },
-                { key: 'notes', label: 'ملاحظات', type: 'text' }
-            ],
-            draws: [
-                { key: 'date', label: 'التاريخ', type: 'date' },
-                { key: 'driver_name', label: 'اسم السائق', type: 'text' },
-                { key: 'amount', label: 'المبلغ المسحوب (SAR)', type: 'number' },
-                { key: 'notes', label: 'السبب / ملاحظات', type: 'text' }
-            ],
-            maintenance: [
-                { key: 'date', label: 'التاريخ', type: 'date' },
-                { key: 'truck_plate', label: 'رقم اللوحة', type: 'text' },
-                { key: 'maintenance_type', label: 'نوع الصيانة', type: 'text' },
-                { key: 'cost', label: 'التكلفة (SAR)', type: 'number' },
-                { key: 'notes', label: 'ملاحظات الورشة', type: 'text' }
-            ],
-            rentals: [
-                { key: 'date', label: 'التاريخ', type: 'date' },
-                { key: 'company_name', label: 'اسم الشركة المستأجرة', type: 'text' },
-                { key: 'amount', label: 'المبلغ المستحق (SAR)', type: 'number' },
-                { key: 'notes', label: 'تفاصيل العقد', type: 'text' }
-            ],
-            debts: [
-                { key: 'date', label: 'التاريخ', type: 'date' },
-                { key: 'creditor_name', label: 'اسم الدائن / الجهة', type: 'text' },
-                { key: 'amount', label: 'قيمة الدين (SAR)', type: 'number' },
-                { key: 'due_date', label: 'تاريخ الاستحقاق', type: 'date' },
-                { key: 'notes', label: 'ملاحظات', type: 'text' }
-            ],
-            expenses: [
-                { key: 'date', label: 'التاريخ', type: 'date' },
-                { key: 'expense_type', label: 'نوع المصروف', type: 'text' },
-                { key: 'amount', label: 'المبلغ (SAR)', type: 'number' },
-                { key: 'notes', label: 'ملاحظات', type: 'text' }
-            ],
-            invoices: [
-                { key: 'date', label: 'التاريخ', type: 'date' },
-                { key: 'invoice_number', label: 'رقم الفاتورة', type: 'text' },
-                { key: 'client_name', label: 'اسم العميل', type: 'text' },
-                { key: 'amount', label: 'المبلغ الإجمالي (SAR)', type: 'number' },
-                { key: 'status', label: 'الحالة (مدفوعة / معلقة)', type: 'text' }
-            ]
-        };
-
-        function buildDynamicFormFields(tab, existingData = null) {
-            const container = document.getElementById('dynamic-fields-container');
-            const fields = tableFieldsDef[tab] || [];
-            container.innerHTML = '';
-
-            fields.forEach(f => {
-                let val = existingData && existingData[f.key] ? existingData[f.key] : '';
-                container.innerHTML += `
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1">${f.label}</label>
-                        <input type="${f.type}" name="${f.key}" value="${val}" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none">
-                    </div>
-                `;
-            });
-        }
-
-        function openAddModal() {
-            document.getElementById('modal-entry-title').innerText = 'إضافة عملية جديدة';
-            document.getElementById('edit-record-id').value = '';
-            document.getElementById('form-submit-btn').innerText = 'حفظ السجل';
-            document.getElementById('form-target-table').value = activeTab;
-            buildDynamicFormFields(activeTab);
-            openModal('modal-add-entry');
-        }
-
-        function openEditModal(tab, id) {
-            const record = store[tab].find(r => r.id === id);
-            if (!record) return;
-
-            document.getElementById('modal-entry-title').innerText = 'تعديل السجل الحالي';
-            document.getElementById('edit-record-id').value = id;
-            document.getElementById('form-submit-btn').innerText = 'تحديث السجل';
-            document.getElementById('form-target-table').value = tab;
-            buildDynamicFormFields(tab, record);
-            openModal('modal-add-entry');
-        }
-
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-            const tab = document.getElementById('form-target-table').value;
-            const recordId = document.getElementById('edit-record-id').value;
-            const tableName = tableConfig[tab].name;
-            const fields = tableFieldsDef[tab];
-            
-            const formData = {};
-            fields.forEach(f => {
-                const inputElem = document.querySelector(`[name="${f.key}"]`);
-                formData[f.key] = f.type === 'number' ? parseFloat(inputElem.value) || 0 : inputElem.value.trim();
-            });
-
-            if (recordId) {
-                // تعديل سجل موجود
-                const { error } = await db.from(tableName).update(formData).eq('id', recordId);
-                if (error) {
-                    alert('خطأ أثناء التحديث: ' + error.message);
-                } else {
-                    closeModal('modal-add-entry');
-                    await loadAllData();
-                    alert('تم تحديث السجل بنجاح!');
-                }
-            } else {
-                // إضافة سجل جديد
-                const { error } = await db.from(tableName).insert([formData]);
-                if (error) {
-                    alert('خطأ أثناء الحفظ: ' + error.message);
-                } else {
-                    closeModal('modal-add-entry');
-                    await loadAllData();
-                    alert('تم حفظ السجل بنجاح!');
-                }
-            }
-        }
-
         function renderCurrentTab() {
-            const head = document.getElementById('table-head');
-            const body = document.getElementById('table-body');
-            const foot = document.getElementById('table-foot');
-            
-            head.innerHTML = '';
-            body.innerHTML = '';
-            foot.innerHTML = '';
+            const data = getFilteredData(activeTab);
+            const thead = document.getElementById('table-head');
+            const tbody = document.getElementById('table-body');
+            const tfoot = document.getElementById('table-foot');
 
-            const fields = tableFieldsDef[activeTab];
-            let headerHtml = '<tr><th class="p-3">#</th>';
-            fields.forEach(f => headerHtml += `<th class="p-3">${f.label}</th>`);
-            headerHtml += '<th class="p-3 no-print">الإجراءات</th></tr>';
-            head.innerHTML = headerHtml;
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+            tfoot.innerHTML = '';
 
-            const filtered = getFilteredData(activeTab);
-            const start = (currentPage - 1) * pageSize;
-            const paginated = filtered.slice(start, start + pageSize);
-
-            if (paginated.length === 0) {
-                body.innerHTML = `<tr><td colspan="${fields.length + 2}" class="p-6 text-center text-slate-400">لا توجد بيانات متاحة في هذا الجدول</td></tr>`;
-                document.getElementById('page-info').innerText = `الصفحة 1 من 1`;
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center py-6 text-slate-400">لا توجد بيانات متاحة</td></tr>`;
+                document.getElementById('page-info').innerText = 'الصفحة 1 من 1';
                 return;
             }
 
-            paginated.forEach((item, index) => {
-                let rowHtml = `<tr class="hover:bg-slate-700/30 transition"><td class="p-3 font-mono text-slate-400">${start + index + 1}</td>`;
-                fields.forEach(f => {
-                    let val = item[f.key] !== undefined ? item[f.key] : '';
-                    if (f.type === 'number') val = Number(val).toLocaleString() + ' SAR';
-                    rowHtml += `<td class="p-3">${val}</td>`;
-                });
-                
-                rowHtml += `<td class="p-3 no-print space-x-2 space-x-reverse">`;
-                if (currentUserRole === 'editor' || currentLoggedInUser === 'raad') {
-                    rowHtml += `<button onclick="openEditModal('${activeTab}', '${item.id}')" class="bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 px-2.5 py-1 rounded-lg text-xs font-bold">تعديل</button>`;
-                    rowHtml += `<button onclick="softDeleteRecord('${activeTab}', '${item.id}')" class="bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 px-2.5 py-1 rounded-lg text-xs font-bold">حذف</button>`;
-                }
-                rowHtml += `</td></tr>`;
-                body.innerHTML += rowHtml;
-            });
+            let headers = [];
+            let fields = [];
 
-            // حساب المجموع السفلي
-            let sumVal = 0;
-            const sumField = fields.find(f => f.type === 'number');
-            if (sumField) {
-                sumVal = filtered.reduce((acc, curr) => acc + (parseFloat(curr[sumField.key]) || 0), 0);
+            if (activeTab === 'trips') {
+                headers = ['التاريخ', 'السائق', 'الشركات المستأجرة', 'العميل', 'المبلغ (SAR)', 'من', 'إلى', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'driver_name', 'company_name', 'client_name', 'amount', 'route_from', 'route_to', 'notes'];
+            } else if (activeTab === 'revenues') {
+                headers = ['التاريخ', 'الشركات المستأجرة', 'العميل', 'المبلغ (SAR)', 'طريقة الدفع', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'company_name', 'client_name', 'amount', 'payment_method', 'notes'];
+            } else if (activeTab === 'draws') {
+                headers = ['التاريخ', 'الشركات المستأجرة', 'اسم الشخص', 'الصفة', 'نوع السحب', 'المبلغ (SAR)', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'company_name', 'person_name', 'person_type', 'draw_type', 'amount', 'notes'];
+            } else if (activeTab === 'maintenance') {
+                headers = ['التاريخ', 'الشركات المستأجرة', 'السائق', 'نوع الصيانة', 'المبلغ (SAR)', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'company_name', 'driver_name', 'service_type', 'amount', 'notes'];
+            } else if (activeTab === 'rentals') {
+                headers = ['التاريخ', 'المالك / الشركة', 'المبلغ (SAR)', 'نوع السحب', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'owner_name', 'amount', 'draw_type', 'notes'];
+            } else if (activeTab === 'debts') {
+                headers = ['التاريخ', 'اسم الشخص / الجهة', 'نوع الدين', 'المبلغ (SAR)', 'حالة السداد', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'person_name', 'debt_type', 'amount', 'is_paid', 'notes'];
+            } else if (activeTab === 'expenses') {
+                headers = ['التاريخ', 'نوع المصروف', 'المبلغ (SAR)', 'الملاحظات', 'الإجراءات'];
+                fields = ['date', 'expense_type', 'amount', 'notes'];
+            } else if (activeTab === 'invoices') {
+                headers = ['رقم الفاتورة', 'العميل', 'التاريخ', 'الحالة', 'المبلغ (SAR)', 'المدفوع', 'حالة السداد', 'الشهر', 'الملاحظات', 'الإجراءات'];
+                fields = ['invoice_number', 'client_name', 'date', 'status', 'amount', 'paid_amount', 'is_paid', 'month_year', 'notes'];
             }
 
-            let footHtml = `<tr><td class="p-3" colspan="2">الإجمالي للنتائج المعروضة:</td>`;
-            fields.slice(1).forEach(f => {
-                if (f.key === (sumField ? sumField.key : '')) {
-                    footHtml += `<td class="p-3 text-emerald-400">${sumVal.toLocaleString()} SAR</td>`;
-                } else {
-                    footHtml += `<td class="p-3">-</td>`;
-                }
+            // رسم الرأس
+            let trHead = document.createElement('tr');
+            headers.forEach(h => {
+                let th = document.createElement('th');
+                th.className = 'p-3 text-right';
+                th.innerText = h;
+                trHead.appendChild(th);
             });
-            footHtml += `<td class="no-print"></td></tr>`;
-            foot.innerHTML = footHtml;
+            thead.appendChild(trHead);
 
-            const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+            // التقسيم الصفحي
+            const start = (currentPage - 1) * pageSize;
+            const paginatedData = data.slice(start, start + pageSize);
+
+            paginatedData.forEach(item => {
+                let tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-700/30 transition';
+
+                fields.forEach(field => {
+                    let td = document.createElement('td');
+                    td.className = 'p-3';
+                    if (field === 'amount' || field === 'paid_amount') {
+                        td.innerText = Number(item[field] || 0).toLocaleString() + ' SAR';
+                    } else if (field === 'is_paid') {
+                        // إضافة خانة توضح هل تم السداد (تحديث رقم 3)
+                        let paidVal = item[field];
+                        if (paidVal === true || paidVal === 'مدفوع' || paidVal === 'تم السداد') {
+                            td.innerHTML = `<span class="bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full font-bold text-[10px]">تم السداد</span>`;
+                        } else {
+                            td.innerHTML = `<span class="bg-rose-500/20 text-rose-400 px-2.5 py-1 rounded-full font-bold text-[10px]">غير مدفوع</span>`;
+                        }
+                    } else {
+                        td.innerText = item[field] || '-';
+                    }
+                    tr.appendChild(td);
+                });
+
+                // خلية الإجراءات (تعديل + حذف) (تحديث رقم 2)
+                let tdAction = document.createElement('td');
+                tdAction.className = 'p-3 flex items-center gap-2';
+                
+                if (currentUserRole === 'editor' || currentLoggedInUser === 'raad') {
+                    let editBtn = document.createElement('button');
+                    editBtn.className = 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-2.5 py-1 rounded-lg font-bold text-xs flex items-center gap-1';
+                    editBtn.innerHTML = `<i class="fa-solid fa-pen"></i> تعديل`;
+                    editBtn.onclick = () => openEditModal(activeTab, item);
+                    tdAction.appendChild(editBtn);
+
+                    let delBtn = document.createElement('button');
+                    delBtn.className = 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 px-2.5 py-1 rounded-lg font-bold text-xs flex items-center gap-1';
+                    delBtn.innerHTML = `<i class="fa-solid fa-trash"></i> حذف`;
+                    delBtn.onclick = () => softDeleteRecord(activeTab, item.id);
+                    tdAction.appendChild(delBtn);
+                } else {
+                    tdAction.innerText = 'عرض فقط';
+                }
+
+                tr.appendChild(tdAction);
+                tbody.appendChild(tr);
+            });
+
+            // حساب المجموع في التذييل
+            let totalAmount = data.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            let trFoot = document.createElement('tr');
+            let tdFootLabel = document.createElement('td');
+            tdFootLabel.className = 'p-3';
+            tdFootLabel.innerText = 'الإجمالي الكلي للنتائج';
+            trFoot.appendChild(tdFootLabel);
+
+            for (let i = 1; i < headers.length; i++) {
+                let td = document.createElement('td');
+                td.className = 'p-3';
+                if (headers[i].includes('المبلغ') || headers[i].includes('المدفوع')) {
+                    td.innerText = totalAmount.toLocaleString() + ' SAR';
+                    totalAmount = 0; // لطباعته مرة واحدة
+                }
+                trFoot.appendChild(td);
+            }
+            tfoot.appendChild(trFoot);
+
+            const totalPages = Math.ceil(data.length / pageSize) || 1;
             document.getElementById('page-info').innerText = `الصفحة ${currentPage} من ${totalPages}`;
         }
 
         function prevPage() {
-            if (currentPage > 1) { currentPage--; renderCurrentTab(); }
+            if (currentPage > 1) {
+                currentPage--;
+                renderCurrentTab();
+            }
         }
 
         function nextPage() {
-            const filtered = getFilteredData(activeTab);
-            const totalPages = Math.ceil(filtered.length / pageSize) || 1;
-            if (currentPage < totalPages) { currentPage++; renderCurrentTab(); }
+            const data = getFilteredData(activeTab);
+            const totalPages = Math.ceil(data.length / pageSize) || 1;
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderCurrentTab();
+            }
+        }
+
+        // بناء حقول النماذج للإدخال أو التعديل
+        function buildDynamicFormFields(table, dataItem = null, containerId = 'dynamic-fields-container') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            let fieldsDef = [];
+
+            const val = (key) => dataItem ? (dataItem[key] || '') : '';
+
+            if (table === 'trips') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'driver_name', label: 'اسم السائق', type: 'text', val: val('driver_name') },
+                    { id: 'company_name', label: 'الشركات المستأجرة', type: 'text', val: val('company_name') },
+                    { id: 'client_name', label: 'اسم العميل', type: 'text', val: val('client_name') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'route_from', label: 'من (المسار)', type: 'text', val: val('route_from') },
+                    { id: 'route_to', label: 'إلى (المسار)', type: 'text', val: val('route_to') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'revenues') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'company_name', label: 'الشركات المستأجرة', type: 'text', val: val('company_name') },
+                    { id: 'client_name', label: 'اسم العميل', type: 'text', val: val('client_name') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'payment_method', label: 'طريقة الدفع', type: 'text', val: val('payment_method') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'draws') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'company_name', label: 'الشركات المستأجرة', type: 'text', val: val('company_name') },
+                    { id: 'person_name', label: 'اسم الشخص', type: 'text', val: val('person_name') },
+                    { id: 'person_type', label: 'الصفة (سائق / عمال)', type: 'text', val: val('person_type') },
+                    { id: 'draw_type', label: 'نوع السحب', type: 'text', val: val('draw_type') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'maintenance') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'company_name', label: 'الشركات المستأجرة', type: 'text', val: val('company_name') },
+                    { id: 'driver_name', label: 'السائق', type: 'text', val: val('driver_name') },
+                    { id: 'service_type', label: 'نوع الصيانة', type: 'text', val: val('service_type') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'rentals') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'owner_name', label: 'المالك / الشركة', type: 'text', val: val('owner_name') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'draw_type', label: 'نوع السحب / البند', type: 'text', val: val('draw_type') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'debts') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'person_name', label: 'اسم الشخص / الجهة', type: 'text', val: val('person_name') },
+                    { id: 'debt_type', label: 'نوع الدين', type: 'text', val: val('debt_type') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'is_paid', label: 'حالة السداد', type: 'select', options: ['تم السداد', 'غير مدفوع'], val: val('is_paid') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'expenses') {
+                fieldsDef = [
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'expense_type', label: 'نوع المصروف', type: 'text', val: val('expense_type') },
+                    { id: 'amount', label: 'المبلغ (SAR)', type: 'number', val: val('amount') },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            } else if (table === 'invoices') {
+                fieldsDef = [
+                    { id: 'invoice_number', label: 'رقم الفاتورة', type: 'text', val: val('invoice_number') },
+                    { id: 'client_name', label: 'اسم العميل', type: 'text', val: val('client_name') },
+                    { id: 'date', label: 'التاريخ *', type: 'date', val: val('date') || new Date().toISOString().split('T')[0] },
+                    { id: 'status', label: 'حالة الفاتورة', type: 'text', val: val('status') },
+                    { id: 'amount', label: 'المبلغ الإجمالي (SAR)', type: 'number', val: val('amount') },
+                    { id: 'paid_amount', label: 'المبلغ المدفوع (SAR)', type: 'number', val: val('paid_amount') },
+                    { id: 'is_paid', label: 'حالة السداد', type: 'select', options: ['تم السداد', 'غير مدفوع'], val: val('is_paid') },
+                    { id: 'month_year', label: 'الشهر (YYYY-MM)', type: 'text', val: val('month_year') || new Date().toISOString().slice(0,7) },
+                    { id: 'notes', label: 'ملاحظات', type: 'text', val: val('notes') }
+                ];
+            }
+
+            fieldsDef.forEach(field => {
+                let div = document.createElement('div');
+                div.innerHTML = `<label class="block text-xs font-bold text-slate-400 mb-1">${field.label}</label>`;
+                
+                if (field.type === 'select') {
+                    let select = document.createElement('select');
+                    select.id = `${containerId === 'edit-dynamic-fields-container' ? 'edit-' : 'form-'}${field.id}`;
+                    select.className = 'w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none';
+                    field.options.forEach(opt => {
+                        let option = document.createElement('option');
+                        option.value = opt;
+                        option.innerText = opt;
+                        if (field.val === opt) option.selected = true;
+                        select.appendChild(option);
+                    });
+                    div.appendChild(select);
+                } else {
+                    let input = document.createElement('input');
+                    input.type = field.type;
+                    input.id = `${containerId === 'edit-dynamic-fields-container' ? 'edit-' : 'form-'}${field.id}`;
+                    input.value = field.val;
+                    input.required = field.label.includes('*');
+                    input.className = 'w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none';
+                    div.appendChild(input);
+                }
+                container.appendChild(div);
+            });
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const targetTableKey = document.getElementById('form-target-table').value;
+            const tableName = tableConfig[targetTableKey].name;
+
+            let recordData = {};
+            const container = document.getElementById('dynamic-fields-container');
+            const inputs = container.querySelectorAll('input, select');
+
+            inputs.forEach(input => {
+                const fieldId = input.id.replace('form-', '');
+                recordData[fieldId] = input.type === 'number' ? Number(input.value) : input.value;
+            });
+
+            const { error } = await db.from(tableName).insert([recordData]);
+            if (error) {
+                alert('خطأ أثناء الحفظ: ' + error.message);
+            } else {
+                closeModal('modal-add-entry');
+                await loadAllData();
+                alert('تمت إضافة السجل بنجاح!');
+            }
+        }
+
+        // فتح نافذة التعديل
+        function openEditModal(tab, item) {
+            document.getElementById('edit-table-name').value = tab;
+            document.getElementById('edit-record-id').value = item.id;
+            buildDynamicFormFields(tab, item, 'edit-dynamic-fields-container');
+            openModal('modal-edit-entry');
+        }
+
+        async function handleEditSubmit(e) {
+            e.preventDefault();
+            const tabKey = document.getElementById('edit-table-name').value;
+            const recordId = document.getElementById('edit-record-id').value;
+            const tableName = tableConfig[tabKey].name;
+
+            let recordData = {};
+            const container = document.getElementById('edit-dynamic-fields-container');
+            const inputs = container.querySelectorAll('input, select');
+
+            inputs.forEach(input => {
+                const fieldId = input.id.replace('edit-', '');
+                recordData[fieldId] = input.type === 'number' ? Number(input.value) : input.value;
+            });
+
+            const { error } = await db.from(tableName).update(recordData).eq('id', recordId);
+            if (error) {
+                alert('خطأ أثناء التحديث: ' + error.message);
+            } else {
+                closeModal('modal-edit-entry');
+                await loadAllData();
+                alert('تم تحديث السجل بنجاح!');
+            }
         }
 
         async function softDeleteRecord(tab, id) {
@@ -811,37 +938,40 @@
 
         async function openTrashModal() {
             openModal('modal-trash');
-            const container = document.getElementById('trash-list');
-            container.innerHTML = 'جاري التحميل...';
+            const listContainer = document.getElementById('trash-list');
+            listContainer.innerHTML = 'جاري التحميل...';
 
             let allDeleted = [];
             for (let key in tableConfig) {
-                const { data } = await db.from(tableConfig[key].name).select('*').eq('is_deleted', true);
+                let { data } = await db.from(tableConfig[key].name).select('*').eq('is_deleted', true);
                 if (data) {
-                    data.forEach(item => { item._tabKey = key; allDeleted.push(item); });
+                    data.forEach(item => {
+                        item._tabKey = key;
+                        allDeleted.push(item);
+                    });
                 }
             }
 
             if (allDeleted.length === 0) {
-                container.innerHTML = '<p class="text-slate-400 text-center py-4">سلة المهملات فارغة تماماً</p>';
+                listContainer.innerHTML = '<p class="text-slate-400 text-center py-4">سلة المهملات فارغة</p>';
                 return;
             }
 
-            container.innerHTML = '';
+            listContainer.innerHTML = '';
             allDeleted.forEach(item => {
-                const title = item.title || item.trip_number || item.invoice_number || item.driver_name || item.company_name || item.creditor_name || item.expense_type || 'سجل رقم ' + item.id.substring(0,6);
-                container.innerHTML += `
-                    <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700">
-                        <div>
-                            <span class="text-white font-bold">[${tableConfig[item._tabKey].title}]</span> 
-                            <span class="text-slate-300 mr-2">${title}</span>
-                        </div>
-                        <div class="space-x-2 space-x-reverse">
-                            <button onclick="restoreRecord('${item._tabKey}', '${item.id}')" class="bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 px-2.5 py-1 rounded-lg text-xs font-bold">استرجاع</button>
-                            <button onclick="permanentDeleteRecord('${item._tabKey}', '${item.id}')" class="bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 px-2.5 py-1 rounded-lg text-xs font-bold">حذف نهائي</button>
-                        </div>
+                let div = document.createElement('div');
+                div.className = 'bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-700';
+                div.innerHTML = `
+                    <div>
+                        <span class="text-amber-400 font-bold">[${tableConfig[item._tabKey].title}]</span>
+                        <span class="text-white mr-2">${item.date || item.invoice_number || 'سجل'} - ${item.amount ? item.amount + ' SAR' : ''}</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="restoreRecord('${item._tabKey}', '${item.id}')" class="bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-lg font-bold">استرجاع</button>
+                        <button onclick="permanentDeleteRecord('${item._tabKey}', '${item.id}')" class="bg-rose-500/10 text-rose-400 px-2.5 py-1 rounded-lg font-bold">حذف نهائي</button>
                     </div>
                 `;
+                listContainer.appendChild(div);
             });
         }
 
@@ -861,40 +991,25 @@
             }
         }
 
-        function resetFilters() {
-            document.getElementById('search-query').value = '';
-            document.getElementById('filter-month').value = '';
-            updateAnalyticsDashboard();
-            renderCurrentTab();
-        }
-
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.remove('hidden');
-            document.getElementById(modalId).classList.add('flex');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-            document.getElementById(modalId).classList.remove('flex');
-        }
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
 
         function exportToExcel() {
-            const filtered = getFilteredData(activeTab);
-            const ws = XLSX.utils.json_to_sheet(filtered);
+            const data = getFilteredData(activeTab);
+            if (data.length === 0) { alert('لا توجد بيانات للتصدير!'); return; }
+            const ws = XLSX.utils.json_to_sheet(data);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, tableConfig[activeTab].title);
-            XLSX.writeFile(wb, `Jasur_${activeTab}_Report.xlsx`);
+            XLSX.writeFile(wb, `${activeTab}_report.xlsx`);
         }
 
         function shareWhatsApp() {
-            const filtered = getFilteredData(activeTab);
-            const title = tableConfig[activeTab].title;
-            let text = `*تقرير شركة جسور المسافات - ${title}*\nإجمالي السجلات: ${filtered.length}\n\n`;
-            filtered.slice(0, 10).forEach((item, idx) => {
-                text += `${idx + 1}. ${item.date || ''} - ${item.trip_number || item.title || item.driver_name || item.company_name || ''} : ${item.amount || item.cost || 0} SAR\n`;
+            const data = getFilteredData(activeTab);
+            let text = `*تقرير ${tableConfig[activeTab].title} - منظومة جسور اللوجستية*\n\n`;
+            data.slice(0, 10).forEach((item, idx) => {
+                text += `${idx+1}. التاريخ: ${item.date || '-'} | المبلغ: ${item.amount || 0} SAR\n`;
             });
-            if(filtered.length > 10) text += `\n... و${filtered.length - 10} سجلات أخرى.`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
         }
     </script>
 </body>
